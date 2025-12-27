@@ -7,7 +7,7 @@ import type {Institution} from "@/domain/entities/institution.ts";
 interface Location {
     id: number;
     quantity: number;
-    institution: Institution | null;
+    institution: Institution;
 }
 
 interface SparePart {
@@ -15,13 +15,14 @@ interface SparePart {
     name: string;
     serialNumber: string;
     minQuality: number;
+    quantity: number;
     compatibleModels: EquipmentModel[];
     note: string | null;
 
     locations: Location[];
-    supplier: Supplier | null;
-    manufacturer: Manufacturer | null;
-    sparePartCategory: SparePartCategory | null;
+    supplier: Supplier;
+    manufacturer: Manufacturer;
+    sparePartCategory: SparePartCategory;
 }
 
 export type { SparePart, Location };

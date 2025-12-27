@@ -2,6 +2,10 @@ import type {RepairRequestFilters} from "@/domain/filters/repair-request.filters
 import type {FilterDefinition} from "@/infrastructure/filters/query-builder.ts";
 
 const repairRequestFilterMap: Record<keyof RepairRequestFilters, FilterDefinition> = {
+    equipmentId: {
+        field: "equipment_id",
+        operator: "eq",
+    },
     serialNumber: {
         field: "equipment__serial_number",
         operator: "ilike",

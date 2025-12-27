@@ -1,8 +1,8 @@
 import {Building2, Calendar, ChevronRight, MapPin, Monitor} from "lucide-react";
 import {Badge} from "@/components/ui/badge.tsx";
 import {limitTextLength} from "@/presentation/pages/utils.ts";
-import {getStatusBadge} from "@/presentation/components/tabs/repair-requests-list/status-badge.tsx";
-import {getPriorityBadge} from "@/presentation/components/tabs/repair-requests-list/priority-badge.tsx";
+import {getStatusBadge} from "@/presentation/components/tabs/repair-requests-list/StatusBadge.tsx";
+import {getPriorityBadge} from "@/presentation/components/tabs/repair-requests-list/PriorityBadge.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {Card} from "@/presentation/components/ui/card.tsx";
 import type {RepairRequest} from "@/domain/entities/repair-request.ts";
@@ -79,7 +79,7 @@ const RepairRequestsList = ({ repairRequests, onOpenItemDetails }: RepairRequest
                                 </Badge>
                             </td>
                             <td className="px-4 py-4 hidden xl:table-cell">
-                                <p className="text-wrap text-sm text-slate-600 truncate max-w-62.5">{limitTextLength(repairRequest.description, 50)}</p>
+                                <p className="text-wrap break-words text-sm text-slate-600 truncate max-w-50">{limitTextLength(repairRequest.description, 50)}</p>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                                 {getStatusBadge(repairRequest.stateHistory[repairRequest.stateHistory.length - 1].status)}

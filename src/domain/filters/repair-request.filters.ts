@@ -2,6 +2,7 @@ import type {RepairRequestStatus, UrgencyLevel} from "@/domain/entities/repair-r
 
 interface RepairRequestFilters {
     serialNumber?: string;
+    equipmentId?: string;
     equipmentModelName?: string;
     institutionId?: number;
     equipmentCategoryId?: number;

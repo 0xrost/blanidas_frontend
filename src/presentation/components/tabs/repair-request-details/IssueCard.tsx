@@ -11,7 +11,7 @@ const IssueCard = ({ issue }: IssueCardProps) => {
                     <h3 className="text-slate-900">Опис проблеми</h3>
                 </div>
                 <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                    <p className="text-slate-900 whitespace-pre-wrap">{issue}</p>
+                    <p className="text-slate-900 whitespace-pre-wrap break-words">{issue}</p>
                 </div>
             </div>
         </Card>

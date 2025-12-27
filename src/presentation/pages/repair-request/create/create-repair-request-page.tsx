@@ -3,7 +3,7 @@ import DeviceInfoPanel from "@/presentation/pages/repair-request/create/device-i
 import {Route} from "@/presentation/routes/repair-request/$equipmentId.tsx"
 import type {UrgencyLevel} from "@/domain/entities/repair-request.ts";
 import RequestSuccess from "@/presentation/pages/repair-request/create/request-success.tsx";
-import BaseLayout from "@/presentation/components/layouts/base-layout.tsx";
+import BaseLayout from "@/presentation/components/layouts/BaseLayout.tsx";
 import {useFindByIdEquipment} from "@/presentation/hooks/equipment.ts";
 import {useCreateRepairRequest} from "@/presentation/hooks/repair-request.ts";
 

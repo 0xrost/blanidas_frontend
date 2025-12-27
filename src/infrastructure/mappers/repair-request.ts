@@ -1,20 +1,26 @@
 import type {
-    CreateRepairRequestStateDTO,
+    CreateRepairRequestStateDTO, CreateRepairRequestUsedSparePartDTO,
     RepairRequestDTO,
     RepairRequestStateDTO, RepairRequestUsedSparePartDTO,
     UpdateRepairRequestDTO
 } from "@/infrastructure/dto/repair-request.ts";
 import type {RepairRequest, RepairRequestState, RepairRequestUsedSparePart} from "@/domain/entities/repair-request.ts";
 import {mapApiEquipment} from "@/infrastructure/mappers/equipment.ts";
-import type {CreateRepairRequestState, UpdateRepairRequest} from "@/domain/models/repair-request.ts";
+import type {
+    CreateRepairRequestState,
+    CreateRepairRequestUsedSparePart,
+    UpdateRepairRequest
+} from "@/domain/models/repair-request.ts";
 import {mapApiInstitution} from "@/infrastructure/mappers/institution.ts";
+import {mapSparePartDTOToDomain} from "@/infrastructure/mappers/spare-part.ts";
 
 const mapRepairRequestUsedSparePartDTOToDomain = (dto: RepairRequestUsedSparePartDTO): RepairRequestUsedSparePart => {
     return {
         id: dto.id,
+        note: dto.note,
         quantity: dto.quantity,
-        institution: mapApiInstitution(dto.institution),
-        sparePart: mapSpare
+        institution: dto.institution ? mapApiInstitution(dto.institution) : null,
+        sparePart: dto.spare_part ? mapSparePartDTOToDomain(dto.spare_part) : null,
     }
 }
 
@@ -26,7 +32,7 @@ const mapApiRepairRequest = (api: RepairRequestDTO): RepairRequest => {
         managerNote: api.manager_note,
         engineerNote: api.engineer_note,
         createdAt: api.created_at,
-        updatedAt: api.updated_at,
+        completedAt: api.completed_at,
         photos: api.photos,
         failureTypes: api.failure_types,
         usedSpareParts: api.used_spare_parts.map(mapRepairRequestUsedSparePartDTOToDomain),
@@ -51,8 +57,19 @@ const mapCreateRepairRequestStateToDTO = (model: CreateRepairRequestState): Crea
     };
 }
 
+const mapCreateRepairRequestUsedSparePartToDTO = (domain: CreateRepairRequestUsedSparePart): CreateRepairRequestUsedSparePartDTO => {
+    return {
+        quantity: domain.quantity,
+        institution_id: domain.institutionId,
+        spare_part_id: domain.sparePartId,
+        note: domain.note,
+    }
+}
+
 const mapUpdateRepairRequestToDTO = (model: UpdateRepairRequest): UpdateRepairRequestDTO => {
     const stateHistory = model.stateHistory ? mapCreateRepairRequestStateToDTO(model.stateHistory) : null;
+    const usedSpareParts = model.usedSpareParts?.map(mapCreateRepairRequestUsedSparePartToDTO) ?? null;
+
 
     return {
         id: model.id,
@@ -61,7 +78,7 @@ const mapUpdateRepairRequestToDTO = (model: UpdateRepairRequest): UpdateRepairRe
 
         state_history: stateHistory,
         failure_types_ids: model.failureTypesIds,
-        used_spare_parts_ids: model.usedSparePartsIds,
+        used_spare_parts: usedSpareParts,
     };
 }
 

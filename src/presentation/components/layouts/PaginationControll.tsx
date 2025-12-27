@@ -26,7 +26,7 @@ type PaginationControlProps = {
     changePagination: (value: Pagination) => void,
 }
 
-const PaginationControl = ({ items, pagination, changePagination }: PaginationControlProps) => {
+const PaginationControll = ({ items, pagination, changePagination }: PaginationControlProps) => {
     const visiblePagesBeforeEllipsis = 2;
 
     const pages = Math.ceil(items / pagination.limit);
@@ -112,4 +112,4 @@ const PaginationControl = ({ items, pagination, changePagination }: PaginationCo
     );
 }
 
-export default PaginationControl;
+export default PaginationControll;

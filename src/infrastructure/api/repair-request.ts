@@ -6,7 +6,6 @@ import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts
 import type {CreateRepairRequest, UpdateRepairRequest} from "@/domain/models/repair-request.ts";
 import type {RepairRequest} from "@/domain/entities/repair-request.ts";
 import type {RepairRequestFilters, RepairRequestOrderBy} from "@/domain/filters/repair-request.filters.ts";
-import {excludeNullFields} from "@/infrastructure/utils.ts";
 import {mapPaginationResponseDTOToDomain} from "@/infrastructure/mappers/pagination.ts";
 import type {RepairRequestDTO} from "@/infrastructure/dto/repair-request.ts";
 
@@ -38,17 +37,33 @@ class RepairRequestRepository implements RepairRequestRepositoryInterface {
 
     async update(command: UpdateRepairRequest): Promise<RepairRequest> {
         const commandDTO = mapUpdateRepairRequestToDTO(command);
+        console.log(commandDTO)
+        console.log(JSON.stringify(commandDTO))
         const response = await fetch(Endpoints.repairRequest.update(), {
             method: "PUT",
-            body: JSON.stringify(commandDTO, excludeNullFields),
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(commandDTO),
         })
 
         return mapApiRepairRequest(await response.json())
     }
 
-    async list(pagination: Pagination, filters: RepairRequestFilters, orderBy: RepairRequestOrderBy): Promise<PaginationResponse<RepairRequest[]>> {
+    async list(pagination: Pagination, filters: RepairRequestFilters, orderBy: RepairRequestOrderBy): Promise<PaginationResponse<RepairRequest>> {
         const response = await fetch(Endpoints.repairRequest.list(pagination, filters, orderBy));
         return mapPaginationResponseDTOToDomain(await response.json(), (x) => mapApiRepairRequest(x as RepairRequestDTO))
+    }
+
+    async delete(id: string): Promise<null> {
+        const response = await fetch(Endpoints.repairRequest.delete(id), {
+            method: "DELETE",
+            body: `{id:${id}}`,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        return await response.json()
     }
 
     async get(id: string): Promise<RepairRequest> {

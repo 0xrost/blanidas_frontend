@@ -27,4 +27,8 @@ const getRepairRequestUseCase =
     (repo: RepairRequestRepository) =>
         async (id: string) => await repo.get(id);
 
-export { createRepairRequest , listRepairRequest, getRepairRequestUseCase, updateRepairRequestUseCase };
+const deleteRepairRequestUseCase =
+    (repo: RepairRequestRepository) =>
+        async (id: string) => await repo.delete(id);
+
+export { createRepairRequest , listRepairRequest, getRepairRequestUseCase, updateRepairRequestUseCase, deleteRepairRequestUseCase };

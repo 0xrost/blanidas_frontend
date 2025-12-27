@@ -1,6 +1,6 @@
 import type {RepairRequest} from "@/domain/entities/repair-request.ts";
 import {Card} from "@/presentation/components/ui/card.tsx";
-import {getStatusBadge} from "@/presentation/components/tabs/repair-requests-list/status-badge.tsx";
+import {getStatusBadge} from "@/presentation/components/tabs/repair-requests-list/StatusBadge.tsx";
 import {Building2, Calendar, Hash, MapPin, Monitor} from "lucide-react";
 import {formatNumber} from "@/utils.ts";
 

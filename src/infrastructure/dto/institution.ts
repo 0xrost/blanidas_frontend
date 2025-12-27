@@ -4,7 +4,7 @@ interface InstitutionDTO {
     id: number;
     name: string;
     address: string;
-    institution_type: InstitutionType | object;
+    institution_type: InstitutionType | null;
     contact_phone: string;
     contact_email: string;
 }

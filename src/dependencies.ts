@@ -19,6 +19,9 @@ import type { EquipmentCategoryRepository as EquipmentCategoryRepositoryInterfac
 import { FailureTypeRepository as FailureTypeRepositoryImplementation } from "@/infrastructure/api/failure-type.ts";
 import type { FailureTypeRepository as FailureTypeRepositoryInterface } from "@/domain/repositories/failure-type.ts";
 
+import { SparePartRepository as SparePartRepositoryImplementation } from "@/infrastructure/api/spare-part.ts";
+import type { SparePartRepository as SparePartRepositoryInterface } from "@/domain/repositories/spare-part.ts";
+
 import { AuthService as AuthServiceImplementation } from "@/infrastructure/services/auth.ts";
 import {login} from "@/domain/useCases/auth.ts";
 
@@ -29,6 +32,7 @@ const SummaryRepository: SummaryRepositoryInterface = new SummaryRepositoryImple
 const EquipmentCategoryRepository: EquipmentCategoryRepositoryInterface = new EquipmentCategoryRepositoryImplementation();
 const InstitutionRepository: InstitutionRepositoryInterface = new InstitutionRepositoryImplementation();
 const FailureTypeRepository: FailureTypeRepositoryInterface = new FailureTypeRepositoryImplementation();
+const SparePartRepository: SparePartRepositoryInterface = new SparePartRepositoryImplementation();
 
 const AuthService: AuthServiceImplementation = new AuthServiceImplementation(login(AuthRepository));
 
@@ -41,4 +45,5 @@ export {
     EquipmentCategoryRepository,
     InstitutionRepository,
     FailureTypeRepository,
+    SparePartRepository,
 };

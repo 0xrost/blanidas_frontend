@@ -16,6 +16,7 @@ interface RepairRequestState {
 
 interface RepairRequestUsedSparePart {
     id: number;
+    note: string;
     quantity: number;
     sparePart: SparePart | null;
     institution: Institution | null;
@@ -25,16 +26,16 @@ interface RepairRequest {
     id: number;
     description: string; // issue
     urgencyLevel: UrgencyLevel;
-    managerNote: string | null;
-    engineerNote: string | null;
+    managerNote: string;
+    engineerNote: string;
     createdAt: Date;
-    updatedAt: Date;
+    completedAt: Date;
 
     photos: string[];
     failureTypes: FailureType[];
     usedSpareParts: RepairRequestUsedSparePart[];
     stateHistory: RepairRequestState[];
-    equipment: Equipment | null;
+    equipment: Equipment;
 }
 
 type UrgencyLevel = "critical" | "non_critical";

@@ -7,6 +7,8 @@ interface RepairRequestRepository {
     create(command: CreateRepairRequest): Promise<RepairRequest>;
     update(command: UpdateRepairRequest): Promise<RepairRequest>;
     list(pagination: Pagination, filters: RepairRequestFilters, orderBy: RepairRequestOrderBy): Promise<PaginationResponse<RepairRequest>>;
+
+    delete(id: string): Promise<null>;
     get(id: string): Promise<RepairRequest>;
 }
 

@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './presentation/routes/__root'
 import { Route as RepairRequestEquipmentIdRouteImport } from './presentation/routes/repair-request/$equipmentId'
 import { Route as AccountsLoginRouteImport } from './presentation/routes/accounts/login'
-import { Route as EngineerDashboardIndexRouteImport } from './presentation/routes/engineer/dashboard/index'
 import { Route as EngineerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/engineer/dashboard/repair-requests/index'
 import { Route as EngineerDashboardRepairRequestsRepairRequestIdRouteImport } from './presentation/routes/engineer/dashboard/repair-requests/$repairRequestId'
 
@@ -24,11 +23,6 @@ const RepairRequestEquipmentIdRoute =
 const AccountsLoginRoute = AccountsLoginRouteImport.update({
   id: '/accounts/login',
   path: '/accounts/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EngineerDashboardIndexRoute = EngineerDashboardIndexRouteImport.update({
-  id: '/engineer/dashboard/',
-  path: '/engineer/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EngineerDashboardRepairRequestsIndexRoute =
@@ -47,14 +41,12 @@ const EngineerDashboardRepairRequestsRepairRequestIdRoute =
 export interface FileRoutesByFullPath {
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
-  '/engineer/dashboard': typeof EngineerDashboardIndexRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
   '/engineer/dashboard/repair-requests': typeof EngineerDashboardRepairRequestsIndexRoute
 }
 export interface FileRoutesByTo {
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
-  '/engineer/dashboard': typeof EngineerDashboardIndexRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
   '/engineer/dashboard/repair-requests': typeof EngineerDashboardRepairRequestsIndexRoute
 }
@@ -62,7 +54,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
-  '/engineer/dashboard/': typeof EngineerDashboardIndexRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
   '/engineer/dashboard/repair-requests/': typeof EngineerDashboardRepairRequestsIndexRoute
 }
@@ -71,21 +62,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/accounts/login'
     | '/repair-request/$equipmentId'
-    | '/engineer/dashboard'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/accounts/login'
     | '/repair-request/$equipmentId'
-    | '/engineer/dashboard'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests'
   id:
     | '__root__'
     | '/accounts/login'
     | '/repair-request/$equipmentId'
-    | '/engineer/dashboard/'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests/'
   fileRoutesById: FileRoutesById
@@ -93,7 +81,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AccountsLoginRoute: typeof AccountsLoginRoute
   RepairRequestEquipmentIdRoute: typeof RepairRequestEquipmentIdRoute
-  EngineerDashboardIndexRoute: typeof EngineerDashboardIndexRoute
   EngineerDashboardRepairRequestsRepairRequestIdRoute: typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
   EngineerDashboardRepairRequestsIndexRoute: typeof EngineerDashboardRepairRequestsIndexRoute
 }
@@ -112,13 +99,6 @@ declare module '@tanstack/react-router' {
       path: '/accounts/login'
       fullPath: '/accounts/login'
       preLoaderRoute: typeof AccountsLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/engineer/dashboard/': {
-      id: '/engineer/dashboard/'
-      path: '/engineer/dashboard'
-      fullPath: '/engineer/dashboard'
-      preLoaderRoute: typeof EngineerDashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/engineer/dashboard/repair-requests/': {
@@ -141,7 +121,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   AccountsLoginRoute: AccountsLoginRoute,
   RepairRequestEquipmentIdRoute: RepairRequestEquipmentIdRoute,
-  EngineerDashboardIndexRoute: EngineerDashboardIndexRoute,
   EngineerDashboardRepairRequestsRepairRequestIdRoute:
     EngineerDashboardRepairRequestsRepairRequestIdRoute,
   EngineerDashboardRepairRequestsIndexRoute:

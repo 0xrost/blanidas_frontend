@@ -1,12 +1,12 @@
 import {AlertCircle, CheckCircle2, Clock, Package} from "lucide-react";
-import DashboardCard from "@/presentation/components/layouts/dashboard-card.tsx";
-import FilterCard, {type FilterConfig} from "@/presentation/components/layouts/filter-card.tsx";
+import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
+import FilterCard, {type FilterConfig} from "@/presentation/components/layouts/FilterCard.tsx";
 import {useMemo, useState} from "react";
 import useRepairRequestSummary from "@/presentation/hooks/summary.ts";
 import {useListEquipmentCategory} from "@/presentation/hooks/equipment-category.ts";
 import {useListInstitution} from "@/presentation/hooks/institution.ts";
 import {useListRepairRequest} from "@/presentation/hooks/repair-request.ts";
-import PaginationControl from "@/presentation/components/layouts/pagination-control.tsx";
+import PaginationControll from "@/presentation/components/layouts/PaginationControll.tsx";
 import {Route} from "@/presentation/routes/engineer/dashboard/repair-requests";
 import type {Pagination} from "@/domain/models/pagination.ts";
 import RepairRequestsList from "@/presentation/components/tabs/repair-requests-list/RepairRequestsList.tsx";
@@ -109,7 +109,7 @@ const RepairRequestListTab = () => {
     const onPaginationChange = (pagination: Pagination) =>
         navigate({search: { page: pagination.page, limit: pagination.limit }});
     const onOpenItemDetails = (repairRequest: RepairRequest) =>
-        navigate({to: "/accounts/login"})
+        navigate({to: "/engineer/dashboard/repair-requests/$repairRequestId", params: {repairRequestId: repairRequest.id.toString()}});
 
     return (
         <div>
@@ -133,7 +133,7 @@ const RepairRequestListTab = () => {
                 <div className="space-y-4">
                     {isSuccess && <RepairRequestsList repairRequests={repairRequestsPagination?.items ?? []} onOpenItemDetails={onOpenItemDetails} />}
                 </div>
-                <PaginationControl changePagination={onPaginationChange} pagination={{ page: page, limit: limit }} items={repairRequestsPagination?.total ?? 0} />
+                <PaginationControll changePagination={onPaginationChange} pagination={{ page: page, limit: limit }} items={repairRequestsPagination?.total ?? 0} />
             </div>
         </div>
     );

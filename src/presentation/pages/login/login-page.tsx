@@ -1,5 +1,5 @@
 import LoginForm from "@/presentation/pages/login/login-form.tsx";
-import BaseLayout from "@/presentation/components/layouts/base-layout.tsx";
+import BaseLayout from "@/presentation/components/layouts/BaseLayout.tsx";
 import {useAuthSession, useLogin} from "@/presentation/hooks/auth.ts";
 import {Navigate} from "@tanstack/react-router";
 
