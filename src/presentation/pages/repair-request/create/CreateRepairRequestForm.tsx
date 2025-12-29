@@ -1,12 +1,13 @@
-import {useState} from "react";
+import {type ChangeEvent, useState} from "react";
 import {Camera, Loader2, Upload, X} from "lucide-react";
 import {Card} from "@/presentation/components/ui/card.tsx";
 import {Textarea} from "@/presentation/components/ui/textarea.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {Label} from "@/presentation/components/ui/label.tsx";
 import {Select, SelectItem, SelectContent, SelectTrigger, SelectValue} from "@/presentation/components/ui/select.tsx";
-import type {RepairRequestFormData} from "@/presentation/pages/repair-request/create/create-repair-request-page.tsx";
-import type {UrgencyLevel} from "@/domain/entities/repair-request.ts";
+import type {RepairRequestFormData} from "@/presentation/pages/repair-request/create/CreateRepairRequestPage.tsx";
+import type {Urgency} from "@/domain/entities/repair-request.ts";
+import Notification from "@/presentation/components/layouts/Notification.tsx";
 
 type RepairRequestFormProps = {
     sendForm: (data: RepairRequestFormData) => void;
@@ -20,7 +21,10 @@ const CreateRepairRequestForm = ({ sendForm, isLoading, isSubmitting }: RepairRe
         photos: []
     });
 
-    const uploadPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const showDescriptionTooLongMessage = formData.description.length > 600;
+    const showPhotoLimitMessage = formData.photos.length > 6;
+
+    const uploadPhoto = (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files) {
             Array.from(files).forEach(file => {
@@ -49,7 +53,7 @@ const CreateRepairRequestForm = ({ sendForm, isLoading, isSubmitting }: RepairRe
     }
 
     return (
-        <Card className="bg-white border-slate-200 shadow-sm">
+        <Card className="py-6 bg-white border-slate-200 shadow-sm">
             <form onSubmit={onSubmit} className="px-6">
                 <div className="space-y-6">
                     <div className="space-y-2">
@@ -57,9 +61,10 @@ const CreateRepairRequestForm = ({ sendForm, isLoading, isSubmitting }: RepairRe
                         <Textarea
                             id="issue"
                             value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            onChange={(e) =>
+                                setFormData((prev) => ({ ...prev, description: e.target.value }))}
                             placeholder="Наприклад: екран показує помилку, пристрій не включається, потрібне калібрування..."
-                            className="min-h-32 resize-none bg-slate-100"
+                            className="min-h-36 resize-none bg-slate-100"
                             required
                         />
                     </div>
@@ -98,20 +103,20 @@ const CreateRepairRequestForm = ({ sendForm, isLoading, isSubmitting }: RepairRe
                                             <button
                                                 type="button"
                                                 onClick={() => removePhoto(index)}
-                                                className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600"
+                                                className="absolute top-2 right-2 bg-red-700 text-white p-1.5 rounded-md opacity-90"
                                             >
                                                 <X className="w-4 h-4" />
                                             </button>
+
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
                     </div>
-
-                    <div className="space-y-2">
+                    <div className="space-y-2 mb-0">
                         <Label className="ml-2" htmlFor="urgency">Рівень терміновості *</Label>
-                        <Select value={formData.urgencyLevel} onValueChange={(value: UrgencyLevel) => setFormData({ ...formData, urgencyLevel: value })}>
+                        <Select value={formData.urgencyLevel} onValueChange={(value: Urgency) => setFormData({ ...formData, urgencyLevel: value })}>
                             <SelectTrigger id="urgency" className="w-full bg-slate-100">
                                 <SelectValue />
                             </SelectTrigger>
@@ -131,11 +136,22 @@ const CreateRepairRequestForm = ({ sendForm, isLoading, isSubmitting }: RepairRe
                             </SelectContent>
                         </Select>
                     </div>
-
+                    {(showDescriptionTooLongMessage || showPhotoLimitMessage) &&
+                        <div className="mt-1 mb-0">
+                            {showDescriptionTooLongMessage && <Notification type="error" message="Опис проблеми не може перевищувати 600 символів" />}
+                            {showPhotoLimitMessage && <Notification className="mt-2" type="error" message="Ви не можете додати більше ніж 6 фото" />}
+                        </div>
+                    }
                     <Button
                         type="submit"
-                        disabled={isLoading || isSubmitting}
-                        className="w-full sm:w-auto bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+                        disabled={
+                            isLoading ||
+                            isSubmitting ||
+                            showPhotoLimitMessage ||
+                            showDescriptionTooLongMessage ||
+                            formData.description.length <= 0
+                        }
+                        className="mt-3 w-full sm:w-auto bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
                     >
                         {isSubmitting ? (
                             <>

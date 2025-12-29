@@ -1,7 +1,14 @@
 import type {SummaryRepository} from "@/domain/repositories/summary.ts";
 
-const getRepairRequestSummary =
+const getRepairRequestsSummaryUseCase =
     (repo: SummaryRepository) =>
-        async () => repo.getRepairRequest();
+        async () => repo.getRepairRequests();
 
-export default getRepairRequestSummary;
+const getSparePartsSummaryUseCase =
+    (repo: SummaryRepository) =>
+        async () => repo.getSpareParts();
+
+export {
+    getRepairRequestsSummaryUseCase,
+    getSparePartsSummaryUseCase,
+};

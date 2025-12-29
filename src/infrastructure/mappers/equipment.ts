@@ -1,8 +1,8 @@
 import type {Equipment} from "@/domain/entities/equipment.ts";
-import type {EquipmentDTO} from "@/infrastructure/dto/equipment.ts";
+import type {EquipmentDto} from "@/infrastructure/dto/equipment.ts";
 
-const mapApiEquipment = (api: EquipmentDTO): Equipment => {
-    const { serial_number, equipment_model, equipment_category, ...rest } = api;
+const mapEquipmentDtoToDomain = (dto: EquipmentDto): Equipment => {
+    const { serial_number, equipment_model, equipment_category, ...rest } = dto;
     return {
         ...rest,
         serialNumber: serial_number,
@@ -11,4 +11,4 @@ const mapApiEquipment = (api: EquipmentDTO): Equipment => {
     }
 }
 
-export { mapApiEquipment };
+export { mapEquipmentDtoToDomain };

@@ -1,11 +1,8 @@
-import type {Session} from "@/domain/auth/session.ts";
+import type {AuthSession} from "@/domain/auth/session.ts";
+import type {UserLogin} from "@/domain/models/auth.ts";
 
-
-export type LoginCommand = {
-    email: string,
-    password: string,
+interface AuthRepository {
+    login(command: UserLogin): Promise<AuthSession>;
 }
 
-export interface AuthRepository {
-    login(command: LoginCommand): Promise<Session>;
-}
+export type { AuthRepository };

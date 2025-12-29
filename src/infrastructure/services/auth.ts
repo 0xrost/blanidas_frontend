@@ -1,14 +1,14 @@
-import type {Session} from "@/domain/auth/session.ts";
-import type {LoginCommand} from "@/domain/repositories/auth.ts";
+import type {AuthSession} from "@/domain/auth/session.ts";
+import type {UserLogin} from "@/domain/repositories/auth.ts";
 
-type Listener = (value: Session | null) => void
+type Listener = (value: AuthSession | null) => void
 
 class AuthService {
-    private session: Session | null = null
+    private session: AuthSession | null = null
     private listeners = new Set<Listener>()
-    private readonly login_callback: (command: LoginCommand) => Promise<Session>
+    private readonly login_callback: (command: LoginCommand) => Promise<AuthSession>
 
-    constructor(login_callback: (command: LoginCommand) => Promise<Session>) {
+    constructor(login_callback: (command: LoginCommand) => Promise<AuthSession>) {
         this.login_callback = login_callback;
     }
 

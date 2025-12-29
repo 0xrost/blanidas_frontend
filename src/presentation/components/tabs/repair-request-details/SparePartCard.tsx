@@ -2,7 +2,6 @@ import {Card} from "@/presentation/components/ui/card.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {MapPin, Package, Plus, Trash2} from "lucide-react";
 import type {RepairRequestUsedSparePartVM} from "@/presentation/components/tabs/repair-request-details/RepairRequestDetailsTab.tsx";
-import {limitTextLength} from "@/presentation/pages/utils.ts";
 
 type SparePartCardProps = {
     usedSpareParts: RepairRequestUsedSparePartVM[],
@@ -43,21 +42,21 @@ const SparePartCard = ({ usedSpareParts, onDeleteSparePart, onOpenModal, isReado
                             {usedSpareParts.map((part) => (
                                 <tr key={`${part.quantity}${part.sparePart?.id}${part.institution?.id}`} className="border-b border-slate-100 hover:bg-slate-50">
                                     <td className="text-nowrap py-3 px-4 text-slate-900">
-                                        <span title={part.sparePart?.name}>
-                                            {limitTextLength(part.sparePart?.name ?? "", 20)}
-                                        </span>
+                                        <p className="truncate max-w-25" title={part.sparePart?.name}>
+                                            {part.sparePart?.name}
+                                        </p>
                                     </td>
                                     <td className="py-3 px-4 text-slate-600">
                                         <div className="flex items-center gap-1 text-nowrap text-sm text-slate-700">
                                             <MapPin className="w-3 h-3 text-slate-400" />
-                                            <span title={part.institution?.name}>{limitTextLength(part.institution?.name ?? "", 20)}</span>
+                                            <p className="truncate max-w-25" title={part.institution?.name}>{part.institution?.name}</p>
                                         </div>
                                     </td>
                                     <td className="py-3 px-4 text-slate-900">{part.quantity}</td>
                                     <td className="text-nowrap break-all py-3 px-4 text-slate-600 text-sm">
-                                        <span title={part.note}>
-                                            {limitTextLength(part.note, 15) || '—'}
-                                        </span>
+                                        <p className="truncate max-w-25" title={part.note}>
+                                            {part.note}
+                                        </p>
                                     </td>
                                     {!isReadonly &&
                                         <td className="py-3 px-4">

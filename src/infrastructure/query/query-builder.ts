@@ -1,4 +1,4 @@
-type FilterOperator = "eq" | "ilike" | "gte" | "lte" | "gt" | "lt";
+type FilterOperator = "eq" | "ne" | "ilike" | "gte" | "lte" | "gt" | "lt";
 
 interface FilterDefinition {
     field: string;

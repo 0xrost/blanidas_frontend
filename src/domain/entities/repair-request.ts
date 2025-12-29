@@ -5,39 +5,38 @@ import type {SparePart} from "@/domain/entities/spare-part.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 
 
-type RepairRequestStatus = "in_progress" | "not_taken" | "waiting_spare_parts" | "finished";
+type Status = "in_progress" | "not_taken" | "waiting_spare_parts" | "finished";
+type Urgency = "critical" | "non_critical";
 
-interface RepairRequestState {
+interface RepairRequestStatusRecord {
     id: number;
     createdAt: Date;
-    status: RepairRequestStatus;
-    responsibleUser: User | null; // assignedEngineer
+    status: Status;
+    assignedEngineer: User | null;
 }
 
-interface RepairRequestUsedSparePart {
+interface UsedSparePart {
     id: number;
     note: string;
     quantity: number;
-    sparePart: SparePart | null;
-    institution: Institution | null;
+    sparePart: SparePart;
+    institution: Institution;
 }
 
 interface RepairRequest {
     id: number;
-    description: string; // issue
-    urgencyLevel: UrgencyLevel;
+    urgency: Urgency;
+    issue: string;
     managerNote: string;
     engineerNote: string;
     createdAt: Date;
-    completedAt: Date;
+    completedAt: Date | null;
 
     photos: string[];
     failureTypes: FailureType[];
-    usedSpareParts: RepairRequestUsedSparePart[];
-    stateHistory: RepairRequestState[];
+    usedSpareParts: UsedSparePart[];
+    statusHistory: RepairRequestStatusRecord[];
     equipment: Equipment;
 }
 
-type UrgencyLevel = "critical" | "non_critical";
-
-export type { RepairRequestState, UrgencyLevel, RepairRequest, RepairRequestStatus, RepairRequestUsedSparePart };
+export type { RepairRequestStatusRecord, Urgency, RepairRequest, Status, UsedSparePart };

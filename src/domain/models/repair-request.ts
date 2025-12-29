@@ -1,31 +1,31 @@
-import type {RepairRequestStatus, UrgencyLevel} from "@/domain/entities/repair-request.ts";
+import type {Status, Urgency} from "@/domain/entities/repair-request.ts";
 
-interface CreateRepairRequestState {
-    status: RepairRequestStatus;
-    responsibleUserId: string | null;
+interface RepairRequestStatusRecordCreate {
+    assignedEngineerId: string | null;
+    status: Status;
 }
 
-interface CreateRepairRequest {
+interface RepairRequestCreate {
     description: string;
-    urgencyLevel: UrgencyLevel;
+    urgencyLevel: Urgency;
     equipmentId: string;
     photos: string[];
 }
 
-interface CreateRepairRequestUsedSparePart {
+interface UsedSparePartCreate {
     quantity: number
-    note: string | null
-    sparePartId: number
-    institutionId: number
+    note: string
+    sparePartId: string
+    institutionId: string
 }
 
-interface UpdateRepairRequest {
+interface RepairRequestUpdate {
     id: string;
     managerNote: string | null;
     engineerNote: string | null;
     failureTypesIds: number[] | null;
-    usedSpareParts: CreateRepairRequestUsedSparePart[] | null;
-    stateHistory: CreateRepairRequestState | null;
+    usedSpareParts: UsedSparePartCreate[] | null;
+    statusHistory: RepairRequestStatusRecordCreate | null;
 }
 
-export type { CreateRepairRequest, UpdateRepairRequest, CreateRepairRequestState, CreateRepairRequestUsedSparePart };
+export type { RepairRequestCreate, RepairRequestUpdate, RepairRequestStatusRecordCreate, UsedSparePartCreate };

@@ -1,8 +1,9 @@
 import {AlertCircle, CheckCircle2, Clock, Package} from "lucide-react";
-import type {RepairRequestStatus} from "@/domain/entities/repair-request.ts";
+import type {Status} from "@/domain/entities/repair-request.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 
-const getStatusBadge = (status: RepairRequestStatus) => {
+const getStatusBadge = (status: Status) => {
+    console.log(status)
     switch (status) {
         case 'not_taken':
             return (

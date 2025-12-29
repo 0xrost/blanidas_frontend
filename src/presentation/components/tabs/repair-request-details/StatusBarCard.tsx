@@ -1,10 +1,10 @@
 import {Card} from "@/presentation/components/ui/card.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/presentation/components/ui/select.tsx";
-import type {RepairRequestStatus} from "@/domain/entities/repair-request.ts";
+import type {Status} from "@/domain/entities/repair-request.ts";
 
 type StatusBarCardProps = {
-    status: RepairRequestStatus,
-    onStatusChange: (status: RepairRequestStatus) => void,
+    status: Status,
+    onStatusChange: (status: Status) => void,
 }
 const StatusBarCard = ({ status, onStatusChange }: StatusBarCardProps) => {
     return (
@@ -15,7 +15,7 @@ const StatusBarCard = ({ status, onStatusChange }: StatusBarCardProps) => {
                     <div className="flex-1">
                         <Select
                             value={status}
-                            onValueChange={(value: RepairRequestStatus) => onStatusChange(value)}
+                            onValueChange={(value: Status) => onStatusChange(value)}
                         >
                             <SelectTrigger className="w-full bg-slate-100 h-12">
                                 <SelectValue />

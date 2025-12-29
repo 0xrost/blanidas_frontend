@@ -1,14 +1,14 @@
-import type {UserDTO} from "@/infrastructure/dto/user.ts";
+import type {UserDto} from "@/infrastructure/dto/user.ts";
 import type {User} from "@/domain/entities/user.ts";
 
-const mapApiUser = (api: UserDTO): User => {
+const mapUserDtoToDomain = (dto: UserDto): User => {
     const {
         hire_at,
         phone_number,
         receive_low_stock_notification,
         receive_repair_request_created_notification,
         ...rest
-    } = api;
+    } = dto;
 
     return {
         ...rest,
@@ -19,4 +19,4 @@ const mapApiUser = (api: UserDTO): User => {
     }
 }
 
-export { mapApiUser };
+export { mapUserDtoToDomain };

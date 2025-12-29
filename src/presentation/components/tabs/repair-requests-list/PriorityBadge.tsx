@@ -1,7 +1,7 @@
-import type {UrgencyLevel} from "@/domain/entities/repair-request.ts";
+import type {Urgency} from "@/domain/entities/repair-request.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 
-const getPriorityBadge = (priority: UrgencyLevel) => {
+const getPriorityBadge = (priority: Urgency) => {
     return priority === 'critical' ? (
         <Badge variant="destructive" className="bg-red-500">
             Критичний

@@ -1,14 +1,14 @@
 import type {User} from "@/domain/entities/user.ts";
-import type {RepairRequestStatus, UrgencyLevel} from "@/domain/entities/repair-request.ts";
-import type {EquipmentDTO} from "@/infrastructure/dto/equipment.ts";
+import type {Status, Urgency} from "@/domain/entities/repair-request.ts";
+import type {EquipmentDto} from "@/infrastructure/dto/equipment.ts";
 import type {FailureType} from "@/domain/entities/failure-type.ts";
-import type {SparePartDTO} from "@/infrastructure/dto/spare-part.ts";
-import type {InstitutionDTO} from "@/infrastructure/dto/institution.ts";
+import type {SparePartDto} from "@/infrastructure/dto/spare-part.ts";
+import type {InstitutionDto} from "@/infrastructure/dto/institution.ts";
 
-interface RepairRequestDTO {
+interface RepairRequestDto {
     id: number;
-    description: string;
-    urgency_level: UrgencyLevel;
+    issue: string;
+    urgency: Urgency;
     manager_note: string;
     engineer_note: string;
     created_at: Date;
@@ -16,47 +16,47 @@ interface RepairRequestDTO {
 
     photos: string[];
     failure_types: FailureType[];
-    used_spare_parts: RepairRequestUsedSparePartDTO[];
-    state_history: RepairRequestStateDTO[];
-    equipment: EquipmentDTO;
+    used_spare_parts: UsedSparePartDto[];
+    status_history: RepairRequestStatusRecordDto[];
+    equipment: EquipmentDto;
 }
 
-interface RepairRequestStateDTO {
+interface RepairRequestStatusRecordDto {
     id: number;
     created_at: Date;
-    status: RepairRequestStatus;
-    responsible_user: User | null;
+    status: Status;
+    assigned_engineer: User | null;
 }
 
-interface CreateRepairRequestStateDTO {
-    status: RepairRequestStatus;
-    responsible_user_id: string | null;
+interface RepairRequestStatusRecordCreateDto {
+    assigned_engineer_id: string | null;
+    status: Status;
 }
 
-interface RepairRequestUsedSparePartDTO {
+interface UsedSparePartDto {
     id: number;
     quantity: number;
     note: string;
-    spare_part: SparePartDTO | null;
-    institution: InstitutionDTO | null;
+    spare_part: SparePartDto;
+    institution: InstitutionDto;
 }
 
-interface CreateRepairRequestUsedSparePartDTO {
+interface UsedSparePartCreateDto {
     quantity: number;
     note: string;
-    spare_part_id: number;
-    institution_id: number;
+    spare_part_id: string;
+    institution_id: string;
 }
 
-interface UpdateRepairRequestDTO {
+interface RepairRequestUpdateDto {
     id: string;
     manager_note: string | null;
     engineer_note: string | null;
 
     failure_types_ids: number[] | null;
-    used_spare_parts: CreateRepairRequestUsedSparePartDTO[] | null;
-    state_history: CreateRepairRequestStateDTO | null;
+    used_spare_parts: UsedSparePartCreateDto[] | null;
+    status_history: RepairRequestStatusRecordCreateDto | null;
 }
 
 
-export type { RepairRequestStateDTO, RepairRequestDTO, UpdateRepairRequestDTO, CreateRepairRequestStateDTO, RepairRequestUsedSparePartDTO, CreateRepairRequestUsedSparePartDTO };
+export type { RepairRequestStatusRecordDto, RepairRequestDto, RepairRequestUpdateDto, RepairRequestStatusRecordCreateDto, UsedSparePartDto, UsedSparePartCreateDto };

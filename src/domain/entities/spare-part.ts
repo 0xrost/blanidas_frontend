@@ -4,18 +4,18 @@ import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 
+type SparePartStatus = "in_stock" | "low_stock" | "out_of_stock";
+
 interface Location {
-    id: number;
+    id: string;
     quantity: number;
     institution: Institution;
 }
 
 interface SparePart {
-    id: number;
+    id: string;
     name: string;
-    serialNumber: string;
-    minQuality: number;
-    quantity: number;
+    minQuantity: number;
     compatibleModels: EquipmentModel[];
     note: string | null;
 
@@ -25,4 +25,4 @@ interface SparePart {
     sparePartCategory: SparePartCategory;
 }
 
-export type { SparePart, Location };
+export type { SparePart, Location, SparePartStatus };

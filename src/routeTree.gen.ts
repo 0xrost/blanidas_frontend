@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './presentation/routes/__root'
 import { Route as RepairRequestEquipmentIdRouteImport } from './presentation/routes/repair-request/$equipmentId'
 import { Route as AccountsLoginRouteImport } from './presentation/routes/accounts/login'
+import { Route as ManagerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/manager/dashboard/repair-requests/index'
+import { Route as EngineerDashboardSparePartsIndexRouteImport } from './presentation/routes/engineer/dashboard/spare-parts/index'
 import { Route as EngineerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/engineer/dashboard/repair-requests/index'
+import { Route as ManagerDashboardRepairRequestsRepairRequestIdRouteImport } from './presentation/routes/manager/dashboard/repair-requests/$repairRequestId'
 import { Route as EngineerDashboardRepairRequestsRepairRequestIdRouteImport } from './presentation/routes/engineer/dashboard/repair-requests/$repairRequestId'
 
 const RepairRequestEquipmentIdRoute =
@@ -25,10 +28,28 @@ const AccountsLoginRoute = AccountsLoginRouteImport.update({
   path: '/accounts/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManagerDashboardRepairRequestsIndexRoute =
+  ManagerDashboardRepairRequestsIndexRouteImport.update({
+    id: '/manager/dashboard/repair-requests/',
+    path: '/manager/dashboard/repair-requests/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const EngineerDashboardSparePartsIndexRoute =
+  EngineerDashboardSparePartsIndexRouteImport.update({
+    id: '/engineer/dashboard/spare-parts/',
+    path: '/engineer/dashboard/spare-parts/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const EngineerDashboardRepairRequestsIndexRoute =
   EngineerDashboardRepairRequestsIndexRouteImport.update({
     id: '/engineer/dashboard/repair-requests/',
     path: '/engineer/dashboard/repair-requests/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ManagerDashboardRepairRequestsRepairRequestIdRoute =
+  ManagerDashboardRepairRequestsRepairRequestIdRouteImport.update({
+    id: '/manager/dashboard/repair-requests/$repairRequestId',
+    path: '/manager/dashboard/repair-requests/$repairRequestId',
     getParentRoute: () => rootRouteImport,
   } as any)
 const EngineerDashboardRepairRequestsRepairRequestIdRoute =
@@ -42,20 +63,29 @@ export interface FileRoutesByFullPath {
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
+  '/manager/dashboard/repair-requests/$repairRequestId': typeof ManagerDashboardRepairRequestsRepairRequestIdRoute
   '/engineer/dashboard/repair-requests': typeof EngineerDashboardRepairRequestsIndexRoute
+  '/engineer/dashboard/spare-parts': typeof EngineerDashboardSparePartsIndexRoute
+  '/manager/dashboard/repair-requests': typeof ManagerDashboardRepairRequestsIndexRoute
 }
 export interface FileRoutesByTo {
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
+  '/manager/dashboard/repair-requests/$repairRequestId': typeof ManagerDashboardRepairRequestsRepairRequestIdRoute
   '/engineer/dashboard/repair-requests': typeof EngineerDashboardRepairRequestsIndexRoute
+  '/engineer/dashboard/spare-parts': typeof EngineerDashboardSparePartsIndexRoute
+  '/manager/dashboard/repair-requests': typeof ManagerDashboardRepairRequestsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
+  '/manager/dashboard/repair-requests/$repairRequestId': typeof ManagerDashboardRepairRequestsRepairRequestIdRoute
   '/engineer/dashboard/repair-requests/': typeof EngineerDashboardRepairRequestsIndexRoute
+  '/engineer/dashboard/spare-parts/': typeof EngineerDashboardSparePartsIndexRoute
+  '/manager/dashboard/repair-requests/': typeof ManagerDashboardRepairRequestsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -63,26 +93,38 @@ export interface FileRouteTypes {
     | '/accounts/login'
     | '/repair-request/$equipmentId'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
+    | '/manager/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests'
+    | '/engineer/dashboard/spare-parts'
+    | '/manager/dashboard/repair-requests'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/accounts/login'
     | '/repair-request/$equipmentId'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
+    | '/manager/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests'
+    | '/engineer/dashboard/spare-parts'
+    | '/manager/dashboard/repair-requests'
   id:
     | '__root__'
     | '/accounts/login'
     | '/repair-request/$equipmentId'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
+    | '/manager/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests/'
+    | '/engineer/dashboard/spare-parts/'
+    | '/manager/dashboard/repair-requests/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AccountsLoginRoute: typeof AccountsLoginRoute
   RepairRequestEquipmentIdRoute: typeof RepairRequestEquipmentIdRoute
   EngineerDashboardRepairRequestsRepairRequestIdRoute: typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
+  ManagerDashboardRepairRequestsRepairRequestIdRoute: typeof ManagerDashboardRepairRequestsRepairRequestIdRoute
   EngineerDashboardRepairRequestsIndexRoute: typeof EngineerDashboardRepairRequestsIndexRoute
+  EngineerDashboardSparePartsIndexRoute: typeof EngineerDashboardSparePartsIndexRoute
+  ManagerDashboardRepairRequestsIndexRoute: typeof ManagerDashboardRepairRequestsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -101,11 +143,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountsLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manager/dashboard/repair-requests/': {
+      id: '/manager/dashboard/repair-requests/'
+      path: '/manager/dashboard/repair-requests'
+      fullPath: '/manager/dashboard/repair-requests'
+      preLoaderRoute: typeof ManagerDashboardRepairRequestsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/engineer/dashboard/spare-parts/': {
+      id: '/engineer/dashboard/spare-parts/'
+      path: '/engineer/dashboard/spare-parts'
+      fullPath: '/engineer/dashboard/spare-parts'
+      preLoaderRoute: typeof EngineerDashboardSparePartsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/engineer/dashboard/repair-requests/': {
       id: '/engineer/dashboard/repair-requests/'
       path: '/engineer/dashboard/repair-requests'
       fullPath: '/engineer/dashboard/repair-requests'
       preLoaderRoute: typeof EngineerDashboardRepairRequestsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manager/dashboard/repair-requests/$repairRequestId': {
+      id: '/manager/dashboard/repair-requests/$repairRequestId'
+      path: '/manager/dashboard/repair-requests/$repairRequestId'
+      fullPath: '/manager/dashboard/repair-requests/$repairRequestId'
+      preLoaderRoute: typeof ManagerDashboardRepairRequestsRepairRequestIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/engineer/dashboard/repair-requests/$repairRequestId': {
@@ -123,8 +186,13 @@ const rootRouteChildren: RootRouteChildren = {
   RepairRequestEquipmentIdRoute: RepairRequestEquipmentIdRoute,
   EngineerDashboardRepairRequestsRepairRequestIdRoute:
     EngineerDashboardRepairRequestsRepairRequestIdRoute,
+  ManagerDashboardRepairRequestsRepairRequestIdRoute:
+    ManagerDashboardRepairRequestsRepairRequestIdRoute,
   EngineerDashboardRepairRequestsIndexRoute:
     EngineerDashboardRepairRequestsIndexRoute,
+  EngineerDashboardSparePartsIndexRoute: EngineerDashboardSparePartsIndexRoute,
+  ManagerDashboardRepairRequestsIndexRoute:
+    ManagerDashboardRepairRequestsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

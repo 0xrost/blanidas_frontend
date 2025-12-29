@@ -1,15 +1,15 @@
 import type {Institution} from "@/domain/entities/institution.ts";
-import type {InstitutionDTO} from "@/infrastructure/dto/institution.ts";
+import type {InstitutionDto} from "@/infrastructure/dto/institution.ts";
 
-const mapApiInstitution = (api: InstitutionDTO): Institution =>  {
+const mapInstitutionDtoToDomain = (dto: InstitutionDto): Institution =>  {
     return {
-        id: api.id,
-        name: api.name,
-        address: api.address,
-        contactEmail: api.contact_email,
-        contactPhone: api.contact_phone,
-        institutionType: api.institution_type,
+        id: dto.id,
+        name: dto.name,
+        address: dto.address,
+        contactEmail: dto.contact_email,
+        contactPhone: dto.contact_phone,
+        institutionType: dto.institution_type,
     };
 };
 
-export { mapApiInstitution };
+export { mapInstitutionDtoToDomain };

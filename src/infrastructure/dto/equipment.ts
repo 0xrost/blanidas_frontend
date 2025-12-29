@@ -1,15 +1,17 @@
-import type {Institution} from "@/domain/entities/institution.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
+import type {InstitutionDto} from "@/infrastructure/dto/institution.ts";
+import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
+import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 
-interface EquipmentDTO {
+interface EquipmentDto {
     id: number;
     location: string;
     serial_number: string;
     installed: Date;
-    institution: null | Institution;
-    equipment_model: null | EquipmentModel;
-    equipment_category: null | object;
-    manufacturer: null | object;
+    institution: InstitutionDto;
+    equipment_model: EquipmentModel;
+    equipment_category: EquipmentCategory;
+    manufacturer: Manufacturer
 }
 
-export type { EquipmentDTO };
+export type { EquipmentDto };

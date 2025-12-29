@@ -1,20 +1,22 @@
 import type {Pagination} from "@/domain/models/pagination.ts";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {SparePartRepository} from "@/dependencies.ts";
-import type {SparePartFilters} from "@/domain/filters/spare-part.filters.ts";
-import {listSparePartUseCase} from "@/domain/useCases/spare-part.ts";
+import type {SparePartsFilters, SparePartsSorting} from "@/domain/query/spare-part.query.ts";
+import {listSparePartsUseCase, updateSparePartsUseCase} from "@/domain/useCases/spare-part.ts";
+import type {SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import type {SparePart} from "@/domain/entities/spare-part.ts";
 
-type Options = {
-    enabled?: boolean;
-}
-
-const useListSpareParts = (pagination: Pagination, filters: SparePartFilters,options: Options | null = null) => {
+const useSpareParts = (pagination: Pagination, filters: SparePartsFilters, sorting: SparePartsSorting) => {
     return useQuery({
-        queryKey: ['spare-parts', pagination, filters],
-        queryFn: () => listSparePartUseCase(SparePartRepository)(pagination, filters),
-        ...options,
-
+        queryKey: ['spare-parts', pagination, filters, sorting],
+        queryFn: () => listSparePartsUseCase(SparePartRepository)(pagination, filters, sorting),
     })
 }
 
-export { useListSpareParts };
+const useUpdateSparePart = () => {
+    return useMutation<SparePart, unknown, SparePartUpdate, unknown>({
+        mutationFn: (data) => updateSparePartsUseCase(SparePartRepository)(data),
+    });
+}
+
+export { useSpareParts, useUpdateSparePart };

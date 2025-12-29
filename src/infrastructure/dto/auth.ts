@@ -1,14 +1,14 @@
-import type {UserDTO} from "@/infrastructure/dto/user.ts";
+import type {UserDto} from "@/infrastructure/dto/user.ts";
 
-interface SessionDTO {
-    current_user: UserDTO;
-    token: TokenDTO;
+interface AuthSessionDto {
+    current_user: UserDto;
+    token: TokenDto;
 }
 
-interface TokenDTO {
+interface TokenDto {
     access_token: string;
     refresh_token: string;
     token_type: string;
 }
 
-export type { SessionDTO, TokenDTO };
+export type { AuthSessionDto, TokenDto };

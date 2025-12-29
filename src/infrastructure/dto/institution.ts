@@ -1,12 +1,12 @@
 import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 
-interface InstitutionDTO {
+interface InstitutionDto {
     id: number;
     name: string;
     address: string;
-    institution_type: InstitutionType | null;
+    institution_type: InstitutionType;
     contact_phone: string;
     contact_email: string;
 }
 
-export type { InstitutionDTO };
+export type { InstitutionDto };

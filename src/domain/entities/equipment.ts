@@ -1,16 +1,17 @@
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
+import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 
 interface Equipment {
     id: number;
     location: string;
     serialNumber: string;
     installed: Date;
-    institution: null | Institution;
-    equipmentModel: null | EquipmentModel;
-    equipmentCategory: null | EquipmentCategory;
-    manufacturer: null | object;
+    institution: Institution;
+    equipmentModel: EquipmentModel;
+    equipmentCategory: EquipmentCategory;
+    manufacturer: Manufacturer;
 }
 
 export type { Equipment };

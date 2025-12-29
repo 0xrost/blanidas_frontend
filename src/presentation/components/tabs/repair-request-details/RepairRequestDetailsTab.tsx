@@ -1,16 +1,16 @@
 import DeviceInfoCard from "@/presentation/components/tabs/repair-request-details/DeviceInfoCard.tsx";
 import {
     useDeleteRepairRequest,
-    useGetRepairRequest,
-    useListRepairRequest,
+    useRepairRequestById,
+    useRepairRequests,
     useUpdateRepairRequest
 } from "@/presentation/hooks/repair-request.ts";
 import {Route} from "@/presentation/routes/engineer/dashboard/repair-requests/$repairRequestId.tsx";
 import IssueCard from "@/presentation/components/tabs/repair-request-details/IssueCard.tsx";
 import FailureTypesCard from "@/presentation/components/tabs/repair-request-details/FailureTypesCard.tsx";
-import {useListFailureTypes} from "@/presentation/hooks/failure-type.ts";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import type {RepairRequestStatus} from "@/domain/entities/repair-request.ts";
+import {useFailureTypes} from "@/presentation/hooks/failure-type.ts";
+import {useEffect, useMemo, useRef, useState} from "react";
+import type {Status} from "@/domain/entities/repair-request.ts";
 import StatusBarCard from "@/presentation/components/tabs/repair-request-details/StatusBarCard.tsx";
 import SparePartCard from "@/presentation/components/tabs/repair-request-details/SparePartCard.tsx";
 import SparePartCardModal from "@/presentation/components/tabs/repair-request-details/spare-part-modal/SparePartCardModal.tsx";
@@ -24,12 +24,10 @@ import {FileText, Save, Trash} from "lucide-react";
 import PhotosCard from "@/presentation/components/tabs/repair-request-details/PhotosCard.tsx";
 import {useAuthSession} from "@/presentation/hooks/auth.ts";
 import NotFoundTab from "@/presentation/components/tabs/not-found/NotFoundTab.tsx";
-import type {
-    CreateRepairRequestState,
-    CreateRepairRequestUsedSparePart,
-} from "@/domain/models/repair-request.ts";
+import type {RepairRequestStatusRecordCreate} from "@/domain/models/repair-request.ts";
 import {Card} from "@/presentation/components/ui/card.tsx";
 import {useNavigate} from "@tanstack/react-router";
+import {UnlimitedPagination} from "@/domain/models/pagination.ts";
 
 
 function mergeUsedSpareParts(
@@ -66,32 +64,39 @@ const RepairRequestDetailsPage = () => {
     const isManager = authSession?.currentUser.role === "manager";
 
     const { repairRequestId } = Route.useParams();
-    const { data: failureTypes } = useListFailureTypes({ page: 1, limit: -1 });
-    const { data: repairRequest, isSuccess, refetch } = useGetRepairRequest(repairRequestId);
-    const { data: repairHistoryPagination } = useListRepairRequest(
+    const { data: failureTypes } = useFailureTypes(UnlimitedPagination);
+    const { data: repairRequest, isSuccess, refetch } = useRepairRequestById(repairRequestId);
+    const { data: repairHistoryPagination } = useRepairRequests(
         { page: 1, limit: 5 },
-        {equipmentId: repairRequest?.equipment.id.toString() ?? ""},
-        "date",
-        isSuccess
+        {
+            equipmentId: repairRequest?.equipment.id.toString() ?? "",
+            idNotEqualTo: repairRequestId
+        },
+        {
+            sortBy: "date",
+            sortOrder: "desc",
+        }
     )
 
     const updateRepairRequest = useUpdateRepairRequest();
     const deleteRepairRequest = useDeleteRepairRequest();
     const navigate = useNavigate();
 
-    const [showDeleteMessageFailMessage, setShowDeleteMessageFailMessage] = useState<boolean>(false);
-    const [showUpdateMessageFailMessage, setShowUpdateMessageFailMessage] = useState<boolean>(false);
-    const [showUpdateMessageSuccessMessage, setShowUpdateMessageSuccessMessage] = useState<boolean>(false);
+    const [showDeleteFailMessage, setShowDeleteFailMessage] = useState<boolean>(false);
+    const [showUpdateFailMessage, setShowUpdateFailMessage] = useState<boolean>(false);
+    const [showUpdateSuccessMessage, setShowUpdateSuccessMessage] = useState<boolean>(false);
 
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
+    const [showFinishUpdateConfirmationModal, setShowFinishUpdateConfirmationModal] = useState<boolean>(false);
+
     const [selectedFailureTypeIds, setSelectedFailureTypeIds] = useState<number[]>([]);
-    const [repairRequestStatus, setRepairRequestStatus] = useState<RepairRequestStatus | null>(null);
+    const [repairRequestStatus, setRepairRequestStatus] = useState<Status | null>(null);
     const [initialUsedSpareParts, setInitialUsedSpareParts] = useState<RepairRequestUsedSparePartVM[]>([]);
     const [newUsedSpareParts, setNewUsedSpareParts] = useState<RepairRequestUsedSparePartVM[]>([]);
     const [notes, setNotes] = useState<string | null>(null);
 
     const [showSparePartModal, setShowSparePartModal] = useState(false);
-    const lastStatus = repairRequest?.stateHistory[repairRequest?.stateHistory.length - 1];
+    const lastStatus = repairRequest?.statusHistory[repairRequest?.statusHistory.length - 1];
 
     const allUsedSpareParts = useMemo(() =>
         mergeUsedSpareParts(initialUsedSpareParts, newUsedSpareParts), [initialUsedSpareParts, newUsedSpareParts])
@@ -100,14 +105,14 @@ const RepairRequestDetailsPage = () => {
         setShowDeleteConfirmationModal(false)
         deleteRepairRequest.mutate(repairRequestId, {
             onSuccess: () => {navigate({to: isManager ? "/manager/dashboard" : "/engineer/dashboard/repair-requests"})},
-            onError: () => {setShowDeleteMessageFailMessage(true)},
+            onError: () => {setShowDeleteFailMessage(true)},
         });
     }
 
     const onRepairRequestUpdate = () => {
-        const stateHistory: CreateRepairRequestState = {
+        const statusHistory: RepairRequestStatusRecordCreate = {
             status: repairRequestStatus ?? 'not_taken',
-            responsibleUserId: authSession!.currentUser.id ?? null,
+            assignedEngineerId: authSession!.currentUser.id ?? null,
         }
 
         updateRepairRequest.mutate({
@@ -115,43 +120,44 @@ const RepairRequestDetailsPage = () => {
             managerNote: isManager ? notes : null,
             engineerNote: !isManager ? notes : null,
             failureTypesIds: selectedFailureTypeIds,
-            stateHistory: (repairRequestStatus !== lastStatus?.status) ? stateHistory : null,
+            statusHistory: (repairRequestStatus !== lastStatus?.status) ? statusHistory : null,
             usedSpareParts: allUsedSpareParts.map(part => ({
                     note: part.note,
                     quantity: part.quantity,
-                    sparePartId: part.sparePart!.id,
-                    institutionId: part.institution!.id,
+                    sparePartId: part.sparePart!.id.toString(),
+                    institutionId: part.institution!.id.toString(),
                 }))
         }, {
             onSuccess: () => {
-                setShowUpdateMessageFailMessage(false)
-                setShowUpdateMessageSuccessMessage(true)
+                setShowUpdateFailMessage(false)
+                setShowUpdateSuccessMessage(true)
                 void refetch()
             },
-            onError: () => setShowUpdateMessageFailMessage(true),
+            onError: () => setShowUpdateFailMessage(true),
         })
     }
 
     useEffect(() => {
-        if (showUpdateMessageFailMessage) {
-            setShowUpdateMessageFailMessage(false);
+        if (showUpdateFailMessage) {
+            setShowUpdateFailMessage(false);
         }
-        if (showUpdateMessageSuccessMessage) {
-            setShowUpdateMessageSuccessMessage(false);
+        if (showUpdateSuccessMessage) {
+            setShowUpdateSuccessMessage(false);
         }
     }, [notes, repairRequestStatus, newUsedSpareParts, selectedFailureTypeIds]);
 
     const initialized = useRef(false);
     useEffect(() => {
         if (!repairRequest || initialized.current) return;
-        setSelectedFailureTypeIds(repairRequest.failureTypes.map(t => t.id));
-        setRepairRequestStatus(repairRequest.stateHistory[repairRequest.stateHistory.length - 1].status);
-        setInitialUsedSpareParts(repairRequest.usedSpareParts);
         setNotes(isManager ? repairRequest.managerNote : repairRequest.engineerNote);
+        setSelectedFailureTypeIds(repairRequest.failureTypes.map(t => t.id));
+        setRepairRequestStatus(repairRequest.statusHistory[repairRequest.statusHistory.length - 1].status);
+        setInitialUsedSpareParts(repairRequest.usedSpareParts);
+
         initialized.current = true;
     }, [repairRequest, isManager]);
 
-    const isReadonly = repairRequest?.stateHistory[repairRequest?.stateHistory.length - 1].status === "finished";
+    const isReadonly = repairRequest?.statusHistory[0].status === "finished";
 
     if (!isSuccess) {
         return <NotFoundTab redirectTo={isManager
@@ -161,15 +167,15 @@ const RepairRequestDetailsPage = () => {
 
     return (
         <>
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="md:col-span-2 space-y-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 space-y-6">
                         <DeviceInfoCard repairRequest={repairRequest} />
-                        <IssueCard issue={repairRequest?.description} />
+                        <IssueCard issue={repairRequest?.issue} />
                         <PhotosCard />
                         <FailureTypesCard
                             isReadonly={isReadonly}
-                            failureTypes={failureTypes ?? []}
+                            failureTypes={failureTypes?.items ?? []}
                             selectedFailureTypeIds={selectedFailureTypeIds}
                             onSelectFailureType={(x) => setSelectedFailureTypeIds(prev => prev.includes(x) ? prev : [x, ...prev])}
                             onDeselectFailureType={(x) => setSelectedFailureTypeIds(prev => prev.filter(id => id != x))}
@@ -207,8 +213,10 @@ const RepairRequestDetailsPage = () => {
                         }
                     </div>
                     <div className="space-y-6">
-                        <StatusHistory statusHistory={repairRequest?.stateHistory} />
-                        <RepairHistory repairHistory={repairHistoryPagination?.items ?? []} />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 space-y-6 sm:space-x-6 lg:space-x-0">
+                            <StatusHistory statusHistory={repairRequest?.statusHistory} />
+                            <RepairHistory repairHistory={repairHistoryPagination?.items ?? []} />
+                        </div>
                         {isReadonly &&
                             <>
                                 {repairRequest?.managerNote &&
@@ -233,7 +241,14 @@ const RepairRequestDetailsPage = () => {
                             {!isReadonly &&
                                 <Button
                                     variant="outline"
-                                    onClick={onRepairRequestUpdate}
+                                    onClick={() => {
+                                        if (repairRequestStatus === "finished") {
+                                            setShowFinishUpdateConfirmationModal(true);
+                                            return;
+                                        }
+
+                                        onRepairRequestUpdate()
+                                    }}
                                     className="w-full h-12 flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
                                     disabled={
                                         notes === (isManager ? repairRequest.managerNote : repairRequest?.engineerNote) &&
@@ -257,12 +272,12 @@ const RepairRequestDetailsPage = () => {
                                     Зберегти заявку
                                 </Button>
                             }
-                            {showUpdateMessageFailMessage &&
+                            {showUpdateFailMessage &&
                                 <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2 rounded-md shadow-sm mt-2 text-center">
                                     Не вдалося оновити заявку. Спробуйте ще раз
                                 </div>
                             }
-                            {showUpdateMessageSuccessMessage && !isReadonly &&
+                            {showUpdateSuccessMessage && !isReadonly &&
                                 <div className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-2 rounded-md shadow-sm mt-2 text-center">
                                     Заявка успішно оновлена
                                 </div>
@@ -274,7 +289,7 @@ const RepairRequestDetailsPage = () => {
                                 <FileText className="w-5 h-5" />
                                 Експортувати звіт (PDF)
                             </Button>
-                            {isManager && !isReadonly &&
+                            {isManager &&
                                 <>
                                     <Button
                                         variant="outline"
@@ -282,9 +297,9 @@ const RepairRequestDetailsPage = () => {
                                         className="w-full h-8 flex items-center justify-center gap-2 border-red-400 text-red-600 hover:bg-red-50 hover:text-red-700"
                                     >
                                         <Trash className="w-5 h-5" />
-                                        Видалити запит
+                                        Видалити заявку
                                     </Button>
-                                    {showDeleteMessageFailMessage && (
+                                    {showDeleteFailMessage && (
                                         <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2 rounded-md shadow-sm mt-2 text-center">
                                             Не вдалося видалити заявку. Спробуйте ще раз
                                         </div>
@@ -294,7 +309,7 @@ const RepairRequestDetailsPage = () => {
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
             {showSparePartModal &&
                 <SparePartCardModal
                     onHideSparePartModal={() => setShowSparePartModal(false)}
@@ -302,11 +317,40 @@ const RepairRequestDetailsPage = () => {
                     setUsedSpareParts={setNewUsedSpareParts}
                 />
             }
+            {showFinishUpdateConfirmationModal &&
+                <div className="fixed inset-0 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center p-4 z-50">
+                    <Card className="bg-white max-w-2xl w-full">
+                        <div className="p-6">
+                            <div className="text-center">
+                                <h3 className="text-center text-slate-900">Ви впевнені, що хочете змінити статус на "Завершено"?</h3>
+                                <span className="size-1">Після цього ви не зможете редагувати заявку або вносити зміни</span>
+                            </div>
+                            <div className="flex flex-row gap-3">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {setShowFinishUpdateConfirmationModal(false)}}
+                                    className="flex-1"
+                                >
+                                    Скасувати
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={onRepairRequestUpdate}
+                                    className="flex-1 border-gray-300 hover:bg-gray-100"
+                                >
+                                    <Trash className="w-5 h-5" />
+                                    Видалити заявку
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            }
             {showDeleteConfirmationModal &&
                 <div className="fixed inset-0 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <Card className="bg-white max-w-md w-full">
                         <div className="p-6">
-                            <h3 className="text-center text-slate-900 mb-4">Підтвердження видалення заявки</h3>
+                            <h3 className="text-center text-slate-900 mb-4">Ви впевнені, що хочете видалити заявку?</h3>
                             <div className="flex flex-row gap-3">
                                 <Button
                                     variant="outline"
@@ -321,7 +365,7 @@ const RepairRequestDetailsPage = () => {
                                     className="flex-1 border-red-400 text-red-600 hover:bg-red-50 hover:text-red-700"
                                 >
                                     <Trash className="w-5 h-5" />
-                                    Видалити запит
+                                    Видалити заявку
                                 </Button>
                             </div>
                         </div>

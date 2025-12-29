@@ -1,9 +1,4 @@
-const limitTextLength = (text: string, maxLength: number): string => {
-    if (text.length < maxLength) return text;
-    return text.substring(0, maxLength) + "...";
-}
-
-export function formatDuration(startDate: Date | string, endDate: Date | string): string {
+function formatDuration(startDate: Date | string, endDate: Date | string): string {
     console.log(startDate, endDate);
     const start = new Date(startDate).getTime();
     const end = new Date(endDate).getTime();
@@ -22,5 +17,4 @@ export function formatDuration(startDate: Date | string, endDate: Date | string)
     return `${diffDays} днів ${diffHours} год ${diffMinutes} хв`;
 }
 
-
-export { limitTextLength };
+export { formatDuration };

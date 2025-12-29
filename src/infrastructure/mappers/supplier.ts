@@ -1,7 +1,7 @@
-import type {SupplierDTO} from "@/infrastructure/dto/supplier.ts";
+import type {SupplierDto} from "@/infrastructure/dto/supplier.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
 
-const mapSupplierDTOToDomain = (dto: SupplierDTO): Supplier => {
+const mapSupplierDtoToDomain = (dto: SupplierDto): Supplier => {
     return {
         id: dto.id,
         name: dto.name,
@@ -10,4 +10,4 @@ const mapSupplierDTOToDomain = (dto: SupplierDTO): Supplier => {
     };
 };
 
-export { mapSupplierDTOToDomain };
+export { mapSupplierDtoToDomain };

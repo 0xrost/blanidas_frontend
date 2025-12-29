@@ -1,12 +1,23 @@
 import {useQuery} from "@tanstack/react-query";
-import getRepairRequestSummary from "@/domain/useCases/summary.ts";
+import {getRepairRequestsSummaryUseCase, getSparePartsSummaryUseCase} from "@/domain/useCases/summary.ts";
 import {SummaryRepository} from "@/dependencies.ts";
 
-const useRepairRequestSummary = () => {
+const useRepairRequestsSummary = () => {
     return useQuery({
-        queryKey: ['summary', "repair-request"],
-        queryFn: getRepairRequestSummary(SummaryRepository),
+        queryKey: ['summary', "repair-requests"],
+        queryFn: getRepairRequestsSummaryUseCase(SummaryRepository),
     })
 }
 
-export default useRepairRequestSummary;
+const useSparePartsSummary = () => {
+    return useQuery({
+        queryKey: ['summary', "spare-parts"],
+        queryFn: getSparePartsSummaryUseCase(SummaryRepository),
+    })
+}
+
+
+export {
+    useRepairRequestsSummary,
+    useSparePartsSummary,
+};

@@ -1,74 +1,68 @@
 import type {RepairRequestRepository as RepairRequestRepositoryInterface} from "@/domain/repositories/repair-request.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
 import {imageMimeToExtension} from "@/utils.ts";
-import {mapApiRepairRequest, mapUpdateRepairRequestToDTO} from "@/infrastructure/mappers/repair-request.ts";
+import {mapRepairRequestDtoToDomain, mapRepairRequestUpdateDomainToDto} from "@/infrastructure/mappers/repair-request.ts";
 import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
-import type {CreateRepairRequest, UpdateRepairRequest} from "@/domain/models/repair-request.ts";
+import type {RepairRequestCreate, RepairRequestUpdate} from "@/domain/models/repair-request.ts";
 import type {RepairRequest} from "@/domain/entities/repair-request.ts";
-import type {RepairRequestFilters, RepairRequestOrderBy} from "@/domain/filters/repair-request.filters.ts";
-import {mapPaginationResponseDTOToDomain} from "@/infrastructure/mappers/pagination.ts";
-import type {RepairRequestDTO} from "@/infrastructure/dto/repair-request.ts";
+import type {RepairRequestFilters, RepairRequestSorting}from "@/domain/query/repair-request.query.ts";
+import {mapPaginationResponseDtoToDomain} from "@/infrastructure/mappers/pagination.ts";
+import jsonRequestHeaders from "@/infrastructure/api/headers.ts";
 
 class RepairRequestRepository implements RepairRequestRepositoryInterface {
-    async create(command: CreateRepairRequest): Promise<RepairRequest> {
-        const data = new FormData()
-        data.append("description", command.description)
-        data.append("equipment_id", command.equipmentId)
-        data.append("urgency_level", command.urgencyLevel)
+    async list(pagination: Pagination, filters: RepairRequestFilters, sorting: RepairRequestSorting): Promise<PaginationResponse<RepairRequest>> {
+        const response = await fetch(Endpoints.repairRequest.list(pagination, filters, sorting));
+        return mapPaginationResponseDtoToDomain(await response.json(), mapRepairRequestDtoToDomain)
+    }
 
-        for (let i = 0; i < command.photos.length; i++) {
-            const blob = await fetch(command.photos[i]).then((response) => response.blob())
+    async get(id: string): Promise<RepairRequest> {
+        const response = await fetch(Endpoints.repairRequest.get(id));
+        return mapRepairRequestDtoToDomain(await response.json());
+    }
+
+    async create(data: RepairRequestCreate): Promise<RepairRequest> {
+        const formData = new FormData()
+        formData.append("issue", data.description)
+        formData.append("equipment_id", data.equipmentId)
+        formData.append("urgency", data.urgencyLevel)
+
+        for (let i = 0; i < data.photos.length; i++) {
+            const blob = await fetch(data.photos[i]).then((response) => response.blob())
             const fileExtension = imageMimeToExtension(blob.type)
             if (!fileExtension) {
                 continue
             }
 
             const filename = Math.random().toString(36).substring(2, 15) + "." + fileExtension;
-            data.append("photos", blob, filename)
+            formData.append("photos", blob, filename)
         }
 
         const response = await fetch(Endpoints.repairRequest.create(), {
             method: "POST",
-            body: data,
+            body: formData,
         })
 
-        return mapApiRepairRequest(await response.json())
+        return mapRepairRequestDtoToDomain(await response.json())
     }
 
-    async update(command: UpdateRepairRequest): Promise<RepairRequest> {
-        const commandDTO = mapUpdateRepairRequestToDTO(command);
-        console.log(commandDTO)
-        console.log(JSON.stringify(commandDTO))
+    async update(data: RepairRequestUpdate): Promise<RepairRequest> {
+        const dataDto = mapRepairRequestUpdateDomainToDto(data);
         const response = await fetch(Endpoints.repairRequest.update(), {
+            ...jsonRequestHeaders,
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(commandDTO),
+            body: JSON.stringify(dataDto),
         })
 
-        return mapApiRepairRequest(await response.json())
-    }
-
-    async list(pagination: Pagination, filters: RepairRequestFilters, orderBy: RepairRequestOrderBy): Promise<PaginationResponse<RepairRequest>> {
-        const response = await fetch(Endpoints.repairRequest.list(pagination, filters, orderBy));
-        return mapPaginationResponseDTOToDomain(await response.json(), (x) => mapApiRepairRequest(x as RepairRequestDTO))
+        return mapRepairRequestDtoToDomain(await response.json())
     }
 
     async delete(id: string): Promise<null> {
         const response = await fetch(Endpoints.repairRequest.delete(id), {
+            ...jsonRequestHeaders,
             method: "DELETE",
             body: `{id:${id}}`,
-            headers: {
-                "Content-Type": "application/json",
-            },
         })
         return await response.json()
-    }
-
-    async get(id: string): Promise<RepairRequest> {
-        const response = await fetch(Endpoints.repairRequest.get(id));
-        return mapApiRepairRequest(await response.json());
     }
 }
 

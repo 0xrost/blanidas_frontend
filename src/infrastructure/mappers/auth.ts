@@ -1,21 +1,21 @@
-import type {SessionDTO, TokenDTO} from "@/infrastructure/dto/auth.ts";
+import type {AuthSessionDto, TokenDto} from "@/infrastructure/dto/auth.ts";
 import type {Token} from "@/domain/auth/token.ts";
-import type {Session} from "@/domain/auth/session.ts";
-import {mapApiUser} from "@/infrastructure/mappers/user.ts";
+import type {AuthSession} from "@/domain/auth/session.ts";
+import {mapUserDtoToDomain} from "@/infrastructure/mappers/user.ts";
 
-const mapApiSession = (api: SessionDTO): Session => {
+const mapAuthSessionDtoToDomain = (dto: AuthSessionDto): AuthSession => {
     return {
-        currentUser: mapApiUser(api.current_user),
-        token: mapApiToken(api.token),
+        currentUser: mapUserDtoToDomain(dto.current_user),
+        token: mapTokenDtoToDomain(dto.token),
     }
 }
 
-const mapApiToken = (api: TokenDTO): Token => {
+const mapTokenDtoToDomain = (dto: TokenDto): Token => {
     return {
-        accessToken: api.access_token,
-        refreshToken: api.refresh_token,
-        tokenType: api.token_type,
+        accessToken: dto.access_token,
+        refreshToken: dto.refresh_token,
+        tokenType: dto.token_type,
     }
 }
 
-export { mapApiSession };
+export { mapAuthSessionDtoToDomain };

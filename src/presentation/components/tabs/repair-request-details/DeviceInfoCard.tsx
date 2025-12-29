@@ -8,8 +8,6 @@ type DeviceInfoCardProps = {
     repairRequest: RepairRequest
 }
 const DeviceInfoCard = ({ repairRequest }: DeviceInfoCardProps) => {
-    const lastState = repairRequest.stateHistory[repairRequest.stateHistory.length - 1];
-
     return (
         <Card className="py-0 bg-white border-slate-200">
             <div className="p-6">
@@ -18,7 +16,7 @@ const DeviceInfoCard = ({ repairRequest }: DeviceInfoCardProps) => {
                         <h3 className="text-slate-900">Інформація про пристрій</h3>
                         <p className="text-sm text-slate-600">ID заявки: {formatNumber(repairRequest.id, 8)}</p>
                     </div>
-                    {getStatusBadge(lastState.status)}
+                    {getStatusBadge(repairRequest.statusHistory[0].status)}
 
                 </div>
 

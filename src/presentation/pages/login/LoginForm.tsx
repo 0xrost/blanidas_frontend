@@ -4,7 +4,7 @@ import {Input} from "@/presentation/components/ui/input.tsx";
 import {AlertCircle, Eye, EyeOff, Loader2, Lock, LogIn, Mail} from "lucide-react";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {useState} from "react";
-import type {LoginFormData} from "@/presentation/pages/login/login-page.tsx";
+import type {LoginFormData} from "@/presentation/pages/login/LoginPage.tsx";
 import * as React from "react";
 import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
 
@@ -29,7 +29,7 @@ const LoginForm = ({ sendForm, isSubmitting, isError, resetError }: LoginFormPro
 
     return (
         <div className="max-w-md mx-auto">
-            <Card className="py-0 bg-white border-slate-200 shadow-sm">
+            <Card className="bg-white border-slate-200 shadow-sm">
                 <div className="p-6 sm:p-8">
                     <div className="mb-6">
                         <h2 className="text-slate-900 mb-1">Вхід до системи</h2>

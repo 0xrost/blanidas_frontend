@@ -1,0 +1,46 @@
+import type {RepairRequestFilters, RepairRequestSortBy} from "@/domain/query/repair-request.query.ts";
+import type {FilterDefinition} from "@/infrastructure/query/query-builder.ts";
+
+const repairRequestsFiltersMap: Record<keyof RepairRequestFilters, FilterDefinition> = {
+    idNotEqualTo: {
+        field: "id",
+        operator: "ne",
+    },
+    equipmentId: {
+        field: "equipment_id",
+        operator: "eq",
+    },
+    serialNumber: {
+        field: "equipment__serial_number",
+        operator: "ilike",
+    },
+    institutionId: {
+        field: "equipment__institution_id",
+        operator: "eq",
+    },
+    equipmentCategoryId: {
+        field: "equipment__equipment_category_id",
+        operator: "eq",
+    },
+    status: {
+        field: "status",
+        operator: "eq",
+    },
+    urgency: {
+        field: "urgency",
+        operator: "eq",
+    },
+    serialNumberOrEquipmentName: {
+        field: "equipment__serial_number__or__equipment__equipment_model__name",
+        operator: "ilike",
+    }
+};
+
+const repairRequestsSortingMap: Record<RepairRequestSortBy, string> = {
+    date: "created_at",
+    status: "status",
+    model: "equipment__equipment_model__name",
+    urgency: "urgency",
+}
+
+export { repairRequestsFiltersMap, repairRequestsSortingMap };

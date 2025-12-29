@@ -1,12 +1,13 @@
 import {useQuery} from "@tanstack/react-query";
 import {InstitutionRepository} from "@/dependencies.ts";
-import {listInstitution} from "@/domain/useCases/institution.ts";
+import {listInstitutionsUseCase} from "@/domain/useCases/institution.ts";
+import type {Pagination} from "@/domain/models/pagination.ts";
 
-const useListInstitution = (page: number, limit: number) => {
+const useInstitutions = (pagination: Pagination) => {
     return useQuery({
-        queryKey: ['institutions', page, limit],
-        queryFn: () => listInstitution(InstitutionRepository)(page, limit),
+        queryKey: ['institutions', pagination],
+        queryFn: () => listInstitutionsUseCase(InstitutionRepository)(pagination),
     })
 }
 
-export { useListInstitution };
+export { useInstitutions };

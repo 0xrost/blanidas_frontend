@@ -1,22 +1,22 @@
-import type {AuthRepository as AuthRepositoryInterface, LoginCommand} from "@/domain/repositories/auth.ts";
+import type {AuthRepository as AuthRepositoryInterface} from "@/domain/repositories/auth.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
-import type {Session} from "@/domain/auth/session.ts";
-import {mapApiSession} from "@/infrastructure/mappers/auth.ts";
+import type {AuthSession} from "@/domain/auth/session.ts";
+import {mapAuthSessionDtoToDomain} from "@/infrastructure/mappers/auth.ts";
+import jsonRequestHeaders from "@/infrastructure/api/headers.ts";
+import type {UserLogin} from "@/domain/models/auth.ts";
 
 class AuthRepository implements AuthRepositoryInterface {
-    async login(command: LoginCommand): Promise<Session> {
+    async login(command: UserLogin): Promise<AuthSession> {
         const response = await fetch(Endpoints.auth.login(), {
+            ...jsonRequestHeaders,
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
             body: JSON.stringify({
                 email: command.email,
                 password: command.password,
             }),
         })
 
-        return mapApiSession(await response.json());
+        return mapAuthSessionDtoToDomain(await response.json());
     }
 }
 

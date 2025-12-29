@@ -2,7 +2,7 @@ import {useContext} from "react";
 import {AuthContext} from "@/context.tsx";
 import {AuthService} from "@/dependencies.ts";
 import {useMutation} from "@tanstack/react-query";
-import type {LoginCommand} from "@/domain/repositories/auth.ts";
+import type {UserLogin} from "@/domain/models/auth.ts";
 
 const useAuthSession = () => {
     const { session } = useContext(AuthContext);
@@ -10,7 +10,7 @@ const useAuthSession = () => {
 }
 
 const useLogin = () => {
-    return useMutation<void, unknown, LoginCommand, unknown>({
+    return useMutation<void, unknown, UserLogin, unknown>({
         mutationFn: async (command) => {
             await AuthService.login(command.email, command.password)
         }

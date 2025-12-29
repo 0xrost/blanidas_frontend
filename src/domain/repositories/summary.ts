@@ -1,7 +1,8 @@
-import type {RepairRequestSummary} from "@/domain/entities/summary.ts";
+import type {RepairRequestsSummary, SparePartsSummary} from "@/domain/entities/summary.ts";
 
 interface SummaryRepository {
-    getRepairRequest(): Promise<RepairRequestSummary>;
+    getRepairRequests(): Promise<RepairRequestsSummary>;
+    getSpareParts(): Promise<SparePartsSummary>;
 }
 
 export type { SummaryRepository };

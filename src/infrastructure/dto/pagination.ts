@@ -1,4 +1,4 @@
-interface PaginationResponseDTO<T> {
+interface PaginationResponseDto<T> {
     page: number;
     limit: number;
     total: number;
@@ -8,4 +8,4 @@ interface PaginationResponseDTO<T> {
     has_prev: boolean;
 }
 
-export type { PaginationResponseDTO };
+export type { PaginationResponseDto };

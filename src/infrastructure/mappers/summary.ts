@@ -1,13 +1,25 @@
-import type {RepairRequestSummaryDTO} from "@/infrastructure/dto/summary.ts";
-import type {RepairRequestSummary} from "@/domain/entities/summary.ts";
+import type {RepairRequestSummaryDto, SparePartsSummaryDto} from "@/infrastructure/dto/summary.ts";
+import type {RepairRequestsSummary, SparePartsSummary} from "@/domain/entities/summary.ts";
 
-const mapApiRepairRequestSummary = (api: RepairRequestSummaryDTO): RepairRequestSummary => {
+const mapRepairRequestSummaryDtoToDomain = (dto: RepairRequestSummaryDto): RepairRequestsSummary => {
     return {
-        inProgress: api.in_progress,
-        finished: api.finished,
-        waitingSpareParts: api.waiting_spare_parts,
-        new: api.new,
-    }
-}
+        inProgress: dto.in_progress,
+        finished: dto.finished,
+        waitingSpareParts: dto.waiting_spare_parts,
+        new: dto.new,
+    };
+};
 
-export { mapApiRepairRequestSummary };
+const mapSparePartsSummaryDtoToDomain = (dto: SparePartsSummaryDto): SparePartsSummary => {
+    return {
+        total: dto.total,
+        inStock: dto.in_stock,
+        lowStock: dto.low_stock,
+        outOfStock: dto.out_of_stock,
+    };
+};
+
+export {
+    mapRepairRequestSummaryDtoToDomain,
+    mapSparePartsSummaryDtoToDomain,
+};

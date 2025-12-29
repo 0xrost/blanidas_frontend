@@ -1,3 +1,5 @@
+const UnlimitedPagination: Pagination = { page: 1, limit: -1 };
+
 interface Pagination {
     page: number;
     limit: number;
@@ -11,7 +13,7 @@ interface PaginationResponse<T> {
     items: T[];
     hasNext: boolean;
     hasPrev: boolean;
-
 }
 
 export type { Pagination, PaginationResponse };
+export { UnlimitedPagination };

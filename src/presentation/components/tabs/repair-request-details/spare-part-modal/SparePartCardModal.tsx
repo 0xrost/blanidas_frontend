@@ -2,7 +2,7 @@ import {Label} from "@/presentation/components/ui/label.tsx";
 import {Package, Plus, Search, X} from "lucide-react";
 import {Input} from "@/presentation/components/ui/input.tsx";
 import {useEffect, useState} from "react";
-import {useListSpareParts} from "@/presentation/hooks/spare-part.ts";
+import {useSpareParts} from "@/presentation/hooks/spare-part.ts";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
@@ -58,7 +58,7 @@ const SparePartCardModal = ({ onHideSparePartModal, newUsedSpareParts, setUsedSp
         onHideSparePartModal();
     }
 
-    const { data: sparePartsPagination, refetch } = useListSpareParts(
+    const { data: sparePartsPagination, refetch } = useSpareParts(
         { page: 1, limit: 15 },
         { name: search },
         { enabled: false }
