@@ -5,97 +5,95 @@ import {
     CheckCircle2,
     ChevronDown,
     ChevronUp,
-    Edit, MapPin, Minus, Plus,
+    Edit, MapPin, Minus, Plus, Save,
     Trash2,
     Warehouse,
     XCircle
 } from "lucide-react";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Input} from "@/presentation/components/ui/input.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/presentation/components/ui/select.tsx";
 import {useInstitutions} from "@/presentation/hooks/institution.ts";
 import {UnlimitedPagination} from "@/domain/models/pagination.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
-import type {SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import type {LocationCreate} from "@/domain/models/spare-parts.ts";
 
-interface AddLocationForm {
+interface UILocation {
     institution: Institution;
     quantity: number;
 }
 
 interface Props {
     sparePart: SparePart;
-    updateSparePart: (data: SparePartUpdate) => void;
+    updateLocations: (sparePartId: string, locations: LocationCreate[]) => void;
 }
-const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
-    const [localSparePart, setLocalSparePart] = useState<SparePart>(sparePart);
-    const quantity = localSparePart.locations.map(x => x.quantity).reduce((quantity, current) => quantity + current, 0)
 
-    const [isExpanded, setIsExpanded] = useState<boolean>(false);
-    const [showAddLocationForm, setShowAddLocationForm] = useState<boolean>(false);
-    const [addLocationForm, setAddLocationForm] = useState<AddLocationForm | null>(null);
-
-    const stockStatus = "low"
-
+const SparePartsListItem = ({ sparePart, updateLocations }: Props) => {
     const { data: institutionsPagination } = useInstitutions(UnlimitedPagination)
-    const updateSparePartData = () => ({
-        id: sparePart.id,
-        locations: localSparePart.locations.map(location => ({
+    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
+    const locationFormInitialValue = { institution: null!, quantity: 1 };
+    const [locationForm, setLocationForm] = useState<UILocation>(locationFormInitialValue);
+    const [locations, setLocations] = useState<UILocation[]>([]);
+
+    useEffect(() => {
+        setLocations(sparePart.locations.map(location => ({
             quantity: location.quantity,
-            institutionId: location.institution.id.toString(),
-        }))
-    });
+            institution: location.institution,
+        })))
+    }, [sparePart.locations])
 
-    const synchronizeWithProps = useRef<boolean>(true);
-    useEffect(() => {
-        if (synchronizeWithProps.current) {
-            synchronizeWithProps.current = false;
-            setLocalSparePart(() => sparePart);
-        }
-    }, [sparePart]);
+    const quantity = useMemo(() => {
+        return locations
+            .map((x) => x.quantity)
+            .reduce((quantity, current) => quantity + current, 0)
+    }, [locations]);
 
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            updateSparePart(updateSparePartData());
-        }, 1000);
-        return () => clearTimeout(timeoutId);
-    }, [localSparePart.locations]);
+    const availableInstitutions = useMemo(() => {
+        if (institutionsPagination === undefined) return [];
+        return institutionsPagination.items.filter(institution =>
+            !locations.some(location => location.institution.id === institution.id)
+        )
+    }, [institutionsPagination, locations]);
 
-    const changeLocationQuantity = (locationId: string, newQuantity: number) => {
-        synchronizeWithProps.current = true;
-        setLocalSparePart((prev) => ({
-            ...prev,
-            locations: prev.locations.map(location => {
-                if (location.id !== locationId) return location;
-                return { ...location, quantity: newQuantity };
-            })
-        }))
+    const saveChanges = () => {
+        updateLocations(sparePart.id, locations.map(location => ({
+            quantity: location.quantity,
+            institutionId: location.institution.id,
+        })));
     };
 
-    const deleteLocation = (locationId: string) => {
-        synchronizeWithProps.current = true;
-        setLocalSparePart((prev) => ({
-            ...prev,
-            locations: prev.locations.filter(location => location.id !== locationId)
-        }))
+    const changeQuantity = (institutionId: string, newQuantity: number) => {
+        setLocations((prev) =>
+            prev.map((location) => {
+                if (location.institution.id !== institutionId) return location;
+                return {
+                    ...location,
+                    quantity: newQuantity
+                };
+            }
+        ));
+    };
+
+    console.log(locations)
+
+    const deleteLocation = (institutionId: string) => {
+        setLocations(
+            (prev) =>
+                prev.filter((location) => location.institution.id !== institutionId)
+        );
     }
 
     const addLocation = () => {
-        synchronizeWithProps.current = true;
-        const data = updateSparePartData();
-        if (addLocationForm === null) return;
-        updateSparePart({
-            ...data,
-            locations: [
-                ...data.locations,
-                {
-                    quantity: addLocationForm.quantity,
-                    institutionId: addLocationForm.institution.id.toString(),
-                }
-            ]
-        });
+        setLocations((prev) => [
+            ...prev,
+            {
+                ...locationForm,
+                isNew: true
+            }
+        ])
     }
 
     return (
@@ -103,9 +101,10 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
             <tr
                 key={sparePart.id}
                 className={`hover:bg-slate-50 transition-colors ${
-                    stockStatus === 'low' ? 'bg-yellow-50/30' :
-                        stockStatus === 'out' ? 'bg-red-50/30' : ''
-                }`}
+                        quantity < sparePart.minQuantity && quantity > 0 ? 'bg-yellow-50/30' :
+                        quantity === 0 ? 'bg-red-50/30' : ''
+                    }`
+                }
             >
                 <td className="px-4 py-4">
                     <div className="space-y-1">
@@ -135,7 +134,13 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
                     >
                         <Warehouse className="w-3 h-3" />
                         <span className="truncate max-w-30">
-                            {sparePart.locations.length} {sparePart.locations.length === 1 ? 'склад' : 'складів'}
+                            {locations.length} {
+                                locations.length === 1
+                                        ? "склад"
+                                    : locations.length > 1 && locations.length < 5
+                                        ? "склади"
+                                    : "складів"
+                            }
                         </span>
                         {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                     </button>
@@ -162,7 +167,7 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
                             Є в наявності
                         </Badge>
                     )}
-                    {quantity <= sparePart.minQuantity && quantity > 0 && (
+                    {quantity < sparePart.minQuantity && quantity > 0 && (
                         <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
                             <AlertTriangle className="w-3 h-3 mr-1" />
                             Мало
@@ -197,27 +202,38 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
             </tr>
             {isExpanded && (
                 <tr className="bg-slate-50">
-                    <td colSpan={8} className="px-4 py-4">
+                    <td colSpan={7} className="px-4 py-4">
                         <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                 <p className="text-xs uppercase tracking-wider text-slate-600">Наявність на складах</p>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-8 text-xs"
-                                    disabled={showAddLocationForm}
-                                    onClick={() => setShowAddLocationForm(true)}
-                                >
-                                    <Plus className="w-3 h-3 mr-1" />
-                                    Додати склад
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-8 text-xs"
+                                        onClick={saveChanges}
+                                        disabled={
+                                            locations.length === sparePart.locations.length &&
+                                            !locations.some(
+                                                location => !sparePart.locations.some(
+                                                    loc =>
+                                                        loc.quantity === location.quantity &&
+                                                        loc.institution.id === location.institution.id
+                                                )
+                                            )
+                                        }
+                                    >
+                                        <Save className="w-3 h-3 mr-1" />
+                                        Зберегти зміни
+                                    </Button>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
-                                {localSparePart.locations.map((location) => {
+                                {locations.map((location) => {
                                     return (
                                         <div
-                                            key={location.id}
+                                            key={location.institution.id}
                                             className="flex items-center justify-between py-2 px-3 bg-white border border-slate-200 rounded"
                                         >
                                             <div className="flex items-center gap-3 flex-1">
@@ -234,7 +250,7 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
                                                             type="number"
                                                             style={{ width: "auto", minWidth: "2ch" }}
                                                             value={location.quantity}
-                                                            onChange={(e) => {changeLocationQuantity(location.id.toString(), +e.target.value)}}
+                                                            onChange={(e) => {changeQuantity(location.institution.id, +e.target.value)}}
                                                             onInput={(e) => {
                                                                 const target = e.target as HTMLInputElement;
                                                                 target.style.width = `${Math.max(2, target.value.length) + 0.5}ch`;
@@ -251,7 +267,7 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
                                                         variant="outline"
                                                         disabled={location.quantity === 1}
                                                         className="h-7 w-7 p-0"
-                                                        onClick={() => changeLocationQuantity(location.id.toString(), location.quantity - 1)}
+                                                        onClick={() => changeQuantity(location.institution.id, location.quantity - 1)}
                                                     >
                                                         <Minus className="w-3 h-3" />
                                                     </Button>
@@ -259,14 +275,14 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
                                                         size="sm"
                                                         variant="outline"
                                                         className="h-7 w-7 p-0"
-                                                        onClick={() => changeLocationQuantity(location.id.toString(), location.quantity + 1)}
+                                                        onClick={() => changeQuantity(location.institution.id, location.quantity + 1)}
                                                     >
                                                         <Plus className="w-3 h-3" />
                                                     </Button>
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
-                                                        onClick={() => {deleteLocation(location.id.toString())}}
+                                                        onClick={() => {deleteLocation(location.institution.id)}}
                                                         className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                                                     >
                                                         <Trash2 className="w-3 h-3" />
@@ -276,62 +292,68 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
                                         </div>
                                     );
                                 })}
-                                {showAddLocationForm && (
-                                    <div className="flex items-center gap-2 py-2 px-3 bg-cyan-50 border border-cyan-200 rounded">
-                                        <MapPin className="w-4 h-4 text-cyan-600" />
-                                        <Select
-                                            onValueChange={(value) => setAddLocationForm({
-                                                    ...addLocationForm,
-                                                    institution: institutionsPagination?.items.find(x => x.id.toString() === value)
-                                                }
-                                            )}
-                                        >
-                                            <SelectTrigger className="flex-1 h-9 bg-white">
-                                                <SelectValue placeholder="Оберіть склад" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {institutionsPagination?.items
-                                                    .filter(institution =>
-                                                        !sparePart.locations.some(location => location.institution.id === institution.id)
-                                                    )
-                                                    .map(institution => (
-                                                        <SelectItem key={institution.id} value={institution.id.toString()}>
-                                                            {institution.name}
-                                                        </SelectItem>
-                                                    ))
-                                                }
-                                            </SelectContent>
-                                        </Select>
-                                        <Input
-                                            type="number"
-                                            value={addLocationForm?.quantity ?? 1}
-                                            onChange={(e) => {
-                                                if (+e.target.value < 1) return;
-                                                setAddLocationForm((prev) => ({...prev, quantity: +e.target.value}));
-                                            }}
-                                            className="w-28 h-9 bg-white"
-                                        />
-                                        <Button
-                                            size="sm"
-                                            disabled={addLocationForm?.institution === undefined}
-                                            onClick={() => {if (addLocationForm) addLocation(addLocationForm)}}
-                                            className="h-9 px-3 bg-cyan-500 hover:bg-cyan-600 text-white"
-                                        >
-                                            <CheckCircle2 className="w-4 h-4" />
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="h-9 px-3"
-                                            onClick={() => {
-                                                setShowAddLocationForm(false);
-                                                setAddLocationForm(null);
-                                            }}
-                                        >
-                                            <XCircle className="w-4 h-4" />
-                                        </Button>
+                                {locations.length === 0 &&
+                                    <div className="flex flex-col items-center justify-center py-6 text-center bg-white border border-dashed border-slate-300 rounded">
+                                        <Warehouse className="w-8 h-8 text-slate-400 mb-2" />
+                                        <p className="text-sm text-slate-700">
+                                            Запчастина не має складів
+                                        </p>
+                                        <p className="text-xs text-slate-500 mb-3">
+                                            Додайте склад, щоб керувати залишками
+                                        </p>
                                     </div>
-                                )}
+                                }
+                                <div className="flex items-center gap-2 py-2 px-3 bg-cyan-50 border border-cyan-200 rounded">
+                                    <MapPin className="w-4 h-4 text-cyan-600" />
+                                    <Select
+                                        value={(locationForm.institution) ? locationForm.institution.id : ''}
+                                        onValueChange={value => {
+                                            setLocationForm(prev => ({
+                                                ...prev,
+                                                institution: availableInstitutions.find(
+                                                    institution =>
+                                                        institution.id === value
+                                                )!
+                                            }))
+                                        }}
+                                    >
+                                        <SelectTrigger className="flex-1 h-9 bg-white">
+                                            <SelectValue placeholder="Оберіть склад" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {
+                                                availableInstitutions.map(institution => (
+                                                    <SelectItem key={institution.id} value={institution.id}>
+                                                        {institution.name}
+                                                    </SelectItem>
+                                                ))
+                                            }
+                                        </SelectContent>
+                                    </Select>
+                                    <Input
+                                        type="number"
+                                        value={locationForm.quantity}
+                                        onChange={(e) => {
+                                            if (+e.target.value < 1) return;
+                                            setLocationForm(prev => ({
+                                                ...prev,
+                                                quantity: +e.target.value,
+                                            }));
+                                        }}
+                                        className="w-28 h-9 bg-white"
+                                    />
+                                    <Button
+                                        size="sm"
+                                        onClick={() => {
+                                            addLocation();
+                                            setLocationForm(locationFormInitialValue);
+                                        }}
+                                        disabled={locationForm.institution === null}
+                                        className="h-9 px-3 bg-cyan-500 hover:bg-cyan-600 text-white"
+                                    >
+                                        <CheckCircle2 className="w-4 h-4" />
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </td>
@@ -342,4 +364,3 @@ const SparePartsListItem = ({ sparePart, updateSparePart }: Props) => {
 }
 
 export default SparePartsListItem;
-export type { AddLocationForm };

@@ -7,8 +7,6 @@ import {useEffect, useState} from "react";
 import type {SparePartsSortBy} from "@/domain/query/spare-part.query.ts";
 import {useSpareParts, useUpdateSparePart} from "@/presentation/hooks/spare-part.ts";
 import SparePartsList from "@/presentation/components/tabs/spare-parts/SparePartsList.tsx";
-import type {AddLocationForm} from "@/presentation/components/tabs/spare-parts/SparePartsListItem.tsx";
-import context from "@/context.tsx";
 import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
 
 const initialFilters: FilterConfig[] = [
@@ -64,7 +62,7 @@ const SparePartsListTab = () => {
         sparePartCategoryId: "all",
         sparePartModelId: "all",
         status: "all",
-        sortOrder: "desc",
+        sortOrder: "asc",
         sortBy: "name",
         search: ""
     });
@@ -73,10 +71,16 @@ const SparePartsListTab = () => {
     const { data: summary, refetch: refetchSummary } = useSparePartsSummary();
     const { data: sparePartsPagination } = useSpareParts(
         { page: 1, limit: 10 },
-        {},
         {
-            sortBy: "name",
-            sortOrder: "desc",
+            categoryId: values.sparePartCategoryId === "all" ? undefined : values.sparePartCategoryId,
+            status: values.status === "all" ? undefined : values.status,
+            modelId: values.sparePartModelId === "all" ? undefined : values.sparePartModelId,
+            institution: values.institutionId === "all" ? undefined : values.institutionId,
+            name: values.search.trim().length === 0 ? undefined : values.search.trim(),
+        },
+        {
+            sortBy: values.sortBy,
+            sortOrder: values.sortOrder,
         },
     )
 
@@ -86,21 +90,18 @@ const SparePartsListTab = () => {
         }
     }, [sparePartsPagination]);
 
-    const update = (data: SparePartUpdate) => {
-        updateSparePart.mutate(
-            data,
-            {
-                onSuccess: async (data) => {
-                    setSpareParts((prev) => {
-                        return prev.map(x => {
-                            if (x.id === data.id) return data;
-                            return x;
-                        })
-                    });
-                    refetchSummary();
-                },
+    const updateLocations = (sparePartId: string, locations: LocationCreate[]) => {
+        updateSparePart.mutate({
+            id: sparePartId,
+            locations: locations,
+        }, {
+            onSuccess: (data) => {
+                setSpareParts(prev =>  prev.map(part => {
+                    if (part.id === data.id) return data;
+                    return part;
+                }));
             }
-        );
+        })
     }
 
     return (
@@ -120,7 +121,7 @@ const SparePartsListTab = () => {
             />
             <SparePartsList
                 spareParts={spareParts}
-                updateSparePart={update}
+                updateLocations={updateLocations}
             />
         </div>
     );

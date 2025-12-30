@@ -2,14 +2,14 @@ import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {Package} from "lucide-react";
 import {Card} from "@/presentation/components/ui/card.tsx";
 import SparePartsListItem from "@/presentation/components/tabs/spare-parts/SparePartsListItem.tsx";
-import type {SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import type {LocationCreate} from "@/domain/models/spare-parts.ts";
 
 interface Props {
     spareParts: SparePart[];
-    updateSparePart: (data: SparePartUpdate) => void;
+    updateLocations: (sparePartId: string, locations: LocationCreate[]) => void;
 }
 
-const SparePartsList = ({ spareParts, updateSparePart }: Props) => {
+const SparePartsList = ({ spareParts, updateLocations }: Props) => {
     return (
         <Card className="bg-white border-slate-200 overflow-x-auto">
             <div className="overflow-x-auto">
@@ -44,7 +44,7 @@ const SparePartsList = ({ spareParts, updateSparePart }: Props) => {
                         <SparePartsListItem
                             key={part.id}
                             sparePart={part}
-                            updateSparePart={updateSparePart}
+                            updateLocations={updateLocations}
                         />
                     )}
                     </tbody>

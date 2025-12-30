@@ -1,7 +1,7 @@
 import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 
 interface InstitutionDto {
-    id: number;
+    id: string;
     name: string;
     address: string;
     institution_type: InstitutionType;
