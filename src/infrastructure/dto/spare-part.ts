@@ -24,19 +24,28 @@ interface LocationCreateDto {
 
 interface SparePartUpdateDto {
     id: string;
-    name?: string;
-    min_quantity?: number;
-    compatible_models_ids?: number[];
-    note?: string;
+    name?: string | null;
+    min_quantity?: number | null;
+    compatible_models_ids?: string[] | null;
 
-    locations?: LocationCreateDto[];
-    supplier_id?: number;
-    manufacturer_Id?: number;
-    sparePartCategory_id?: number;
+    locations?: LocationCreateDto[] | null;
+    supplier_id?: string | null;
+    manufacturer_Id?: string | null;
+    spare_part_category_id?: string | null;
+}
+
+interface SparePartCreateDto {
+    name: string;
+    min_quantity: number;
+    compatible_models_ids: string[];
+    supplier_id: string;
+    manufacturer_id: string;
+    spare_part_category_id: string;
 }
 
 export type {
     SparePartDto,
     LocationCreateDto,
     SparePartUpdateDto,
+    SparePartCreateDto,
 };

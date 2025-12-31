@@ -1,5 +1,5 @@
 interface Supplier {
-    id: number;
+    id: string;
     name: string;
     contactPhone: string;
     contactEmail: string;

@@ -5,18 +5,27 @@ interface LocationCreate {
 
 interface SparePartUpdate {
     id: string;
-    name?: string;
-    minQuantity?: number;
-    compatibleModelsIds?: number[];
-    note?: string;
+    name?: string | null;
+    minQuantity?: number | null;
+    compatibleModelIds?: string[] | null;
 
-    locations?: LocationCreate[];
-    supplierId?: number;
-    manufacturerId?: number;
-    sparePartCategoryId?: number;
+    locations?: LocationCreate[] | null;
+    supplierId?: string | null;
+    manufacturerId?: string | null;
+    sparePartCategoryId?: string | null;
+}
+
+interface SparePartCreate {
+    name: string;
+    minQuantity: number;
+    compatibleModelIds: string[];
+    supplierId: string;
+    manufacturerId: string;
+    sparePartCategoryId: string;
 }
 
 export type {
     SparePartUpdate,
     LocationCreate,
+    SparePartCreate,
 };

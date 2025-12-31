@@ -6,7 +6,7 @@ import {useRepairRequestsSummary} from "@/presentation/hooks/summary.ts";
 import {useEquipmentCategories} from "@/presentation/hooks/equipment-category.ts";
 import {useInstitutions} from "@/presentation/hooks/institution.ts";
 import {useRepairRequests} from "@/presentation/hooks/repair-request.ts";
-import PaginationControl from "@/presentation/components/layouts/PaginationControll.tsx";
+import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import {Route} from "@/presentation/routes/engineer/dashboard/repair-requests";
 import {type Pagination, UnlimitedPagination} from "@/domain/models/pagination.ts";
 import RepairRequestsList from "@/presentation/components/tabs/repair-requests-list/RepairRequestsList.tsx";
@@ -124,7 +124,6 @@ const RepairRequestListTab = () => {
     const onOpenItemDetails = (repairRequest: RepairRequest) =>
         navigate({to: "/engineer/dashboard/repair-requests/$repairRequestId", params: {repairRequestId: repairRequest.id.toString()}});
 
-    console.log(repairRequestsPagination?.items)
     return (
         <div className="w-full">
             <div>

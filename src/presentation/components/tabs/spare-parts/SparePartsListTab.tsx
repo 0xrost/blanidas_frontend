@@ -1,13 +1,32 @@
-import {AlertTriangle, CheckCircle, Package, XCircle} from "lucide-react";
+import {AlertTriangle, CheckCircle, Package, Plus, XCircle} from "lucide-react";
 import {useSparePartsSummary} from "@/presentation/hooks/summary.ts";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
 import FilterCard, {type FilterCardValues, type FilterConfig} from "@/presentation/components/layouts/FilterCard.tsx";
 import type {SparePart, SparePartStatus} from "@/domain/entities/spare-part.ts";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import type {SparePartsSortBy} from "@/domain/query/spare-part.query.ts";
-import {useSpareParts, useUpdateSparePart} from "@/presentation/hooks/spare-part.ts";
+import {
+    useCreateSparePart,
+    useDeleteSparePart,
+    useSpareParts,
+    useUpdateSparePart
+} from "@/presentation/hooks/spare-part.ts";
 import SparePartsList from "@/presentation/components/tabs/spare-parts/SparePartsList.tsx";
 import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import {useInstitutions} from "@/presentation/hooks/institution.ts";
+import {type Pagination, UnlimitedPagination} from "@/domain/models/pagination.ts";
+import SparePartFormModal, {
+    type SparePartFormData
+} from "@/presentation/components/tabs/spare-parts/SparePartFormModal.tsx";
+import {useSparePartCategories} from "@/presentation/hooks/spare-part-categories.ts";
+import {useEquipmentModels} from "@/presentation/hooks/equipment-models.ts";
+import {useSuppliers} from "@/presentation/hooks/suppliers.ts";
+import {useManufacturers} from "@/presentation/hooks/manufacturers.ts";
+import {Button} from "@/presentation/components/ui/button.tsx";
+import {composeMutationOptions} from "@/presentation/utils.ts";
+import type {MutationOptions} from "@/presentation/models.ts";
+import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
+import {Route} from "@/presentation/routes/manager/dashboard/repair-requests";
 
 const initialFilters: FilterConfig[] = [
     {
@@ -55,7 +74,9 @@ interface SearchParams extends FilterCardValues {
     sortBy: SparePartsSortBy;
 }
 
-const SparePartsListTab = () => {
+interface Props { page: number, limit: number }
+const SparePartsListTab = ({ page, limit }: Props) => {
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [spareParts, setSpareParts] = useState<SparePart[]>([]);
     const [values, setValues] = useState<SearchParams>({
         institutionId: "all",
@@ -67,16 +88,27 @@ const SparePartsListTab = () => {
         search: ""
     });
 
-    const updateSparePart = useUpdateSparePart()
+    const { data: institutionsPagination } = useInstitutions(UnlimitedPagination)
+    const { data: sparePartCategoriesPagination } = useSparePartCategories(UnlimitedPagination, { sortBy: 'name', sortOrder: 'asc' })
+    const { data: equipmentModelsPagination } = useEquipmentModels(UnlimitedPagination, { sortBy: 'name', sortOrder: 'asc' })
+    const { data: suppliersPagination } = useSuppliers(UnlimitedPagination, { sortBy: 'name', sortOrder: 'asc' })
+    const { data: manufacturersPagination } = useManufacturers(UnlimitedPagination, {}, { sortBy: 'name', sortOrder: 'asc' })
+
+    const updateSparePart = useUpdateSparePart();
+    const createSparePart = useCreateSparePart();
+    const deleteSparePart = useDeleteSparePart();
+
+    const pagination = useMemo<Pagination>(() => ({ page: page, limit: limit }), [page, limit])
+
     const { data: summary, refetch: refetchSummary } = useSparePartsSummary();
     const { data: sparePartsPagination } = useSpareParts(
-        { page: 1, limit: 10 },
+        pagination,
         {
-            categoryId: values.sparePartCategoryId === "all" ? undefined : values.sparePartCategoryId,
             status: values.status === "all" ? undefined : values.status,
-            modelId: values.sparePartModelId === "all" ? undefined : values.sparePartModelId,
-            institution: values.institutionId === "all" ? undefined : values.institutionId,
             name: values.search.trim().length === 0 ? undefined : values.search.trim(),
+            categoryId: values.sparePartCategoryId === "all" ? undefined : values.sparePartCategoryId,
+            modelId: values.sparePartModelId === "all" ? undefined : values.sparePartModelId,
+            institutionId: values.institutionId === "all" ? undefined : values.institutionId,
         },
         {
             sortBy: values.sortBy,
@@ -84,25 +116,80 @@ const SparePartsListTab = () => {
         },
     )
 
+    const filters = useMemo<FilterConfig[]>(() => {
+        const mapper: Record<string, { id: string, name: string }[]> = {
+            "institutionId": institutionsPagination?.items ?? [],
+            "sparePartCategoryId": sparePartCategoriesPagination?.items ?? [],
+            "sparePartModelId": equipmentModelsPagination?.items ?? [],
+        };
+
+        return initialFilters.map(filter => {
+            if (filter.key in mapper) {
+                return {
+                    ...filter,
+                    options: [
+                        ...filter.options,
+                        ...mapper[filter.key].map(item => ({
+                            value: item.id.toString(),
+                            label: item.name,
+                        })),
+                    ],
+                };
+            }
+
+            return filter;
+        });
+    }, [institutionsPagination, sparePartCategoriesPagination, equipmentModelsPagination]);
+
     useEffect(() => {
         if (sparePartsPagination) {
             setSpareParts(sparePartsPagination.items);
         }
     }, [sparePartsPagination]);
 
-    const updateLocations = (sparePartId: string, locations: LocationCreate[]) => {
-        updateSparePart.mutate({
-            id: sparePartId,
-            locations: locations,
-        }, {
-            onSuccess: (data) => {
+    useEffect(() => { refetchSummary() }, [spareParts]);
+
+    const onCreateSparePart = (data: SparePartFormData, options?: MutationOptions<SparePart>) => {
+        if (data.categoryId === null || data.supplierId === null || data.manufacturerId === null) return;
+        createSparePart.mutate({...data, sparePartCategoryId: data.categoryId}, composeMutationOptions({
+            onSuccess: (response) => {
+                setSpareParts(prev =>  [
+                    response,
+                    ...prev.filter(x => x.id !== response.id),
+                ]);
+            },
+        }, options));
+    };
+
+    const onUpdateSparePart = (data: SparePartUpdate, options?: MutationOptions<SparePart>) => {
+        updateSparePart.mutate(data, composeMutationOptions({
+            onSuccess: (response) => {
                 setSpareParts(prev =>  prev.map(part => {
-                    if (part.id === data.id) return data;
+                    if (part.id === response.id) return response;
                     return part;
                 }));
-            }
-        })
+            },
+        }, options))
     }
+
+    const onUpdateLocations = (sparePartId: string, locations: LocationCreate[], options?: MutationOptions<SparePart>) => {
+        onUpdateSparePart({id: sparePartId, locations: locations,}, options);
+    }
+
+    const onDeleteSparePart = (id: string, options?: MutationOptions<null>) => {
+        deleteSparePart.mutate(id, composeMutationOptions({
+            onSuccess: () => setSpareParts(prev => prev.filter(x => x.id !== id),)
+        }, options))
+    }
+
+    const createButton = (
+        <Button
+            onClick={() => setIsModalVisible(true)}
+            className="h-12 text-sm bg-slate-100 text-slate-700 hover:bg-slate-200">
+            <Plus className="w-8 h-8" />
+            Додати запчастину
+        </Button>
+    );
 
     return (
         <div className="space-y-6">
@@ -116,12 +203,34 @@ const SparePartsListTab = () => {
             <FilterCard
                 setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
                 values={values}
-                filters={initialFilters}
+                actionButton={createButton}
+                filters={filters}
                 searchPlaceholder={"Пошук за назвою або кодом запчастини"}
             />
             <SparePartsList
                 spareParts={spareParts}
-                updateLocations={updateLocations}
+                deleteSparePart={onDeleteSparePart}
+                updateLocations={onUpdateLocations}
+                updateSparePart={onUpdateSparePart}
+                institutions={institutionsPagination?.items ?? []}
+                suppliers={suppliersPagination?.items ?? []}
+                models={equipmentModelsPagination?.items ?? []}
+                categories={sparePartCategoriesPagination?.items ?? []}
+                manufacturers={manufacturersPagination?.items ?? []}
+            />
+            <SparePartFormModal
+                submit={onCreateSparePart}
+                isOpen={isModalVisible}
+                close={() => setIsModalVisible(false)}
+                institutions={institutionsPagination?.items ?? []}
+                suppliers={suppliersPagination?.items ?? []}
+                models={equipmentModelsPagination?.items ?? []}
+                categories={sparePartCategoriesPagination?.items ?? []}
+                manufacturers={manufacturersPagination?.items ?? []}
+            />
+            <PaginationControl
+                items={sparePartsPagination?.total ?? 0}
+                pagination={pagination}
             />
         </div>
     );

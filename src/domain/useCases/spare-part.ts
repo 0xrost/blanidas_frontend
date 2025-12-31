@@ -3,7 +3,7 @@ import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts
 import type {SparePartsFilters, SparePartsSorting} from "@/domain/query/spare-part.query.ts";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {InvalidPageNumberError} from "@/domain/errors.ts";
-import type {SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import type {SparePartCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
 
 const listSparePartsUseCase =
     (repo: SparePartsRepository) =>
@@ -13,13 +13,24 @@ const listSparePartsUseCase =
             return await repo.list(pagination, filters, sorting);
         };
 
-const updateSparePartsUseCase =
+const updateSparePartUseCase =
     (repo: SparePartsRepository) =>
         async (data: SparePartUpdate): Promise<SparePart> =>
             await repo.update(data);
 
+const createSparePartUseCase =
+    (repo: SparePartsRepository) =>
+        async (data: SparePartCreate): Promise<SparePart> =>
+            await repo.create(data);
+
+const deleteSparePartUseCase =
+    (repo: SparePartsRepository) =>
+        async (id: string): Promise<null> =>
+            await repo.delete(id);
 
 export {
     listSparePartsUseCase,
-    updateSparePartsUseCase,
+    updateSparePartUseCase,
+    createSparePartUseCase,
+    deleteSparePartUseCase,
 };

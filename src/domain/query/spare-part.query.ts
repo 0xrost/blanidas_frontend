@@ -6,7 +6,7 @@ type SparePartsSorting = Sorting<SparePartsSortBy>;
 
 interface SparePartsFilters {
     name?: string
-    institution?: string
+    institutionId?: string
     categoryId?: string
     modelId?: string
     status?: SparePartStatus

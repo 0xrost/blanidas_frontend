@@ -8,6 +8,10 @@ import {repairRequestsFiltersMap, repairRequestsSortingMap} from "@/infrastructu
 import type {SparePartsFilters, SparePartsSorting} from "@/domain/query/spare-part.query.ts";
 import {sparePartsFiltersMap, sparePartsSortingMap} from "@/infrastructure/query/spare-part-query.map.ts";
 import type {SortOrder} from "@/domain/query/query.ts";
+import type {SparePartCategoriesSorting} from "@/domain/query/spare-part-categories.query.ts";
+import type {EquipmentModelsSorting} from "@/domain/query/equipment-models.query.ts";
+import type {SuppliersSorting} from "@/domain/query/suppliers.query.ts";
+import type {ManufacturersFilters, ManufacturersSorting} from "@/domain/query/manufacturer.query.ts";
 
 const BaseURL = "http://127.0.0.1:8000/api"
 
@@ -39,12 +43,44 @@ const Endpoints = {
             return BaseURL + `/spare-parts/?${paginationQueries}&${filteringQueries}&${orderingQueries}`;
         },
         update: () => BaseURL + "/spare-parts/",
+        create: () => BaseURL + "/spare-parts/",
+        delete: (id: string) => BaseURL + "/spare-parts/" + id,
+    },
+    sparePartCategories: {
+        list(pagination: Pagination, sorting: SparePartCategoriesSorting) {
+            const paginationQueries = formPaginationQueries(pagination);
+            const orderingQueries = formSortingQueries(sorting.sortBy, sorting.sortOrder, sparePartsSortingMap);
+            return BaseURL + `/spare-part-categories/?${paginationQueries}&${orderingQueries}`;
+        }
+    },
+    suppliers: {
+        list(pagination: Pagination, sorting: SuppliersSorting) {
+            const paginationQueries = formPaginationQueries(pagination);
+            const orderingQueries = formSortingQueries(sorting.sortBy, sorting.sortOrder, sparePartsSortingMap);
+            return BaseURL + `/suppliers/?${paginationQueries}&${orderingQueries}`;
+        }
+    },
+    manufacturers: {
+        list(pagination: Pagination, filters:ManufacturersFilters, sorting: ManufacturersSorting) {
+            const filteringQueries = buildFiltersQuery(filters, sparePartsFiltersMap);
+
+            const paginationQueries = formPaginationQueries(pagination);
+            const orderingQueries = formSortingQueries(sorting.sortBy, sorting.sortOrder, sparePartsSortingMap);
+            return BaseURL + `/manufacturers/?${paginationQueries}&${orderingQueries}&${filteringQueries}`;
+        }
     },
     failureTypes: {
         list: (pagination: Pagination) => BaseURL + "/failure-types/?" + formPaginationQueries(pagination),
     },
     equipment: {
         get: (id: string) => BaseURL + "/equipment/" + id,
+    },
+    equipmentModels: {
+        list: (pagination: Pagination, sorting: EquipmentModelsSorting) => {
+            const paginationQueries = formPaginationQueries(pagination);
+            const orderingQueries = formSortingQueries(sorting.sortBy, sorting.sortOrder, sparePartsSortingMap);
+            return BaseURL + `/equipment-models/?${paginationQueries}&${orderingQueries}`;
+        },
     },
     institution: {
         list:(pagination: Pagination) => BaseURL + `/institutions/?${formPaginationQueries(pagination)}`,

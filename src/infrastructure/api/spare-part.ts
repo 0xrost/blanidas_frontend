@@ -4,18 +4,29 @@ import type {SparePartsFilters, SparePartsSorting} from "@/domain/query/spare-pa
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
 import {mapPaginationResponseDtoToDomain} from "@/infrastructure/mappers/pagination.ts";
-import {mapSparePartDtoToDomain, mapSparePartUpdateDomainToDto} from "@/infrastructure/mappers/spare-part.ts";
-import type {SparePartUpdate} from "@/domain/models/spare-parts.ts";
 import {
-    mapRepairRequestDtoToDomain,
-    mapRepairRequestUpdateDomainToDto
-} from "@/infrastructure/mappers/repair-request.ts";
+    mapSparePartCreateDomainToDto,
+    mapSparePartDtoToDomain,
+    mapSparePartUpdateDomainToDto
+} from "@/infrastructure/mappers/spare-part.ts";
+import type {SparePartCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
 import jsonRequestHeaders from "@/infrastructure/api/headers.ts";
 
 class SparePartsRepository implements SparePartsRepositoryInterface {
     async list(pagination: Pagination, filters: SparePartsFilters, sorting: SparePartsSorting): Promise<PaginationResponse<SparePart>> {
         const response = await fetch(Endpoints.spareParts.list(pagination, filters, sorting));
         return mapPaginationResponseDtoToDomain(await response.json(), mapSparePartDtoToDomain)
+    }
+
+    async create(data: SparePartCreate): Promise<SparePart> {
+        const dataDto = mapSparePartCreateDomainToDto(data);
+        const response = await fetch(Endpoints.spareParts.create(), {
+            ...jsonRequestHeaders,
+            method: "POST",
+            body: JSON.stringify({...dataDto, locations: []}),
+        })
+
+        return mapSparePartDtoToDomain(await response.json())
     }
 
     async update(data: SparePartUpdate): Promise<SparePart> {
@@ -27,6 +38,14 @@ class SparePartsRepository implements SparePartsRepositoryInterface {
         })
 
         return mapSparePartDtoToDomain(await response.json())
+    }
+
+    async delete(id: string): Promise<null> {
+        const response = await fetch(Endpoints.spareParts.delete(id), {
+            ...jsonRequestHeaders,
+            method: "DELETE",
+        })
+        return await response.json()
     }
 }
 

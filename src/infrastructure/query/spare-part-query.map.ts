@@ -6,6 +6,22 @@ const sparePartsFiltersMap: Record<keyof SparePartsFilters, FilterDefinition> = 
         field: "name",
         operator: "ilike",
     },
+    status: {
+        field: "stock_status",
+        operator: "eq",
+    },
+    institutionId: {
+        field: "institution_id",
+        operator: "eq",
+    },
+    modelId: {
+        field: "compatible_model_id",
+        operator: "eq",
+    },
+    categoryId: {
+        field: "spare_part_category_id",
+        operator: "eq",
+    }
 };
 
 const sparePartsSortingMap: Record<SparePartsSortBy, string> = {

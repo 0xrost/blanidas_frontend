@@ -1,5 +1,5 @@
 interface SparePartCategory {
-    id: number;
+    id: string;
     name: string;
 }
 

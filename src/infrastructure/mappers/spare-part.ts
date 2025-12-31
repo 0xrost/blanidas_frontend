@@ -1,7 +1,12 @@
-import type {LocationCreateDto, SparePartDto, SparePartUpdateDto} from "@/infrastructure/dto/spare-part.ts";
+import type {
+    LocationCreateDto,
+    SparePartCreateDto,
+    SparePartDto,
+    SparePartUpdateDto
+} from "@/infrastructure/dto/spare-part.ts";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {mapSupplierDtoToDomain} from "@/infrastructure/mappers/supplier.ts";
-import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import type {LocationCreate, SparePartCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
 
 const mapSparePartDtoToDomain = (dto: SparePartDto): SparePart => {
     return {
@@ -29,12 +34,23 @@ const mapSparePartUpdateDomainToDto = (domain: SparePartUpdate): SparePartUpdate
     return {
         id: domain.id,
         name: domain.name,
-        note: domain.note,
         locations: locations,
         min_quantity: domain.minQuantity,
-        sparePartCategory_id: domain.sparePartCategoryId,
+        spare_part_category_id: domain.sparePartCategoryId,
         manufacturer_Id: domain.manufacturerId,
-        compatible_models_ids: domain.compatibleModelsIds,
+        compatible_models_ids: domain.compatibleModelIds,
+        supplier_id: domain.supplierId,
+    };
+};
+
+
+const mapSparePartCreateDomainToDto = (domain: SparePartCreate): SparePartCreateDto => {
+    return {
+        name: domain.name,
+        min_quantity: domain.minQuantity,
+        spare_part_category_id: domain.sparePartCategoryId,
+        manufacturer_id: domain.manufacturerId,
+        compatible_models_ids: domain.compatibleModelIds,
         supplier_id: domain.supplierId,
     };
 };
@@ -42,4 +58,5 @@ const mapSparePartUpdateDomainToDto = (domain: SparePartUpdate): SparePartUpdate
 export {
     mapSparePartUpdateDomainToDto,
     mapSparePartDtoToDomain,
+    mapSparePartCreateDomainToDto,
 };

@@ -3,35 +3,18 @@ import {Button} from "@/presentation/components/ui/button.tsx";
 import {ChevronRight} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/presentation/components/ui/select.tsx";
 import type {Pagination} from "@/domain/models/pagination.ts";
+import {Link} from "@tanstack/react-router";
 
-type PaginationControlButtonProps = {
-    changePage: (page: number) => void,
-    isSelected: boolean,
-    page: number,
-}
-const PaginationControlButton = ({ isSelected, page, changePage }: PaginationControlButtonProps) => {
-    const styles = isSelected
-        ? "bg-cyan-500 text-white border-cyan-500 hover:bg-cyan-600"
-        : "text-slate-600 border-slate-300 hover:bg-slate-50";
-
-    return (
-        <Button onClick={() => changePage(page)} size="sm" variant="outline" className={`w-9 h-9 p-0 ${styles}`}>
-            {page}
-        </Button>
-    );
-};
 type PaginationControlProps = {
+    url: string;
     items: number;
     pagination: Pagination,
-    changePagination: (value: Pagination) => void,
 }
 
-const PaginationControll = ({ items, pagination, changePagination }: PaginationControlProps) => {
+const PaginationControl = ({ items, pagination, url }: PaginationControlProps) => {
     const visiblePagesBeforeEllipsis = 2;
 
     const pages = Math.ceil(items / pagination.limit);
-    const onPageChange = (page: number): void => changePagination({ ...pagination, page: page });
-    const onLimitChange = (limit: number): void => changePagination({ ...pagination, limit: limit });
 
     const startFrom = (pagination.page - 1) * pagination.limit;
     const endAt = Math.min((pagination.page) * pagination.limit, items);
@@ -45,20 +28,21 @@ const PaginationControll = ({ items, pagination, changePagination }: PaginationC
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Button
-                            onClick={() => onPageChange(pagination.page - 1)}
-                            variant="outline"
-                            size="sm"
-                            className="text-slate-600 border-slate-300 hover:bg-slate-50"
-                            disabled={pagination.page === 1}
-                        >
-                            <ChevronRight className="w-4 h-4 rotate-180" />
-                            <span className="hidden sm:inline ml-1">Попередня</span>
-                        </Button>
+                        <Link disabled={pagination.page === 1} to={url} search={{page: pagination.page - 1, limit: pagination.limit}}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-slate-600 border-slate-300 hover:bg-slate-50"
+                                disabled={pagination.page === 1}
+                            >
+                                <ChevronRight className="w-4 h-4 rotate-180" />
+                                <span className="hidden sm:inline ml-1">Попередня</span>
+                            </Button>
+                        </Link>
                         {
                             (pagination.page - visiblePagesBeforeEllipsis > 1) &&
                             <>
-                                <PaginationControlButton page={1} isSelected={false} changePage={onPageChange} />
+                                <PaginationControlButton page={1} isSelected={false} />
                                 <span className="text-slate-400 px-2">...</span>
                             </>
                         }
@@ -69,7 +53,6 @@ const PaginationControll = ({ items, pagination, changePagination }: PaginationC
                                 <PaginationControlButton
                                     key={page}
                                     isSelected={pagination.page === page}
-                                    changePage={onPageChange}
                                     page={page}
                                 />
                             ))
@@ -78,11 +61,10 @@ const PaginationControll = ({ items, pagination, changePagination }: PaginationC
                             (pagination.page + visiblePagesBeforeEllipsis < pages) &&
                             <>
                                 <span className="text-slate-400 px-2">...</span>
-                                <PaginationControlButton isSelected={false} page={pages} changePage={onPageChange} />
+                                <PaginationControlButton isSelected={false} page={pages}  />
                             </>
                         }
                         <Button
-                            onClick={() => onPageChange(pagination.page + 1)}
                             variant="outline"
                             size="sm"
                             className="text-slate-600 border-slate-300 hover:bg-slate-50"
@@ -94,7 +76,7 @@ const PaginationControll = ({ items, pagination, changePagination }: PaginationC
                     </div>
                     <div className="hidden lg:flex items-center gap-2 text-sm text-slate-600">
                         <span>На сторінці:</span>
-                        <Select onValueChange={(value) => onLimitChange(+value)} value={pagination.limit.toString()}>
+                        <Select value={pagination.limit.toString()}>
                             <SelectTrigger className="w-20 h-9">
                                 <SelectValue />
                             </SelectTrigger>
@@ -112,4 +94,4 @@ const PaginationControll = ({ items, pagination, changePagination }: PaginationC
     );
 }
 
-export default PaginationControll;
+export default PaginationControl;

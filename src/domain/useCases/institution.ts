@@ -1,5 +1,4 @@
 import type {InstitutionRepository} from "@/domain/repositories/institution.ts";
-import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
 import {InvalidLimitError, InvalidPageNumberError} from "@/domain/errors.ts";
 import type {Institution} from "@/domain/entities/institution.ts";

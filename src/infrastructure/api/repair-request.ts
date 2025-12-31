@@ -60,7 +60,6 @@ class RepairRequestRepository implements RepairRequestRepositoryInterface {
         const response = await fetch(Endpoints.repairRequest.delete(id), {
             ...jsonRequestHeaders,
             method: "DELETE",
-            body: `{id:${id}}`,
         })
         return await response.json()
     }

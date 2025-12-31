@@ -1,5 +1,5 @@
 interface EquipmentModel {
-    id: number;
+    id: string;
     name: string;
 }
 

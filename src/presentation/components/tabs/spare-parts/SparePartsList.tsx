@@ -1,15 +1,37 @@
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {Package} from "lucide-react";
 import {Card} from "@/presentation/components/ui/card.tsx";
-import SparePartsListItem from "@/presentation/components/tabs/spare-parts/SparePartsListItem.tsx";
-import type {LocationCreate} from "@/domain/models/spare-parts.ts";
+import SparePartItem, {
+    type MutationOptions
+} from "@/presentation/components/tabs/spare-parts/SparePartItem.tsx";
+import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import type {Institution} from "@/domain/entities/institution.ts";
+import type {Supplier} from "@/domain/entities/supplier.ts";
+import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
+import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
+import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 
 interface Props {
     spareParts: SparePart[];
-    updateLocations: (sparePartId: string, locations: LocationCreate[]) => void;
+    updateLocations: (
+        sparePartId: string,
+        locations: LocationCreate[],
+        options?: MutationOptions
+    ) => void;
+
+    updateSparePart: (data: SparePartUpdate, options?: MutationOptions) => void;
+    deleteSparePart: (id: string, options?: MutationOptions) => void;
+
+    institutions: Institution[];
+    suppliers: Supplier[];
+    models: EquipmentModel[];
+    categories: SparePartCategory[];
+    manufacturers: Manufacturer[];
 }
 
-const SparePartsList = ({ spareParts, updateLocations }: Props) => {
+const SparePartsList = ({
+    spareParts, updateLocations, institutions, suppliers, models, categories, manufacturers, updateSparePart, deleteSparePart
+}: Props) => {
     return (
         <Card className="bg-white border-slate-200 overflow-x-auto">
             <div className="overflow-x-auto">
@@ -41,10 +63,17 @@ const SparePartsList = ({ spareParts, updateLocations }: Props) => {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                     {spareParts.map((part) =>
-                        <SparePartsListItem
+                        <SparePartItem
                             key={part.id}
                             sparePart={part}
+                            deleteSparePart={deleteSparePart}
+                            updateSparePart={updateSparePart}
                             updateLocations={updateLocations}
+                            institutions={institutions}
+                            suppliers={suppliers}
+                            models={models}
+                            categories={categories}
+                            manufacturers={manufacturers}
                         />
                     )}
                     </tbody>
