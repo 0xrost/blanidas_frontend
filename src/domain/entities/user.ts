@@ -1,5 +1,4 @@
 import type {Role} from "@/domain/auth/roles.ts";
-import type {Scope} from "@/domain/auth/scopes.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 
 
@@ -9,7 +8,6 @@ interface User {
     email: string;
     phoneNumber: string;
     role: Role;
-    scopes: Scope[];
     department: string;
     workplace: Institution;
     hireAt: Date;

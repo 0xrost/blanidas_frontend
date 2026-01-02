@@ -1,4 +1,4 @@
-import {Badge} from "@/components/ui/badge.tsx";
+import {Badge} from "@/presentation/components/ui/badge.tsx";
 import {
     AlertTriangle,
     Building2, Check,
@@ -65,13 +65,13 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                         </div>
                     </div>
                 </td>
-                <td className="px-4 py-4 hidden md:table-cell">
+                <td className="px-4 py-4">
                     <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                        <span className="truncate max-w-40">{sparePart.sparePartCategory.name}</span>
+                        <span className="truncate max-w-40">{sparePart.category.name}</span>
                     </Badge>
                 </td>
 
-                <td className="px-4 py-4 hidden lg:table-cell">
+                <td className="px-4 py-4">
                     <button
                         onClick={() => setLocationVisible(!areLocationVisible)}
                         className="flex items-center gap-1 text-sm text-cyan-600 hover:text-cyan-700 transition-colors"
@@ -104,7 +104,7 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                     </div>
                 </td>
 
-                <td className="px-4 py-4 text-center hidden sm:table-cell">
+                <td className="px-4 py-4 text-center">
                     {quantity >= sparePart.minQuantity && (
                         <Badge className="bg-green-100 text-green-700 border-green-200">
                             <CheckCircle2 className="w-3 h-3 mr-1" />

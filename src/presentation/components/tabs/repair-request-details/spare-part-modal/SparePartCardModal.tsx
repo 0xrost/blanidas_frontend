@@ -2,9 +2,9 @@ import {Label} from "@/presentation/components/ui/label.tsx";
 import {Package, Plus, Search, X} from "lucide-react";
 import {Input} from "@/presentation/components/ui/input.tsx";
 import {useEffect, useState} from "react";
-import {useSpareParts} from "@/presentation/hooks/spare-part.ts";
+import {useSpareParts} from "@/presentation/hooks/entities/spare-part.ts";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
-import {Badge} from "@/components/ui/badge.tsx";
+import {Badge} from "@/presentation/components/ui/badge.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import SparePartLocationDetails from "@/presentation/components/tabs/repair-request-details/spare-part-modal/SparePartLocationDetails.tsx";
 import type {

@@ -4,11 +4,11 @@ import {
     useRepairRequestById,
     useRepairRequests,
     useUpdateRepairRequest
-} from "@/presentation/hooks/repair-request.ts";
-import {Route} from "@/presentation/routes/engineer/dashboard/repair-requests/$repairRequestId.tsx";
+} from "@/presentation/hooks/entities/repair-request.ts";
+import {Route} from "@/presentation/routes/_authenticated/engineer/dashboard/repair-requests/$repairRequestId.tsx";
 import IssueCard from "@/presentation/components/tabs/repair-request-details/IssueCard.tsx";
 import FailureTypesCard from "@/presentation/components/tabs/repair-request-details/FailureTypesCard.tsx";
-import {useFailureTypes} from "@/presentation/hooks/failure-type.ts";
+import {useFailureTypes} from "@/presentation/hooks/entities/failure-type.ts";
 import {useEffect, useMemo, useRef, useState} from "react";
 import type {Status} from "@/domain/entities/repair-request.ts";
 import StatusBarCard from "@/presentation/components/tabs/repair-request-details/StatusBarCard.tsx";
@@ -59,11 +59,11 @@ interface RepairRequestUsedSparePartVM {
     institution: Institution | null;
 }
 
-const RepairRequestDetailsPage = () => {
+interface Props { repairRequestId: string }
+const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
     const authSession = useAuthSession();
     const isManager = authSession?.currentUser.role === "manager";
 
-    const { repairRequestId } = Route.useParams();
     const { data: failureTypes } = useFailureTypes(UnlimitedPagination);
     const { data: repairRequest, isSuccess, refetch } = useRepairRequestById(repairRequestId);
     const { data: repairHistoryPagination } = useRepairRequests(

@@ -1,5 +1,5 @@
 interface EquipmentCategory {
-    id: number;
+    id: string;
     name: string;
 }
 

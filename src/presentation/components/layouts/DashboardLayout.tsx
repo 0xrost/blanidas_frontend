@@ -1,9 +1,9 @@
 import {DashboardHeader} from "@/presentation/components/layouts/Header.tsx";
 import NavigationTab from "@/presentation/components/layouts/NavigationTab.tsx";
-import {ClipboardList, type LucideIcon, Package} from "lucide-react";
+import {BarChart3, Building2, ClipboardList, type LucideIcon, Monitor, Package, Settings, Users} from "lucide-react";
 import {DashboardFooter} from "@/presentation/components/layouts/Footer.tsx";
 import {useAuthSession, useLogout} from "@/presentation/hooks/auth.ts";
-import {useLocation} from "@tanstack/react-router";
+import {useLocation, useNavigate} from "@tanstack/react-router";
 
 type DashboardLayoutTab = {
     title: string;
@@ -20,11 +20,23 @@ type DashboardLayoutProps = {
 const DashboardLayout = ({ children, showFullLogo, tabs }: DashboardLayoutProps) => {
     const session = useAuthSession();
     const logout = useLogout()
+
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const onLogout = () => {
+        logout();
+        void navigate({to: "/accounts/login"})
+    }
 
     return (
         <div className="flex flex-col min-h-screen bg-linear-to-br from-slate-50 to-blue-50">
-            <DashboardHeader username={session?.currentUser.username ?? ""} role={session?.currentUser.role ?? "engineer"} showFullLogo={showFullLogo} onLogout={logout}>
+            <DashboardHeader
+                username={session?.currentUser.username ?? ""}
+                role={session?.currentUser.role ?? "engineer"}
+                showFullLogo={showFullLogo}
+                onLogout={onLogout}
+            >
                 {
                     tabs.map(tab =>
                         <NavigationTab key={tab.url} to={tab.url} icon={tab.icon} isActive={location.pathname === tab.url} title={tab.title}/>
@@ -53,9 +65,7 @@ const EngineerDashboardLayoutTabs: DashboardLayoutTab[] = [
     },
 ]
 
-type EngineerDashboardLayoutProps = {
-    children: React.ReactNode;
-}
+type EngineerDashboardLayoutProps = { children: React.ReactNode; }
 const EngineerDashboardLayout = ({ children }: EngineerDashboardLayoutProps) => {
     return (
         <DashboardLayout showFullLogo={true} tabs={EngineerDashboardLayoutTabs}>
@@ -64,4 +74,51 @@ const EngineerDashboardLayout = ({ children }: EngineerDashboardLayoutProps) => 
     );
 };
 
-export { EngineerDashboardLayout };
+const ManagerDashboardLayoutTabs: DashboardLayoutTab[] = [
+    {
+        title: "Статистика",
+        icon: BarChart3,
+        url: "/manager/dashboard/statistics",
+    },
+    {
+        title: "Заявки",
+        icon: ClipboardList,
+        url: "/manager/dashboard/repair-requests",
+    },
+    {
+        title: "Запчастини",
+        icon: Package,
+        url: "/manager/dashboard/spare-parts",
+    },
+    {
+        title: "Обладнання",
+        icon: Monitor,
+        url: "/manager/dashboard/equipment",
+    },
+    {
+        title: "Працівники",
+        icon: Users,
+        url: "/manager/dashboard/staff",
+    },
+    {
+        title: "Заклади",
+        icon: Building2,
+        url: "/manager/dashboard/institutions",
+    },
+    {
+        title: "Інше",
+        icon: Settings,
+        url: "/manager/dashboard/settings",
+    },
+]
+
+type ManagerDashboardLayoutProps = { children: React.ReactNode };
+const ManagerDashboardLayout = ({ children }: ManagerDashboardLayoutProps) => {
+    return (
+        <DashboardLayout showFullLogo={false} tabs={ManagerDashboardLayoutTabs}>
+            { children }
+        </DashboardLayout>
+    );
+}
+
+export { EngineerDashboardLayout, ManagerDashboardLayout };

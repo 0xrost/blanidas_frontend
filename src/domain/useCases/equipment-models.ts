@@ -1,15 +1,21 @@
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
-import {InvalidLimitError, InvalidPageNumberError} from "@/domain/errors.ts";
+import {createCrudUseCases} from "@/domain/useCases/factory.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
-import type {EquipmentModelsRepository} from "@/domain/repositories/equipment-models.ts";
-import type {EquipmentModelsSorting} from "@/domain/query/equipment-models.query.ts";
+import type {EquipmentModelCreate, EquipmentModelUpdate} from "@/domain/models/equipment-model.ts";
+import type {EquipmentModelFilters, EquipmentModelSortBy} from "@/domain/queries/equipment-model-list.query.ts";
+import type {EquipmentModelRepository} from "@/domain/repositories/equipment-models.ts";
 
-const listEquipmentModelsUseCase =
-    (repo: EquipmentModelsRepository) =>
-        async (pagination: Pagination, sorting: EquipmentModelsSorting): Promise<PaginationResponse<EquipmentModel>> => {
-            if (pagination.page < 1) throw new InvalidPageNumberError(pagination.page);
-            if (pagination.limit < 1 && pagination.limit !== -1) throw new InvalidLimitError(pagination.limit)
-            return await repo.list(pagination, sorting);
-        };
+const EquipmentModelUseCases = createCrudUseCases<
+    EquipmentModel,
+    EquipmentModelCreate,
+    EquipmentModelUpdate,
+    EquipmentModelFilters,
+    EquipmentModelSortBy,
+    EquipmentModelRepository
+>();
 
-export { listEquipmentModelsUseCase };
+export const {
+    list: listEquipmentModelsUseCase,
+    create: createEquipmentModelUseCase,
+    update: updateEquipmentModelUseCase,
+    delete: deleteEquipmentModelUseCase
+} = EquipmentModelUseCases;

@@ -1,15 +1,14 @@
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {Package} from "lucide-react";
 import {Card} from "@/presentation/components/ui/card.tsx";
-import SparePartItem, {
-    type MutationOptions
-} from "@/presentation/components/tabs/spare-parts/SparePartItem.tsx";
-import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import SparePartItem from "@/presentation/components/tabs/spare-parts/SparePartItem.tsx";
+import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
+import type {MutationOptions} from "@/presentation/models.ts";
 
 interface Props {
     spareParts: SparePart[];

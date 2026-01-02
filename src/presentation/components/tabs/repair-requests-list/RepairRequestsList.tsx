@@ -1,5 +1,5 @@
 import {Building2, Calendar, ChevronRight, MapPin, Monitor} from "lucide-react";
-import {Badge} from "@/components/ui/badge.tsx";
+import {Badge} from "@/presentation/components/ui/badge.tsx";
 import {getStatusBadge} from "@/presentation/components/tabs/repair-requests-list/StatusBadge.tsx";
 import {getPriorityBadge} from "@/presentation/components/tabs/repair-requests-list/PriorityBadge.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
@@ -13,33 +13,33 @@ type RepairRequestsListProps = {
 const RepairRequestsList = ({ repairRequests, onOpenItemDetails }: RepairRequestsListProps) => {
     console.log(repairRequests);
     return (
-        <Card className="py-0 bg-white border-slate-200 overflow-hidden">
-            <div className="overflow-x-auto">
+        <Card className="bg-white border-slate-200 overflow-x-auto">
+            <div>
                 <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-200">
-                    <tr>
-                        <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
-                            Обладнання
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
-                            Локація / Центр
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider hidden xl:table-cell">
-                            Категорія
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
-                            Статус
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
-                            Пріоритет
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
-                            Дата
-                        </th>
-                        <th className="px-4 py-3 text-right text-xs text-slate-600 uppercase tracking-wider">
-                            Дії
-                        </th>
-                    </tr>
+                        <tr>
+                            <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
+                                Обладнання
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
+                                Локація / Центр
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
+                                Категорія
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
+                                Статус
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
+                                Пріоритет
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase tracking-wider">
+                                Дата
+                            </th>
+                            <th className="px-4 py-3 text-right text-xs text-slate-600 uppercase tracking-wider">
+                                Дії
+                            </th>
+                        </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                     {repairRequests && repairRequests.map((repairRequest) => (
@@ -54,9 +54,9 @@ const RepairRequestsList = ({ repairRequests, onOpenItemDetails }: RepairRequest
                                     <Monitor className="w-4 h-4 text-slate-400 shrink-0 mt-1" />
                                     <div className="min-w-0">
                                         <p
-                                            title={repairRequest?.equipment?.equipmentModel?.name}
+                                            title={repairRequest?.equipment?.model?.name}
                                             className="text-sm text-slate-900 truncate max-w-80"
-                                        >{repairRequest?.equipment?.equipmentModel?.name}</p>
+                                        >{repairRequest?.equipment?.model?.name}</p>
                                         <p
                                             title={repairRequest.equipment?.serialNumber}
                                             className="text-xs text-slate-500 truncate"
@@ -83,7 +83,7 @@ const RepairRequestsList = ({ repairRequests, onOpenItemDetails }: RepairRequest
                             </td>
                             <td className="px-3 py-4 whitespace-nowrap content-center">
                                 <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-                                    {repairRequest.equipment?.equipmentCategory?.name}
+                                    {repairRequest.equipment?.category?.name}
                                 </Badge>
                             </td>
                             <td className="px-3 py-4 whitespace-nowrap content-center">

@@ -1,10 +1,21 @@
-import type {IManufacturersRepository} from "@/domain/repositories/manufacturers.ts";
-import type {Pagination} from "@/domain/models/pagination.ts";
-import type {ManufacturersFilters, ManufacturersSorting} from "@/domain/query/manufacturer.query.ts";
+import {createCrudUseCases} from "@/domain/useCases/factory.ts";
+import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
+import type {ManufacturerCreate, ManufacturerUpdate} from "@/domain/models/manufacturer.ts";
+import type {ManufacturerFilters, ManufacturerSortBy} from "@/domain/queries/manufacturer-list.query.ts";
+import type {ManufacturerRepository} from "@/domain/repositories/manufacturers.ts";
 
-const listManufacturersUseCase =
-    (repo: IManufacturersRepository) =>
-        async (pagination: Pagination, filters: ManufacturersFilters, sorting: ManufacturersSorting) =>
-            await repo.list(pagination, filters, sorting);
+const ManufacturerUseCases = createCrudUseCases<
+    Manufacturer,
+    ManufacturerCreate,
+    ManufacturerUpdate,
+    ManufacturerFilters,
+    ManufacturerSortBy,
+    ManufacturerRepository
+>();
 
-export { listManufacturersUseCase };
+export const {
+    list: listManufacturersUseCase,
+    create: createManufacturerUseCase,
+    update: updateManufacturerUseCase,
+    delete: deleteManufacturerUseCase
+} = ManufacturerUseCases;

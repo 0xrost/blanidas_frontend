@@ -26,7 +26,7 @@ const DeviceInfoCard = ({ repairRequest }: DeviceInfoCardProps) => {
                             <Monitor className="w-5 h-5 text-slate-400 mt-0.5" />
                             <div>
                                 <p className="text-sm text-slate-500">Модель</p>
-                                <p className="text-slate-900">{repairRequest.equipment?.equipmentModel?.name}</p>
+                                <p className="text-slate-900">{repairRequest.equipment?.model?.name}</p>
                             </div>
                         </div>
 

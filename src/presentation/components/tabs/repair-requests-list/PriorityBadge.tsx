@@ -1,5 +1,5 @@
 import type {Urgency} from "@/domain/entities/repair-request.ts";
-import {Badge} from "@/components/ui/badge.tsx";
+import {Badge} from "@/presentation/components/ui/badge.tsx";
 
 const getPriorityBadge = (priority: Urgency) => {
     return priority === 'critical' ? (

@@ -18,7 +18,7 @@ const useLogin = () => {
 }
 
 const useLogout = () => {
-    return AuthService.logout;
+    return () => AuthService.logout();
 };
 
 

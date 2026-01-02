@@ -1,6 +1,6 @@
 import {AlertCircle, CheckCircle2, Clock, Package} from "lucide-react";
 import type {Status} from "@/domain/entities/repair-request.ts";
-import {Badge} from "@/components/ui/badge.tsx";
+import {Badge} from "@/presentation/components/ui/badge.tsx";
 
 const getStatusBadge = (status: Status) => {
     console.log(status)

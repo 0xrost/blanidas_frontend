@@ -9,4 +9,25 @@ interface InstitutionDto {
     contact_email: string;
 }
 
-export type { InstitutionDto };
+interface InstitutionCreateDto {
+    name: string;
+    address: string;
+    institution_type_id: string;
+    contact_phone: string;
+    contact_email: string;
+}
+
+interface InstitutionUpdateDto {
+    id: string
+    name?: string | null
+    address?: string | null;
+    institution_type_id?: string | null;
+    contact_phone?: string | null;
+    contact_email?: string | null;
+}
+
+export type {
+    InstitutionDto,
+    InstitutionUpdateDto,
+    InstitutionCreateDto
+};

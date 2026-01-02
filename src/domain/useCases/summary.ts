@@ -8,7 +8,17 @@ const getSparePartsSummaryUseCase =
     (repo: SummaryRepository) =>
         async () => repo.getSpareParts();
 
+const getStaffSummaryUseCase =
+    (repo: SummaryRepository) =>
+        async () => repo.getStaff();
+
+const getInstitutionsSummaryUseCase =
+    (repo: SummaryRepository) =>
+        async () => repo.getInstitutions();
+
 export {
     getRepairRequestsSummaryUseCase,
+    getInstitutionsSummaryUseCase,
     getSparePartsSummaryUseCase,
+    getStaffSummaryUseCase,
 };

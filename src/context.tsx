@@ -6,25 +6,16 @@ interface AuthContextType {
     session: AuthSession | null;
 }
 
-const localSessionJSON = localStorage.getItem("session");
-const localSession: AuthSession | null = localSessionJSON ? JSON.parse(localSessionJSON) : null;
-const initialState: AuthContextType = { session: localSession };
-
-const AuthContext = createContext<AuthContextType>(initialState)
+const AuthContext = createContext<AuthContextType>({ session: null });
 
 type AuthContextProviderProps = { children: React.ReactNode };
 const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
-    const [contextData, setContextData] = useState<AuthContextType>(initialState);
-    useEffect(() => {
-        const listener = (session: AuthSession | null) => {
-            localStorage.setItem("session", JSON.stringify(session));
-            setContextData({ session: session });
-        }
-        AuthService.subscribe(listener);
+    const [contextData, setContextData] = useState<AuthContextType>({session: AuthService.getSession()});
 
-        return () => {
-            AuthService.unsubscribe(listener);
-        };
+    useEffect(() => {
+        const listener = (session: AuthSession | null) => { setContextData({session: session}) };
+        const unsubscribe = AuthService.subscribe(listener);
+        return () => void unsubscribe();
     }, []);
 
     return (

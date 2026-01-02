@@ -1,52 +1,42 @@
-import type { SparePartsRepository as SparePartsRepositoryInterface } from "@/domain/repositories/spare-part.ts";
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
-import type {SparePartsFilters, SparePartsSorting} from "@/domain/query/spare-part.query.ts";
-import type {SparePart} from "@/domain/entities/spare-part.ts";
+import {type CRUDMappers, CRUDRepository} from "@/infrastructure/api/general.ts";
+import type {SparePartRepository as SparePartRepositoryInterface} from "@/domain/repositories/spare-part.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
-import {mapPaginationResponseDtoToDomain} from "@/infrastructure/mappers/pagination.ts";
+import type {SparePart} from "@/domain/entities/spare-part.ts";
+import type {SparePartCreateDto, SparePartDto, SparePartUpdateDto} from "@/infrastructure/dto/spare-part.ts";
+import type {SparePartCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
 import {
     mapSparePartCreateDomainToDto,
     mapSparePartDtoToDomain,
     mapSparePartUpdateDomainToDto
 } from "@/infrastructure/mappers/spare-part.ts";
-import type {SparePartCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
-import jsonRequestHeaders from "@/infrastructure/api/headers.ts";
+import type {SparePartFilters, SparePartSortBy} from "@/domain/queries/spare-part-list.query.ts";
 
-class SparePartsRepository implements SparePartsRepositoryInterface {
-    async list(pagination: Pagination, filters: SparePartsFilters, sorting: SparePartsSorting): Promise<PaginationResponse<SparePart>> {
-        const response = await fetch(Endpoints.spareParts.list(pagination, filters, sorting));
-        return mapPaginationResponseDtoToDomain(await response.json(), mapSparePartDtoToDomain)
-    }
+const sparePartMappers: CRUDMappers<
+    SparePart,
+    SparePartDto,
+    SparePartCreate,
+    SparePartCreateDto,
+    SparePartUpdate,
+    SparePartUpdateDto
+> = {
+    model: mapSparePartDtoToDomain,
+    create: mapSparePartCreateDomainToDto,
+    update: mapSparePartUpdateDomainToDto,
+}
 
-    async create(data: SparePartCreate): Promise<SparePart> {
-        const dataDto = mapSparePartCreateDomainToDto(data);
-        const response = await fetch(Endpoints.spareParts.create(), {
-            ...jsonRequestHeaders,
-            method: "POST",
-            body: JSON.stringify({...dataDto, locations: []}),
-        })
-
-        return mapSparePartDtoToDomain(await response.json())
-    }
-
-    async update(data: SparePartUpdate): Promise<SparePart> {
-        const dataDto = mapSparePartUpdateDomainToDto(data);
-        const response = await fetch(Endpoints.spareParts.update(), {
-            ...jsonRequestHeaders,
-            method: "PUT",
-            body: JSON.stringify(dataDto),
-        })
-
-        return mapSparePartDtoToDomain(await response.json())
-    }
-
-    async delete(id: string): Promise<null> {
-        const response = await fetch(Endpoints.spareParts.delete(id), {
-            ...jsonRequestHeaders,
-            method: "DELETE",
-        })
-        return await response.json()
+class SparePartRepository extends CRUDRepository<
+    SparePart,
+    SparePartDto,
+    SparePartCreate,
+    SparePartCreateDto,
+    SparePartUpdate,
+    SparePartUpdateDto,
+    SparePartFilters,
+    SparePartSortBy
+> implements SparePartRepositoryInterface {
+    constructor() {
+        super(Endpoints.sparePart, sparePartMappers);
     }
 }
 
-export { SparePartsRepository };
+export { SparePartRepository };

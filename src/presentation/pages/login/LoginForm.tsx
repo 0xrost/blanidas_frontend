@@ -6,7 +6,7 @@ import {Button} from "@/presentation/components/ui/button.tsx";
 import {useState} from "react";
 import type {LoginFormData} from "@/presentation/pages/login/LoginPage.tsx";
 import * as React from "react";
-import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
+import {Alert, AlertDescription} from "@/presentation/components/ui/alert.tsx";
 
 interface LoginFormProps {
     sendForm: (data: LoginFormData) => void;

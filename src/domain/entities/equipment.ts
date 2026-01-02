@@ -8,9 +8,9 @@ interface Equipment {
     location: string;
     serialNumber: string;
     installed: Date;
+    model: EquipmentModel;
     institution: Institution;
-    equipmentModel: EquipmentModel;
-    equipmentCategory: EquipmentCategory;
+    category: EquipmentCategory;
     manufacturer: Manufacturer;
 }
 

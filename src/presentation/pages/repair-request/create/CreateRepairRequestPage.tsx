@@ -4,8 +4,8 @@ import {Route} from "@/presentation/routes/repair-request/$equipmentId.tsx"
 import type {Urgency} from "@/domain/entities/repair-request.ts";
 import RequestSuccess from "@/presentation/pages/repair-request/create/RequestSuccess.tsx";
 import BaseLayout from "@/presentation/components/layouts/BaseLayout.tsx";
-import {useEquipmentById} from "@/presentation/hooks/equipment.ts";
-import {useCreateRepairRequest} from "@/presentation/hooks/repair-request.ts";
+import {useEquipmentById} from "@/presentation/hooks/entities/equipment.ts";
+import {useCreateRepairRequest} from "@/presentation/hooks/entities/repair-request.ts";
 import {useState} from "react";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
 import EquipmentNotFound from "@/presentation/pages/repair-request/create/EquipmentNotFound.tsx";

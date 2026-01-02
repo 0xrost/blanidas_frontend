@@ -9,7 +9,7 @@ const Header = () => {
             <div className="max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+                        <div className="w-12 h-12 bg-linear-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
                             <span className="text-white text-xl">B</span>
                         </div>
                         <div>
@@ -38,7 +38,7 @@ const DashboardHeader = ({ username, role, onLogout, children, showFullLogo }: D
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+                            <div className="w-12 h-12 bg-linear-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
                                 <span className="text-white text-xl">B</span>
                             </div>
                             {showFullLogo &&

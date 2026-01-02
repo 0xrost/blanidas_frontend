@@ -1,9 +1,14 @@
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
-import type {ManufacturersFilters, ManufacturersSorting} from "@/domain/query/manufacturer.query.ts";
+import type {ManufacturerFilters, ManufacturerSortBy} from "@/domain/queries/manufacturer-list.query.ts";
 import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
+import type {CRUDRepository} from "@/domain/repositories/general.ts";
+import type {ManufacturerCreate, ManufacturerUpdate} from "@/domain/models/manufacturer.ts";
 
-interface IManufacturersRepository {
-    list(pagination: Pagination, filters: ManufacturersFilters, sorting: ManufacturersSorting): Promise<PaginationResponse<Manufacturer>>;
-}
+interface ManufacturerRepository extends CRUDRepository<
+    Manufacturer,
+    ManufacturerCreate,
+    ManufacturerUpdate,
+    ManufacturerFilters,
+    ManufacturerSortBy
+> {}
 
-export type { IManufacturersRepository };
+export type { ManufacturerRepository };

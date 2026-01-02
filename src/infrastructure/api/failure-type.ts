@@ -1,11 +1,37 @@
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
 import type {FailureType} from "@/domain/entities/failure-type.ts";
+import {type CRUDMappers, CRUDRepository} from "@/infrastructure/api/general.ts";
+import {emptyDomainToDtoMapper, emptyDtoToDomainMapper} from "@/infrastructure/mappers/mapper.ts";
+import type {FailureTypeCreate, FailureTypeUpdate} from "@/domain/models/failure-type.ts";
+import type {FailureTypeFilters, FailureTypeSortBy} from "@/domain/queries/failure-type.ts";
+import type {FailureTypeRepository as FailureTypeRepositoryInterface} from "@/domain/repositories/failure-type.ts";
 
-class FailureTypeRepository implements FailureTypeRepository {
-    async list(pagination: Pagination): Promise<PaginationResponse<FailureType>> {
-        const response = await fetch(Endpoints.failureTypes.list(pagination));
-        return await response.json();
+
+const failureTypeMappers: CRUDMappers<
+    FailureType,
+    FailureType,
+    FailureTypeCreate,
+    FailureTypeCreate,
+    FailureTypeUpdate,
+    FailureTypeUpdate
+> = {
+    model: emptyDtoToDomainMapper,
+    create: emptyDomainToDtoMapper,
+    update: emptyDomainToDtoMapper,
+}
+
+class FailureTypeRepository extends CRUDRepository<
+    FailureType,
+    FailureType,
+    FailureTypeCreate,
+    FailureTypeCreate,
+    FailureTypeUpdate,
+    FailureTypeUpdate,
+    FailureTypeFilters,
+    FailureTypeSortBy
+> implements FailureTypeRepositoryInterface {
+    constructor() {
+        super(Endpoints.failureType, failureTypeMappers);
     }
 }
 

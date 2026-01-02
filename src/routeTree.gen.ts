@@ -9,14 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './presentation/routes/__root'
+import { Route as AuthenticatedRouteImport } from './presentation/routes/_authenticated'
 import { Route as RepairRequestEquipmentIdRouteImport } from './presentation/routes/repair-request/$equipmentId'
 import { Route as AccountsLoginRouteImport } from './presentation/routes/accounts/login'
-import { Route as ManagerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/manager/dashboard/repair-requests/index'
-import { Route as EngineerDashboardSparePartsIndexRouteImport } from './presentation/routes/engineer/dashboard/spare-parts/index'
-import { Route as EngineerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/engineer/dashboard/repair-requests/index'
-import { Route as ManagerDashboardRepairRequestsRepairRequestIdRouteImport } from './presentation/routes/manager/dashboard/repair-requests/$repairRequestId'
-import { Route as EngineerDashboardRepairRequestsRepairRequestIdRouteImport } from './presentation/routes/engineer/dashboard/repair-requests/$repairRequestId'
+import { Route as AuthenticatedManagerRouteImport } from './presentation/routes/_authenticated/manager'
+import { Route as AuthenticatedEngineerRouteImport } from './presentation/routes/_authenticated/engineer'
+import { Route as AuthenticatedManagerDashboardStaffRouteImport } from './presentation/routes/_authenticated/manager/dashboard/staff'
+import { Route as AuthenticatedManagerDashboardSparePartsRouteImport } from './presentation/routes/_authenticated/manager/dashboard/spare-parts'
+import { Route as AuthenticatedManagerDashboardInstitutionsRouteImport } from './presentation/routes/_authenticated/manager/dashboard/institutions'
+import { Route as AuthenticatedManagerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/_authenticated/manager/dashboard/repair-requests/index'
+import { Route as AuthenticatedEngineerDashboardSparePartsIndexRouteImport } from './presentation/routes/_authenticated/engineer/dashboard/spare-parts/index'
+import { Route as AuthenticatedEngineerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/_authenticated/engineer/dashboard/repair-requests/index'
+import { Route as AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRouteImport } from './presentation/routes/_authenticated/manager/dashboard/repair-requests/$repairRequestId'
+import { Route as AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRouteImport } from './presentation/routes/_authenticated/engineer/dashboard/repair-requests/$repairRequestId'
 
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RepairRequestEquipmentIdRoute =
   RepairRequestEquipmentIdRouteImport.update({
     id: '/repair-request/$equipmentId',
@@ -28,70 +38,121 @@ const AccountsLoginRoute = AccountsLoginRouteImport.update({
   path: '/accounts/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ManagerDashboardRepairRequestsIndexRoute =
-  ManagerDashboardRepairRequestsIndexRouteImport.update({
-    id: '/manager/dashboard/repair-requests/',
-    path: '/manager/dashboard/repair-requests/',
-    getParentRoute: () => rootRouteImport,
+const AuthenticatedManagerRoute = AuthenticatedManagerRouteImport.update({
+  id: '/manager',
+  path: '/manager',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedEngineerRoute = AuthenticatedEngineerRouteImport.update({
+  id: '/engineer',
+  path: '/engineer',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedManagerDashboardStaffRoute =
+  AuthenticatedManagerDashboardStaffRouteImport.update({
+    id: '/dashboard/staff',
+    path: '/dashboard/staff',
+    getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
-const EngineerDashboardSparePartsIndexRoute =
-  EngineerDashboardSparePartsIndexRouteImport.update({
-    id: '/engineer/dashboard/spare-parts/',
-    path: '/engineer/dashboard/spare-parts/',
-    getParentRoute: () => rootRouteImport,
+const AuthenticatedManagerDashboardSparePartsRoute =
+  AuthenticatedManagerDashboardSparePartsRouteImport.update({
+    id: '/dashboard/spare-parts',
+    path: '/dashboard/spare-parts',
+    getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
-const EngineerDashboardRepairRequestsIndexRoute =
-  EngineerDashboardRepairRequestsIndexRouteImport.update({
-    id: '/engineer/dashboard/repair-requests/',
-    path: '/engineer/dashboard/repair-requests/',
-    getParentRoute: () => rootRouteImport,
+const AuthenticatedManagerDashboardInstitutionsRoute =
+  AuthenticatedManagerDashboardInstitutionsRouteImport.update({
+    id: '/dashboard/institutions',
+    path: '/dashboard/institutions',
+    getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
-const ManagerDashboardRepairRequestsRepairRequestIdRoute =
-  ManagerDashboardRepairRequestsRepairRequestIdRouteImport.update({
-    id: '/manager/dashboard/repair-requests/$repairRequestId',
-    path: '/manager/dashboard/repair-requests/$repairRequestId',
-    getParentRoute: () => rootRouteImport,
+const AuthenticatedManagerDashboardRepairRequestsIndexRoute =
+  AuthenticatedManagerDashboardRepairRequestsIndexRouteImport.update({
+    id: '/dashboard/repair-requests/',
+    path: '/dashboard/repair-requests/',
+    getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
-const EngineerDashboardRepairRequestsRepairRequestIdRoute =
-  EngineerDashboardRepairRequestsRepairRequestIdRouteImport.update({
-    id: '/engineer/dashboard/repair-requests/$repairRequestId',
-    path: '/engineer/dashboard/repair-requests/$repairRequestId',
-    getParentRoute: () => rootRouteImport,
+const AuthenticatedEngineerDashboardSparePartsIndexRoute =
+  AuthenticatedEngineerDashboardSparePartsIndexRouteImport.update({
+    id: '/dashboard/spare-parts/',
+    path: '/dashboard/spare-parts/',
+    getParentRoute: () => AuthenticatedEngineerRoute,
   } as any)
+const AuthenticatedEngineerDashboardRepairRequestsIndexRoute =
+  AuthenticatedEngineerDashboardRepairRequestsIndexRouteImport.update({
+    id: '/dashboard/repair-requests/',
+    path: '/dashboard/repair-requests/',
+    getParentRoute: () => AuthenticatedEngineerRoute,
+  } as any)
+const AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute =
+  AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRouteImport.update({
+    id: '/dashboard/repair-requests/$repairRequestId',
+    path: '/dashboard/repair-requests/$repairRequestId',
+    getParentRoute: () => AuthenticatedManagerRoute,
+  } as any)
+const AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute =
+  AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRouteImport.update(
+    {
+      id: '/dashboard/repair-requests/$repairRequestId',
+      path: '/dashboard/repair-requests/$repairRequestId',
+      getParentRoute: () => AuthenticatedEngineerRoute,
+    } as any,
+  )
 
 export interface FileRoutesByFullPath {
+  '/engineer': typeof AuthenticatedEngineerRouteWithChildren
+  '/manager': typeof AuthenticatedManagerRouteWithChildren
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
-  '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
-  '/manager/dashboard/repair-requests/$repairRequestId': typeof ManagerDashboardRepairRequestsRepairRequestIdRoute
-  '/engineer/dashboard/repair-requests': typeof EngineerDashboardRepairRequestsIndexRoute
-  '/engineer/dashboard/spare-parts': typeof EngineerDashboardSparePartsIndexRoute
-  '/manager/dashboard/repair-requests': typeof ManagerDashboardRepairRequestsIndexRoute
+  '/manager/dashboard/institutions': typeof AuthenticatedManagerDashboardInstitutionsRoute
+  '/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
+  '/manager/dashboard/staff': typeof AuthenticatedManagerDashboardStaffRoute
+  '/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
+  '/manager/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
+  '/engineer/dashboard/repair-requests': typeof AuthenticatedEngineerDashboardRepairRequestsIndexRoute
+  '/engineer/dashboard/spare-parts': typeof AuthenticatedEngineerDashboardSparePartsIndexRoute
+  '/manager/dashboard/repair-requests': typeof AuthenticatedManagerDashboardRepairRequestsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/engineer': typeof AuthenticatedEngineerRouteWithChildren
+  '/manager': typeof AuthenticatedManagerRouteWithChildren
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
-  '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
-  '/manager/dashboard/repair-requests/$repairRequestId': typeof ManagerDashboardRepairRequestsRepairRequestIdRoute
-  '/engineer/dashboard/repair-requests': typeof EngineerDashboardRepairRequestsIndexRoute
-  '/engineer/dashboard/spare-parts': typeof EngineerDashboardSparePartsIndexRoute
-  '/manager/dashboard/repair-requests': typeof ManagerDashboardRepairRequestsIndexRoute
+  '/manager/dashboard/institutions': typeof AuthenticatedManagerDashboardInstitutionsRoute
+  '/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
+  '/manager/dashboard/staff': typeof AuthenticatedManagerDashboardStaffRoute
+  '/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
+  '/manager/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
+  '/engineer/dashboard/repair-requests': typeof AuthenticatedEngineerDashboardRepairRequestsIndexRoute
+  '/engineer/dashboard/spare-parts': typeof AuthenticatedEngineerDashboardSparePartsIndexRoute
+  '/manager/dashboard/repair-requests': typeof AuthenticatedManagerDashboardRepairRequestsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated/engineer': typeof AuthenticatedEngineerRouteWithChildren
+  '/_authenticated/manager': typeof AuthenticatedManagerRouteWithChildren
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
-  '/engineer/dashboard/repair-requests/$repairRequestId': typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
-  '/manager/dashboard/repair-requests/$repairRequestId': typeof ManagerDashboardRepairRequestsRepairRequestIdRoute
-  '/engineer/dashboard/repair-requests/': typeof EngineerDashboardRepairRequestsIndexRoute
-  '/engineer/dashboard/spare-parts/': typeof EngineerDashboardSparePartsIndexRoute
-  '/manager/dashboard/repair-requests/': typeof ManagerDashboardRepairRequestsIndexRoute
+  '/_authenticated/manager/dashboard/institutions': typeof AuthenticatedManagerDashboardInstitutionsRoute
+  '/_authenticated/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
+  '/_authenticated/manager/dashboard/staff': typeof AuthenticatedManagerDashboardStaffRoute
+  '/_authenticated/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
+  '/_authenticated/manager/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
+  '/_authenticated/engineer/dashboard/repair-requests/': typeof AuthenticatedEngineerDashboardRepairRequestsIndexRoute
+  '/_authenticated/engineer/dashboard/spare-parts/': typeof AuthenticatedEngineerDashboardSparePartsIndexRoute
+  '/_authenticated/manager/dashboard/repair-requests/': typeof AuthenticatedManagerDashboardRepairRequestsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/engineer'
+    | '/manager'
     | '/accounts/login'
     | '/repair-request/$equipmentId'
+    | '/manager/dashboard/institutions'
+    | '/manager/dashboard/spare-parts'
+    | '/manager/dashboard/staff'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
     | '/manager/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests'
@@ -99,8 +160,13 @@ export interface FileRouteTypes {
     | '/manager/dashboard/repair-requests'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/engineer'
+    | '/manager'
     | '/accounts/login'
     | '/repair-request/$equipmentId'
+    | '/manager/dashboard/institutions'
+    | '/manager/dashboard/spare-parts'
+    | '/manager/dashboard/staff'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
     | '/manager/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests'
@@ -108,27 +174,36 @@ export interface FileRouteTypes {
     | '/manager/dashboard/repair-requests'
   id:
     | '__root__'
+    | '/_authenticated'
+    | '/_authenticated/engineer'
+    | '/_authenticated/manager'
     | '/accounts/login'
     | '/repair-request/$equipmentId'
-    | '/engineer/dashboard/repair-requests/$repairRequestId'
-    | '/manager/dashboard/repair-requests/$repairRequestId'
-    | '/engineer/dashboard/repair-requests/'
-    | '/engineer/dashboard/spare-parts/'
-    | '/manager/dashboard/repair-requests/'
+    | '/_authenticated/manager/dashboard/institutions'
+    | '/_authenticated/manager/dashboard/spare-parts'
+    | '/_authenticated/manager/dashboard/staff'
+    | '/_authenticated/engineer/dashboard/repair-requests/$repairRequestId'
+    | '/_authenticated/manager/dashboard/repair-requests/$repairRequestId'
+    | '/_authenticated/engineer/dashboard/repair-requests/'
+    | '/_authenticated/engineer/dashboard/spare-parts/'
+    | '/_authenticated/manager/dashboard/repair-requests/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AccountsLoginRoute: typeof AccountsLoginRoute
   RepairRequestEquipmentIdRoute: typeof RepairRequestEquipmentIdRoute
-  EngineerDashboardRepairRequestsRepairRequestIdRoute: typeof EngineerDashboardRepairRequestsRepairRequestIdRoute
-  ManagerDashboardRepairRequestsRepairRequestIdRoute: typeof ManagerDashboardRepairRequestsRepairRequestIdRoute
-  EngineerDashboardRepairRequestsIndexRoute: typeof EngineerDashboardRepairRequestsIndexRoute
-  EngineerDashboardSparePartsIndexRoute: typeof EngineerDashboardSparePartsIndexRoute
-  ManagerDashboardRepairRequestsIndexRoute: typeof ManagerDashboardRepairRequestsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/repair-request/$equipmentId': {
       id: '/repair-request/$equipmentId'
       path: '/repair-request/$equipmentId'
@@ -143,56 +218,141 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountsLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/manager/dashboard/repair-requests/': {
-      id: '/manager/dashboard/repair-requests/'
-      path: '/manager/dashboard/repair-requests'
+    '/_authenticated/manager': {
+      id: '/_authenticated/manager'
+      path: '/manager'
+      fullPath: '/manager'
+      preLoaderRoute: typeof AuthenticatedManagerRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/engineer': {
+      id: '/_authenticated/engineer'
+      path: '/engineer'
+      fullPath: '/engineer'
+      preLoaderRoute: typeof AuthenticatedEngineerRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/manager/dashboard/staff': {
+      id: '/_authenticated/manager/dashboard/staff'
+      path: '/dashboard/staff'
+      fullPath: '/manager/dashboard/staff'
+      preLoaderRoute: typeof AuthenticatedManagerDashboardStaffRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
+    '/_authenticated/manager/dashboard/spare-parts': {
+      id: '/_authenticated/manager/dashboard/spare-parts'
+      path: '/dashboard/spare-parts'
+      fullPath: '/manager/dashboard/spare-parts'
+      preLoaderRoute: typeof AuthenticatedManagerDashboardSparePartsRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
+    '/_authenticated/manager/dashboard/institutions': {
+      id: '/_authenticated/manager/dashboard/institutions'
+      path: '/dashboard/institutions'
+      fullPath: '/manager/dashboard/institutions'
+      preLoaderRoute: typeof AuthenticatedManagerDashboardInstitutionsRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
+    '/_authenticated/manager/dashboard/repair-requests/': {
+      id: '/_authenticated/manager/dashboard/repair-requests/'
+      path: '/dashboard/repair-requests'
       fullPath: '/manager/dashboard/repair-requests'
-      preLoaderRoute: typeof ManagerDashboardRepairRequestsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedManagerDashboardRepairRequestsIndexRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
     }
-    '/engineer/dashboard/spare-parts/': {
-      id: '/engineer/dashboard/spare-parts/'
-      path: '/engineer/dashboard/spare-parts'
+    '/_authenticated/engineer/dashboard/spare-parts/': {
+      id: '/_authenticated/engineer/dashboard/spare-parts/'
+      path: '/dashboard/spare-parts'
       fullPath: '/engineer/dashboard/spare-parts'
-      preLoaderRoute: typeof EngineerDashboardSparePartsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedEngineerDashboardSparePartsIndexRouteImport
+      parentRoute: typeof AuthenticatedEngineerRoute
     }
-    '/engineer/dashboard/repair-requests/': {
-      id: '/engineer/dashboard/repair-requests/'
-      path: '/engineer/dashboard/repair-requests'
+    '/_authenticated/engineer/dashboard/repair-requests/': {
+      id: '/_authenticated/engineer/dashboard/repair-requests/'
+      path: '/dashboard/repair-requests'
       fullPath: '/engineer/dashboard/repair-requests'
-      preLoaderRoute: typeof EngineerDashboardRepairRequestsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedEngineerDashboardRepairRequestsIndexRouteImport
+      parentRoute: typeof AuthenticatedEngineerRoute
     }
-    '/manager/dashboard/repair-requests/$repairRequestId': {
-      id: '/manager/dashboard/repair-requests/$repairRequestId'
-      path: '/manager/dashboard/repair-requests/$repairRequestId'
+    '/_authenticated/manager/dashboard/repair-requests/$repairRequestId': {
+      id: '/_authenticated/manager/dashboard/repair-requests/$repairRequestId'
+      path: '/dashboard/repair-requests/$repairRequestId'
       fullPath: '/manager/dashboard/repair-requests/$repairRequestId'
-      preLoaderRoute: typeof ManagerDashboardRepairRequestsRepairRequestIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
     }
-    '/engineer/dashboard/repair-requests/$repairRequestId': {
-      id: '/engineer/dashboard/repair-requests/$repairRequestId'
-      path: '/engineer/dashboard/repair-requests/$repairRequestId'
+    '/_authenticated/engineer/dashboard/repair-requests/$repairRequestId': {
+      id: '/_authenticated/engineer/dashboard/repair-requests/$repairRequestId'
+      path: '/dashboard/repair-requests/$repairRequestId'
       fullPath: '/engineer/dashboard/repair-requests/$repairRequestId'
-      preLoaderRoute: typeof EngineerDashboardRepairRequestsRepairRequestIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRouteImport
+      parentRoute: typeof AuthenticatedEngineerRoute
     }
   }
 }
 
+interface AuthenticatedEngineerRouteChildren {
+  AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute: typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
+  AuthenticatedEngineerDashboardRepairRequestsIndexRoute: typeof AuthenticatedEngineerDashboardRepairRequestsIndexRoute
+  AuthenticatedEngineerDashboardSparePartsIndexRoute: typeof AuthenticatedEngineerDashboardSparePartsIndexRoute
+}
+
+const AuthenticatedEngineerRouteChildren: AuthenticatedEngineerRouteChildren = {
+  AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute:
+    AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute,
+  AuthenticatedEngineerDashboardRepairRequestsIndexRoute:
+    AuthenticatedEngineerDashboardRepairRequestsIndexRoute,
+  AuthenticatedEngineerDashboardSparePartsIndexRoute:
+    AuthenticatedEngineerDashboardSparePartsIndexRoute,
+}
+
+const AuthenticatedEngineerRouteWithChildren =
+  AuthenticatedEngineerRoute._addFileChildren(
+    AuthenticatedEngineerRouteChildren,
+  )
+
+interface AuthenticatedManagerRouteChildren {
+  AuthenticatedManagerDashboardInstitutionsRoute: typeof AuthenticatedManagerDashboardInstitutionsRoute
+  AuthenticatedManagerDashboardSparePartsRoute: typeof AuthenticatedManagerDashboardSparePartsRoute
+  AuthenticatedManagerDashboardStaffRoute: typeof AuthenticatedManagerDashboardStaffRoute
+  AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute: typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
+  AuthenticatedManagerDashboardRepairRequestsIndexRoute: typeof AuthenticatedManagerDashboardRepairRequestsIndexRoute
+}
+
+const AuthenticatedManagerRouteChildren: AuthenticatedManagerRouteChildren = {
+  AuthenticatedManagerDashboardInstitutionsRoute:
+    AuthenticatedManagerDashboardInstitutionsRoute,
+  AuthenticatedManagerDashboardSparePartsRoute:
+    AuthenticatedManagerDashboardSparePartsRoute,
+  AuthenticatedManagerDashboardStaffRoute:
+    AuthenticatedManagerDashboardStaffRoute,
+  AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute:
+    AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute,
+  AuthenticatedManagerDashboardRepairRequestsIndexRoute:
+    AuthenticatedManagerDashboardRepairRequestsIndexRoute,
+}
+
+const AuthenticatedManagerRouteWithChildren =
+  AuthenticatedManagerRoute._addFileChildren(AuthenticatedManagerRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedEngineerRoute: typeof AuthenticatedEngineerRouteWithChildren
+  AuthenticatedManagerRoute: typeof AuthenticatedManagerRouteWithChildren
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedEngineerRoute: AuthenticatedEngineerRouteWithChildren,
+  AuthenticatedManagerRoute: AuthenticatedManagerRouteWithChildren,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AccountsLoginRoute: AccountsLoginRoute,
   RepairRequestEquipmentIdRoute: RepairRequestEquipmentIdRoute,
-  EngineerDashboardRepairRequestsRepairRequestIdRoute:
-    EngineerDashboardRepairRequestsRepairRequestIdRoute,
-  ManagerDashboardRepairRequestsRepairRequestIdRoute:
-    ManagerDashboardRepairRequestsRepairRequestIdRoute,
-  EngineerDashboardRepairRequestsIndexRoute:
-    EngineerDashboardRepairRequestsIndexRoute,
-  EngineerDashboardSparePartsIndexRoute: EngineerDashboardSparePartsIndexRoute,
-  ManagerDashboardRepairRequestsIndexRoute:
-    ManagerDashboardRepairRequestsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

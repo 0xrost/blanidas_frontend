@@ -1,7 +1,7 @@
-import type {FilterDefinition} from "@/infrastructure/query/query-builder.ts";
-import type {SparePartsFilters, SparePartsSortBy} from "@/domain/query/spare-part.query.ts";
+import type {FilterDefinition} from "@/infrastructure/query/map.ts";
+import type {SparePartFilters, SparePartSortBy} from "@/domain/queries/spare-part-list.query.ts";
 
-const sparePartsFiltersMap: Record<keyof SparePartsFilters, FilterDefinition> = {
+const sparePartsFilterMap: Record<keyof SparePartFilters, FilterDefinition> = {
     name: {
         field: "name",
         operator: "ilike",
@@ -24,13 +24,13 @@ const sparePartsFiltersMap: Record<keyof SparePartsFilters, FilterDefinition> = 
     }
 };
 
-const sparePartsSortingMap: Record<SparePartsSortBy, string> = {
+const sparePartsSortMap: Record<SparePartSortBy, string> = {
     status: "status",
     name: "name",
     quantity: "quantity",
 }
 
 export {
-    sparePartsFiltersMap,
-    sparePartsSortingMap,
+    sparePartsFilterMap,
+    sparePartsSortMap,
 };

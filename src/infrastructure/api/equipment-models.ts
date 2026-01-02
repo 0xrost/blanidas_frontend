@@ -1,15 +1,37 @@
-import type {EquipmentModelsRepository as EquipmentModelsRepositoryInterface} from "@/infrastructure/api/equipment-models.ts";
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
-import type {EquipmentModelsSorting} from "@/domain/query/equipment-models.query.ts";
+import {type CRUDMappers, CRUDRepository} from "@/infrastructure/api/general.ts";
+import {emptyDomainToDtoMapper, emptyDtoToDomainMapper} from "@/infrastructure/mappers/mapper.ts";
+import type {EquipmentModelRepository as EquipmentModelRepositoryInterface} from "@/domain/repositories/equipment-models.ts"
 import {Endpoints} from "@/infrastructure/endpoints.ts";
-import {mapPaginationResponseDtoToDomain} from "@/infrastructure/mappers/pagination.ts";
+import type {EquipmentModelCreate, EquipmentModelUpdate} from "@/domain/models/equipment-model.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
+import type {EquipmentModelFilters, EquipmentModelSortBy} from "@/domain/queries/equipment-model-list.query.ts";
 
-class EquipmentModelsRepository implements EquipmentModelsRepositoryInterface {
-    async list(pagination: Pagination, sorting: EquipmentModelsSorting): Promise<PaginationResponse<EquipmentModel>> {
-        const response = await fetch(Endpoints.equipmentModels.list(pagination, sorting));
-        return mapPaginationResponseDtoToDomain(await response.json(), (data: unknown): EquipmentModel => data as EquipmentModel);
+const equipmentModelMappers: CRUDMappers<
+    EquipmentModel,
+    EquipmentModel,
+    EquipmentModelCreate,
+    EquipmentModelCreate,
+    EquipmentModelUpdate,
+    EquipmentModelUpdate
+> = {
+    model: emptyDtoToDomainMapper,
+    create: emptyDomainToDtoMapper,
+    update: emptyDomainToDtoMapper,
+}
+
+class EquipmentModelRepository extends CRUDRepository<
+    EquipmentModel,
+    EquipmentModel,
+    EquipmentModelCreate,
+    EquipmentModelCreate,
+    EquipmentModelUpdate,
+    EquipmentModelUpdate,
+    EquipmentModelFilters,
+    EquipmentModelSortBy
+> implements EquipmentModelRepositoryInterface {
+    constructor() {
+        super(Endpoints.equipmentModel, equipmentModelMappers);
     }
 }
 
-export { EquipmentModelsRepository };
+export { EquipmentModelRepository };

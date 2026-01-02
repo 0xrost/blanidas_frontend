@@ -1,32 +1,32 @@
 import {AlertTriangle, CheckCircle, Package, Plus, XCircle} from "lucide-react";
 import {useSparePartsSummary} from "@/presentation/hooks/summary.ts";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
-import FilterCard, {type FilterCardValues, type FilterConfig} from "@/presentation/components/layouts/FilterCard.tsx";
-import type {SparePart, SparePartStatus} from "@/domain/entities/spare-part.ts";
+import FiltersPanel, {type FiltersPanelValues, type FilterConfig} from "@/presentation/components/layouts/FiltersPanel.tsx";
+import type {SparePart, StockStatus} from "@/domain/entities/spare-part.ts";
 import {useEffect, useMemo, useState} from "react";
-import type {SparePartsSortBy} from "@/domain/query/spare-part.query.ts";
+import type {SparePartSortBy} from "@/domain/queries/spare-part-list.query.ts";
 import {
     useCreateSparePart,
     useDeleteSparePart,
     useSpareParts,
     useUpdateSparePart
-} from "@/presentation/hooks/spare-part.ts";
+} from "@/presentation/hooks/entities/spare-part.ts";
 import SparePartsList from "@/presentation/components/tabs/spare-parts/SparePartsList.tsx";
-import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
-import {useInstitutions} from "@/presentation/hooks/institution.ts";
-import {type Pagination, UnlimitedPagination} from "@/domain/models/pagination.ts";
+import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
+import {useInstitutions} from "@/presentation/hooks/entities/institution.ts";
 import SparePartFormModal, {
     type SparePartFormData
 } from "@/presentation/components/tabs/spare-parts/SparePartFormModal.tsx";
-import {useSparePartCategories} from "@/presentation/hooks/spare-part-categories.ts";
-import {useEquipmentModels} from "@/presentation/hooks/equipment-models.ts";
-import {useSuppliers} from "@/presentation/hooks/suppliers.ts";
-import {useManufacturers} from "@/presentation/hooks/manufacturers.ts";
+import {useSparePartCategories} from "@/presentation/hooks/entities/spare-part-category.ts";
+import {useEquipmentModels} from "@/presentation/hooks/entities/equipment-model.ts";
+import {useSuppliers} from "@/presentation/hooks/entities/supplier.ts";
+import {useManufacturers} from "@/presentation/hooks/entities/manufacturer.ts";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {composeMutationOptions} from "@/presentation/utils.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
-import {Route} from "@/presentation/routes/manager/dashboard/repair-requests";
+import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
+import {SortByNameAsc} from "@/domain/sorting.ts";
 
 const initialFilters: FilterConfig[] = [
     {
@@ -66,16 +66,16 @@ const initialFilters: FilterConfig[] = [
     },
 ];
 
-interface SearchParams extends FilterCardValues {
+interface SearchParams extends FiltersPanelValues {
     institutionId: string;
     sparePartCategoryId: string;
     sparePartModelId: string;
-    status: SparePartStatus | "all";
-    sortBy: SparePartsSortBy;
+    status: StockStatus | "all";
+    sortBy: SparePartSortBy;
 }
 
-interface Props { page: number, limit: number }
-const SparePartsListTab = ({ page, limit }: Props) => {
+interface Props { page: number, limit: number, url: string }
+const SparePartsListTab = ({ page, limit, url }: Props) => {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [spareParts, setSpareParts] = useState<SparePart[]>([]);
     const [values, setValues] = useState<SearchParams>({
@@ -88,11 +88,11 @@ const SparePartsListTab = ({ page, limit }: Props) => {
         search: ""
     });
 
-    const { data: institutionsPagination } = useInstitutions(UnlimitedPagination)
-    const { data: sparePartCategoriesPagination } = useSparePartCategories(UnlimitedPagination, { sortBy: 'name', sortOrder: 'asc' })
-    const { data: equipmentModelsPagination } = useEquipmentModels(UnlimitedPagination, { sortBy: 'name', sortOrder: 'asc' })
-    const { data: suppliersPagination } = useSuppliers(UnlimitedPagination, { sortBy: 'name', sortOrder: 'asc' })
-    const { data: manufacturersPagination } = useManufacturers(UnlimitedPagination, {}, { sortBy: 'name', sortOrder: 'asc' })
+    const { data: sparePartCategoriesPagination } = useSparePartCategories({pagination: UnlimitedPagination, sorting: SortByNameAsc})
+    const { data: equipmentModelsPagination } = useEquipmentModels({pagination: UnlimitedPagination, sorting: SortByNameAsc})
+    const { data: manufacturersPagination } = useManufacturers({pagination: UnlimitedPagination, sorting: SortByNameAsc})
+    const { data: institutionsPagination } = useInstitutions({pagination: UnlimitedPagination, sorting: SortByNameAsc})
+    const { data: suppliersPagination } = useSuppliers({pagination: UnlimitedPagination, sorting: SortByNameAsc})
 
     const updateSparePart = useUpdateSparePart();
     const createSparePart = useCreateSparePart();
@@ -101,20 +101,20 @@ const SparePartsListTab = ({ page, limit }: Props) => {
     const pagination = useMemo<Pagination>(() => ({ page: page, limit: limit }), [page, limit])
 
     const { data: summary, refetch: refetchSummary } = useSparePartsSummary();
-    const { data: sparePartsPagination } = useSpareParts(
-        pagination,
-        {
+    const { data: sparePartsPagination } = useSpareParts({
+        pagination: pagination,
+        filters: {
             status: values.status === "all" ? undefined : values.status,
             name: values.search.trim().length === 0 ? undefined : values.search.trim(),
             categoryId: values.sparePartCategoryId === "all" ? undefined : values.sparePartCategoryId,
             modelId: values.sparePartModelId === "all" ? undefined : values.sparePartModelId,
             institutionId: values.institutionId === "all" ? undefined : values.institutionId,
         },
-        {
+        sorting: {
             sortBy: values.sortBy,
             sortOrder: values.sortOrder,
-        },
-    )
+        }
+    })
 
     const filters = useMemo<FilterConfig[]>(() => {
         const mapper: Record<string, { id: string, name: string }[]> = {
@@ -147,12 +147,19 @@ const SparePartsListTab = ({ page, limit }: Props) => {
         }
     }, [sparePartsPagination]);
 
-    useEffect(() => { refetchSummary() }, [spareParts]);
+    useEffect(() => { void refetchSummary() }, [spareParts, refetchSummary]);
 
     const onCreateSparePart = (data: SparePartFormData, options?: MutationOptions<SparePart>) => {
         if (data.categoryId === null || data.supplierId === null || data.manufacturerId === null) return;
-        createSparePart.mutate({...data, sparePartCategoryId: data.categoryId}, composeMutationOptions({
+        const { categoryId, supplierId, manufacturerId, ...rest } = data;
+        createSparePart.mutate({
+            ...rest,
+            sparePartCategoryId: categoryId,
+            manufacturerId: manufacturerId,
+            supplierId: supplierId,
+        }, composeMutationOptions({
             onSuccess: (response) => {
+                console.log(response);
                 setSpareParts(prev =>  [
                     response,
                     ...prev.filter(x => x.id !== response.id),
@@ -176,7 +183,7 @@ const SparePartsListTab = ({ page, limit }: Props) => {
         onUpdateSparePart({id: sparePartId, locations: locations,}, options);
     }
 
-    const onDeleteSparePart = (id: string, options?: MutationOptions<null>) => {
+    const onDeleteSparePart = (id: string, options?: MutationOptions<void>) => {
         deleteSparePart.mutate(id, composeMutationOptions({
             onSuccess: () => setSpareParts(prev => prev.filter(x => x.id !== id),)
         }, options))
@@ -200,7 +207,7 @@ const SparePartsListTab = ({ page, limit }: Props) => {
                 <DashboardCard label="Відсутні" value={summary?.outOfStock ?? 0} color="red" icon={XCircle} />
             </div>
 
-            <FilterCard
+            <FiltersPanel
                 setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
                 values={values}
                 actionButton={createButton}
@@ -222,7 +229,6 @@ const SparePartsListTab = ({ page, limit }: Props) => {
                 submit={onCreateSparePart}
                 isOpen={isModalVisible}
                 close={() => setIsModalVisible(false)}
-                institutions={institutionsPagination?.items ?? []}
                 suppliers={suppliersPagination?.items ?? []}
                 models={equipmentModelsPagination?.items ?? []}
                 categories={sparePartCategoriesPagination?.items ?? []}
@@ -231,6 +237,7 @@ const SparePartsListTab = ({ page, limit }: Props) => {
             <PaginationControl
                 items={sparePartsPagination?.total ?? 0}
                 pagination={pagination}
+                url={url}
             />
         </div>
     );

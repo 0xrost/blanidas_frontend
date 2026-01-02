@@ -1,44 +1,71 @@
-import type {AuthSession} from "@/domain/auth/session.ts";
-import type {UserLogin} from "@/domain/repositories/auth.ts";
+import type { AuthSession } from "@/domain/auth/session";
+import type {UserLogin} from "@/domain/models/auth.ts";
 
-type Listener = (value: AuthSession | null) => void
+type Listener = (value: AuthSession | null) => void;
+
+const STORAGE_KEY = "auth-session";
 
 class AuthService {
-    private session: AuthSession | null = null
-    private listeners = new Set<Listener>()
-    private readonly login_callback: (command: LoginCommand) => Promise<AuthSession>
+    private authSession: AuthSession | null = null;
+    private listeners = new Set<Listener>();
+    private readonly loginCallback: (command: UserLogin) => Promise<AuthSession>;
 
-    constructor(login_callback: (command: LoginCommand) => Promise<AuthSession>) {
-        this.login_callback = login_callback;
+    constructor(loginCallback: (command: UserLogin) => Promise<AuthSession>) {
+        this.loginCallback = loginCallback;
+        this.loadFromStorage();
+        this.syncBetweenTabs();
+    }
+
+    private loadFromStorage() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            this.authSession = raw ? JSON.parse(raw) : null;
+        } catch {
+            localStorage.removeItem(STORAGE_KEY);
+            this.authSession = null;
+        }
     }
 
     async login(email: string, password: string) {
-        this.session = await this.login_callback({ email, password });
-        this.emit()
-        return this.session
+        this.authSession = await this.loginCallback({ email, password });
+        this.persist();
+        this.notify();
+        return this.authSession;
     }
 
     logout() {
-        this.session = null
-        this.emit()
+        this.authSession = null;
+        localStorage.removeItem(STORAGE_KEY);
+        this.notify();
     }
 
     getSession() {
-        return this.session
+        return this.authSession;
     }
 
     subscribe(listener: Listener) {
-        this.listeners.add(listener)
-        return () => this.listeners.delete(listener)
+        this.listeners.add(listener);
+        listener(this.authSession);
+        return () => this.listeners.delete(listener);
     }
 
-    unsubscribe(listener: Listener) {
-        this.listeners.delete(listener)
-        return () => this.listeners.delete(listener)
+    private notify() {
+        this.listeners.forEach(l => l(this.authSession));
     }
 
-    private emit() {
-        this.listeners.forEach(l => l(this.session))
+    private persist() {
+        if (this.authSession) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.authSession));
+        }
+    }
+
+    private syncBetweenTabs() {
+        window.addEventListener("storage", (e) => {
+            if (e.key !== STORAGE_KEY) return;
+
+            this.authSession = e.newValue ? JSON.parse(e.newValue) : null;
+            this.notify();
+        });
     }
 }
 

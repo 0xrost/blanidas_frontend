@@ -5,7 +5,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog.tsx";
+} from "@/presentation/components/ui/dialog.tsx";
 import {Label} from "@/presentation/components/ui/label.tsx";
 import {Input} from "@/presentation/components/ui/input.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
@@ -14,12 +14,21 @@ import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/presentation/components/ui/select.tsx";
-import {MultiSelect} from "@/components/ui/multi-select.tsx";
+import {MultiSelect} from "@/presentation/components/ui/multi-select.tsx";
 import {useEffect, useState} from "react";
 import type {MutationOptions} from "@/presentation/models.ts";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
+
+const emptyForm: SparePartFormData = {
+    name: "",
+    minQuantity: 1,
+    categoryId: null,
+    supplierId: null,
+    manufacturerId: null,
+    compatibleModelIds: [],
+};
 
 interface SparePartFormData {
     name: string;
@@ -45,15 +54,6 @@ interface Props {
 const SparePartFormModal = ({
     isOpen, close, initialValues, submit, categories, suppliers, models, manufacturers
 }: Props) => {
-    const emptyForm: SparePartFormData = {
-        name: "",
-        minQuantity: 1,
-        categoryId: null,
-        supplierId: null,
-        manufacturerId: null,
-        compatibleModelIds: [],
-    };
-
     const [error, setError] = useTimedError<boolean>(false, 5000);
     const [formData, setFormData] = useState<SparePartFormData>(emptyForm);
 
@@ -124,7 +124,7 @@ const SparePartFormModal = ({
                             value={formData.name}
                             onChange={e => updateField("name", e.target.value)}
                             placeholder="Назва запчастини"
-                            className="border border-slate-200 rounded-lg "
+                            className="border border-slate-200 rounded-lg"
                         />
                     </div>
                     <div className="space-y-2">

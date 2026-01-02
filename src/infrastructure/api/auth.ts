@@ -2,7 +2,7 @@ import type {AuthRepository as AuthRepositoryInterface} from "@/domain/repositor
 import {Endpoints} from "@/infrastructure/endpoints.ts";
 import type {AuthSession} from "@/domain/auth/session.ts";
 import {mapAuthSessionDtoToDomain} from "@/infrastructure/mappers/auth.ts";
-import jsonRequestHeaders from "@/infrastructure/api/headers.ts";
+import {jsonRequestHeaders} from "@/infrastructure/api/headers.ts";
 import type {UserLogin} from "@/domain/models/auth.ts";
 
 class AuthRepository implements AuthRepositoryInterface {

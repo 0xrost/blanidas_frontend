@@ -1,9 +1,14 @@
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
-import type {SuppliersSorting} from "@/domain/query/suppliers.query.ts";
+import type {SupplierFilters, SupplierSortBy} from "@/domain/queries/supplier-list.query.ts";
+import type {CRUDRepository} from "@/domain/repositories/general.ts";
+import type {SupplierCreate, SupplierUpdate} from "@/domain/models/supplier.ts";
 
-interface SuppliersRepository {
-    list(pagination: Pagination, sorting: SuppliersSorting): Promise<PaginationResponse<Supplier>>;
-}
+interface SupplierRepository extends CRUDRepository<
+    Supplier,
+    SupplierCreate,
+    SupplierUpdate,
+    SupplierFilters,
+    SupplierSortBy
+> {}
 
-export type { SuppliersRepository };
+export type { SupplierRepository };

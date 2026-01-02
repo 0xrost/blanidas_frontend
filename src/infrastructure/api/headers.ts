@@ -4,4 +4,4 @@ const jsonRequestHeaders = {
     },
 }
 
-export default jsonRequestHeaders;
+export { jsonRequestHeaders };

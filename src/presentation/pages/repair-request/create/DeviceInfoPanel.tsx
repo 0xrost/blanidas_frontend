@@ -15,7 +15,7 @@ const DeviceInfoPanel = ({ equipment, isLoading }: DeviceInfoPanelProps) => {
                             <p className="text-sm text-slate-500">Модель обладнання</p>
                             {isLoading
                                 ? <div className="h-4 w-52 bg-slate-200 rounded animate-pulse"></div>
-                                : <p className="text-slate-900 text-base">{equipment?.equipmentModel?.name}</p>
+                                : <p className="text-slate-900 text-base">{equipment?.model?.name}</p>
                             }
                         </div>
                     </div>

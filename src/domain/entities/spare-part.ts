@@ -4,7 +4,7 @@ import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 
-type SparePartStatus = "in_stock" | "low_stock" | "out_of_stock";
+type StockStatus = "in_stock" | "low_stock" | "out_of_stock";
 
 interface Location {
     id: string;
@@ -22,7 +22,7 @@ interface SparePart {
     locations: Location[];
     supplier: Supplier;
     manufacturer: Manufacturer;
-    sparePartCategory: SparePartCategory;
+    category: SparePartCategory;
 }
 
-export type { SparePart, Location, SparePartStatus };
+export type { SparePart, Location, StockStatus };

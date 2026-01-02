@@ -1,8 +1,14 @@
-import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
+import type {EquipmentCategoryFilters, EquipmentCategorySortBy} from "@/domain/queries/equipment-category-list.query.ts";
+import type {EquipmentCategoryCreate, EquipmentCategoryUpdate} from "@/domain/models/equipment-category.ts";
+import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
+import type {CRUDRepository} from "@/domain/repositories/general.ts";
 
-interface EquipmentCategoryRepository {
-    list(pagination: Pagination): Promise<PaginationResponse<EquipmentModel>>;
-}
+interface EquipmentCategoryRepository extends CRUDRepository<
+    EquipmentCategory,
+    EquipmentCategoryCreate,
+    EquipmentCategoryUpdate,
+    EquipmentCategoryFilters,
+    EquipmentCategorySortBy
+> {}
 
 export type { EquipmentCategoryRepository };

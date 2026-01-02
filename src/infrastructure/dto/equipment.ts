@@ -14,4 +14,28 @@ interface EquipmentDto {
     manufacturer: Manufacturer
 }
 
-export type { EquipmentDto };
+interface EquipmentCreateDto {
+    location: string;
+    serial_number: string;
+    installed: Date;
+    model_id: string;
+    institution_id: string;
+    category_id: string;
+    manufacturer_id: string;
+}
+
+interface EquipmentUpdateDto {
+    location?: string | null;
+    serial_number?: string | null;
+    installed?: Date | null;
+    model_id?: string | null;
+    institution_id?: string | null;
+    categorya_id?: string | null;
+    manufacturer_id?: string | null;
+}
+
+export type {
+    EquipmentDto,
+    EquipmentCreateDto,
+    EquipmentUpdateDto,
+};

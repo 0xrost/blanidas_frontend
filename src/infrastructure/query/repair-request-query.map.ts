@@ -1,7 +1,7 @@
-import type {RepairRequestFilters, RepairRequestSortBy} from "@/domain/query/repair-request.query.ts";
-import type {FilterDefinition} from "@/infrastructure/query/query-builder.ts";
+import type {RepairRequestFilters, RepairRequestSortBy} from "@/domain/queries/repair-request-list.query.ts";
+import type {FilterDefinition} from "@/infrastructure/query/map.ts";
 
-const repairRequestsFiltersMap: Record<keyof RepairRequestFilters, FilterDefinition> = {
+const repairRequestsFilterMap: Record<keyof RepairRequestFilters, FilterDefinition> = {
     idNotEqualTo: {
         field: "id",
         operator: "ne",
@@ -36,11 +36,11 @@ const repairRequestsFiltersMap: Record<keyof RepairRequestFilters, FilterDefinit
     }
 };
 
-const repairRequestsSortingMap: Record<RepairRequestSortBy, string> = {
+const repairRequestsSortMap: Record<RepairRequestSortBy, string> = {
     date: "created_at",
     status: "status",
     model: "equipment__equipment_model__name",
     urgency: "urgency",
 }
 
-export { repairRequestsFiltersMap, repairRequestsSortingMap };
+export { repairRequestsFilterMap, repairRequestsSortMap };

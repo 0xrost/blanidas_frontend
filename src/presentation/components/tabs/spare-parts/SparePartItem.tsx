@@ -1,7 +1,7 @@
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {useState} from "react";
 import type {Institution} from "@/domain/entities/institution.ts";
-import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-parts.ts";
+import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import SparePartLocations from "@/presentation/components/tabs/spare-parts/SparePartLocations.tsx";
 import SparePartItemRow from "@/presentation/components/tabs/spare-parts/SparePartItemRow.tsx";
@@ -85,13 +85,12 @@ const SparePartItem = ({
                     manufacturerId: sparePart.id,
                     supplierId: sparePart.supplier.id,
                     minQuantity: sparePart.minQuantity,
-                    categoryId: sparePart.sparePartCategory.id,
+                    categoryId: sparePart.category.id,
                     compatibleModelIds: sparePart.compatibleModels.map(x => x.id),
                 }}
                 submit={onSubmit}
                 isOpen={isModalVisible}
                 close={() => setIsModalVisible(false)}
-                institutions={institutions}
                 suppliers={suppliers}
                 models={models}
                 categories={categories}

@@ -1,15 +1,40 @@
-import type {SparePartCategoriesRepository as SparePartCategoriesRepositoryInterface} from "@/domain/repositories/spare-part-categories.ts";
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
-import type {SparePartCategoriesSorting} from "@/domain/query/spare-part-categories.query.ts";
+import {type CRUDMappers, CRUDRepository} from "@/infrastructure/api/general.ts";
+import type {SparePartCategoryRepository as SparePartCategoryRepositoryInterface} from "@/domain/repositories/spare-part-categories.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
-import {mapPaginationResponseDtoToDomain} from "@/infrastructure/mappers/pagination.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
+import type {SparePartCategoryCreate, SparePartCategoryUpdate} from "@/domain/models/spare-part-category.ts";
+import {emptyDomainToDtoMapper, emptyDtoToDomainMapper} from "@/infrastructure/mappers/mapper.ts";
+import type {
+    SparePartCategoryFilters,
+    SparePartCategorySortBy
+} from "@/domain/queries/spare-part-category-list.query.ts";
 
-class SparePartCategoriesRepository implements SparePartCategoriesRepositoryInterface {
-    async list(pagination: Pagination, sorting: SparePartCategoriesSorting): Promise<PaginationResponse<SparePartCategory>> {
-        const response = await fetch(Endpoints.sparePartCategories.list(pagination, sorting));
-        return mapPaginationResponseDtoToDomain(await response.json(), (data: unknown): SparePartCategory => data as SparePartCategory);
+const sparePartCategoryMappers: CRUDMappers<
+    SparePartCategory,
+    SparePartCategory,
+    SparePartCategoryCreate,
+    SparePartCategoryCreate,
+    SparePartCategoryUpdate,
+    SparePartCategoryUpdate
+> = {
+    model: emptyDtoToDomainMapper,
+    create: emptyDomainToDtoMapper,
+    update: emptyDomainToDtoMapper,
+}
+
+class SparePartCategoryRepository extends CRUDRepository<
+    SparePartCategory,
+    SparePartCategory,
+    SparePartCategoryCreate,
+    SparePartCategoryCreate,
+    SparePartCategoryUpdate,
+    SparePartCategoryUpdate,
+    SparePartCategoryFilters,
+    SparePartCategorySortBy
+> implements SparePartCategoryRepositoryInterface {
+    constructor() {
+        super(Endpoints.sparePartCategory, sparePartCategoryMappers);
     }
 }
 
-export { SparePartCategoriesRepository };
+export { SparePartCategoryRepository }

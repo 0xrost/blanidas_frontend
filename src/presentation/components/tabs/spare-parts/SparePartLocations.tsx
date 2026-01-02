@@ -3,7 +3,7 @@ import {Save, Warehouse} from "lucide-react";
 import LocationItem from "@/presentation/components/tabs/spare-parts/LocationItem.tsx";
 import LocationForm from "@/presentation/components/tabs/spare-parts/LocationForm.tsx";
 import type {UILocation} from "@/presentation/components/tabs/spare-parts/models.ts";
-import type {LocationCreate} from "@/domain/models/spare-parts.ts";
+import type {LocationCreate} from "@/domain/models/spare-part.ts";
 import {useEffect, useMemo, useState} from "react";
 import type {MutationOptions} from "@/presentation/models.ts";
 import type {Institution} from "@/domain/entities/institution.ts";

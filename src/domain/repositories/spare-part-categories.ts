@@ -1,10 +1,18 @@
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
-import type {SparePartCategoriesSorting} from "@/domain/query/spare-part-categories.query.ts";
+import type {
+    SparePartCategoryFilters,
+    SparePartCategorySortBy
+} from "@/domain/queries/spare-part-category-list.query.ts";
+import type {CRUDRepository} from "@/domain/repositories/general.ts";
+import type {SparePartCategoryCreate, SparePartCategoryUpdate} from "@/domain/models/spare-part-category.ts";
 
-interface SparePartCategoriesRepository {
-    list(pagination: Pagination, sorting: SparePartCategoriesSorting): Promise<PaginationResponse<SparePartCategory>>;
-}
+interface SparePartCategoryRepository extends CRUDRepository<
+    SparePartCategory,
+    SparePartCategoryCreate,
+    SparePartCategoryUpdate,
+    SparePartCategoryFilters,
+    SparePartCategorySortBy
+> {}
 
-export type { SparePartCategoriesRepository };
+export type { SparePartCategoryRepository };
 

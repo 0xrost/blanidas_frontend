@@ -12,7 +12,20 @@ interface SparePartsSummary {
     outOfStock: number;
 }
 
+interface StaffSummary {
+    total: number;
+    engineers: number;
+    managers: number;
+}
+
+interface InstitutionsSummary {
+    total: number;
+    equipment: number;
+}
+
 export type {
     RepairRequestsSummary,
+    InstitutionsSummary,
     SparePartsSummary,
+    StaffSummary,
 };

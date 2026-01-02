@@ -1,14 +1,21 @@
-import type {InstitutionRepository} from "@/domain/repositories/institution.ts";
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
-import {InvalidLimitError, InvalidPageNumberError} from "@/domain/errors.ts";
+import {createCrudUseCases} from "@/domain/useCases/factory.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
+import type {InstitutionCreate, InstitutionUpdate} from "@/domain/models/institution.ts";
+import type {InstitutionFilters, InstitutionSortBy} from "@/domain/queries/institution-list.query.ts";
+import type {InstitutionRepository} from "@/domain/repositories/institution.ts";
 
-const listInstitutionsUseCase =
-    (repo: InstitutionRepository) =>
-        async (pagination: Pagination): Promise<PaginationResponse<Institution>> => {
-            if (pagination.page < 1) throw new InvalidPageNumberError(pagination.page);
-            if (pagination.limit < 1 && pagination.limit !== -1) throw new InvalidLimitError(pagination.limit)
-            return await repo.list(pagination);
-        }
+const InstitutionUseCases = createCrudUseCases<
+    Institution,
+    InstitutionCreate,
+    InstitutionUpdate,
+    InstitutionFilters,
+    InstitutionSortBy,
+    InstitutionRepository
+>();
 
-export { listInstitutionsUseCase };
+export const {
+    list: listInstitutionsUseCase,
+    create: createInstitutionUseCase,
+    update: updateInstitutionUseCase,
+    delete: deleteInstitutionUseCase
+} = InstitutionUseCases;

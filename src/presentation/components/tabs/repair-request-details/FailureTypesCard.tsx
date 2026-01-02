@@ -1,7 +1,7 @@
 import {Card} from "@/presentation/components/ui/card.tsx";
 import type {FailureType} from "@/domain/entities/failure-type.ts";
-import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {Badge} from "@/components/ui/badge.tsx";
+import {Checkbox} from "@/presentation/components/ui/checkbox.tsx";
+import {Badge} from "@/presentation/components/ui/badge.tsx";
 
 type FailureTypesCardProps = {
     isReadonly: boolean;

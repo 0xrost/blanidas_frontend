@@ -1,16 +1,42 @@
-import type {SuppliersRepository as SuppliersRepositoryInterface} from "@/domain/repositories/suppliers.ts";
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
+import {type CRUDMappers, CRUDRepository} from "@/infrastructure/api/general.ts";
+import type {SupplierRepository as SupplierRepositoryInterface} from "@/domain/repositories/suppliers.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
-import {mapPaginationResponseDtoToDomain} from "@/infrastructure/mappers/pagination.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
-import type {SuppliersSorting} from "@/domain/query/suppliers.query.ts";
-import {mapSupplierDtoToDomain} from "@/infrastructure/mappers/supplier.ts";
+import type {SupplierCreate, SupplierUpdate} from "@/domain/models/supplier.ts";
+import type {SupplierFilters, SupplierSortBy} from "@/domain/queries/supplier-list.query.ts";
+import type {SupplierCreateDto, SupplierDto, SupplierUpdateDto} from "@/infrastructure/dto/supplier.ts";
+import {
+    mapSupplierCreateDomainToDto,
+    mapSupplierDtoToDomain,
+    mapSupplierUpdateDomainToDto
+} from "@/infrastructure/mappers/supplier.ts";
 
-class SuppliersRepository implements SuppliersRepositoryInterface {
-    async list(pagination: Pagination, sorting: SuppliersSorting): Promise<PaginationResponse<Supplier>> {
-        const response = await fetch(Endpoints.suppliers.list(pagination, sorting));
-        return mapPaginationResponseDtoToDomain(await response.json(), mapSupplierDtoToDomain);
+const supplierMappers: CRUDMappers<
+    Supplier,
+    SupplierDto,
+    SupplierCreate,
+    SupplierCreateDto,
+    SupplierUpdate,
+    SupplierUpdateDto
+> = {
+    model: mapSupplierDtoToDomain,
+    create: mapSupplierCreateDomainToDto,
+    update: mapSupplierUpdateDomainToDto,
+}
+
+class SupplierRepository extends CRUDRepository<
+    Supplier,
+    SupplierDto,
+    SupplierCreate,
+    SupplierCreateDto,
+    SupplierUpdate,
+    SupplierUpdateDto,
+    SupplierFilters,
+    SupplierSortBy
+> implements SupplierRepositoryInterface {
+    constructor() {
+        super(Endpoints.supplier, supplierMappers);
     }
 }
 
-export { SuppliersRepository };
+export { SupplierRepository }

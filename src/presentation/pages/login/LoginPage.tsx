@@ -16,7 +16,7 @@ const LoginPage = () => {
     if (session) {
         navigate({
             to: session.currentUser.role === "manager"
-                ? "/engineer/dashboard/repair-requests"
+                ? "/manager/dashboard/repair-requests"
                 : "/engineer/dashboard/repair-requests"
         })
     }

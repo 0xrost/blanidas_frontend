@@ -24,7 +24,7 @@ interface UsedSparePart {
 }
 
 interface RepairRequest {
-    id: number;
+    id: string;
     urgency: Urgency;
     issue: string;
     managerNote: string;

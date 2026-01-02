@@ -8,7 +8,7 @@ interface ColorScheme {
     icon: string
 }
 
-type Color = "red" | "blue" | "green" | "orange" | "yellow" | "slate";
+type Color = "red" | "blue" | "green" | "orange" | "yellow" | "slate" | "purple" | "cyan" | "pink";
 interface Props {
     label: string;
     value: number;
@@ -52,6 +52,24 @@ const colorSchemes: Record<Color, ColorScheme> = {
         label: "text-slate-700",
         value: "text-slate-900",
         icon: "text-slate-500",
+    },
+    purple: {
+        card: "bg-purple-50 border-purple-200",
+        label: "text-purple-700",
+        value: "text-purple-900",
+        icon: "text-purple-500",
+    },
+    cyan: {
+        card: "bg-cyan-50 border-cyan-200",
+        label: "text-cyan-700",
+        value: "text-cyan-900",
+        icon: "text-cyan-500",
+    },
+    pink: {
+        card: "bg-pink-50 border-pink-200",
+        label: "text-pink-700",
+        value: "text-pink-900",
+        icon: "text-pink-500",
     },
 };
 

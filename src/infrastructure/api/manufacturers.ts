@@ -1,15 +1,37 @@
-import type { IManufacturersRepository } from "@/domain/repositories/manufacturers.ts";
-import type {ManufacturersFilters, ManufacturersSorting} from "@/domain/query/manufacturer.query.ts";
-import type {Pagination, PaginationResponse} from "@/domain/models/pagination.ts";
-import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
+import {type CRUDMappers, CRUDRepository} from "@/infrastructure/api/general.ts";
+import {emptyDomainToDtoMapper, emptyDtoToDomainMapper} from "@/infrastructure/mappers/mapper.ts";
+import type {ManufacturerRepository as ManufacturerRepositoryInterface} from "@/domain/repositories/manufacturers.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
-import {mapPaginationResponseDtoToDomain} from "@/infrastructure/mappers/pagination.ts";
+import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
+import type {ManufacturerCreate, ManufacturerUpdate} from "@/domain/models/manufacturer.ts";
+import type {ManufacturerFilters, ManufacturerSortBy} from "@/domain/queries/manufacturer-list.query.ts";
 
-class ManufacturersRepository implements IManufacturersRepository {
-    async list(pagination: Pagination, filters: ManufacturersFilters, sorting: ManufacturersSorting): Promise<PaginationResponse<Manufacturer>> {
-        const response = await fetch(Endpoints.manufacturers.list(pagination, filters, sorting));
-        return mapPaginationResponseDtoToDomain(await response.json(), (data: unknown): Manufacturer => data as Manufacturer);
+const manufacturerMappers: CRUDMappers<
+    Manufacturer,
+    Manufacturer,
+    ManufacturerCreate,
+    ManufacturerCreate,
+    ManufacturerUpdate,
+    ManufacturerUpdate
+> = {
+    model: emptyDtoToDomainMapper,
+    create: emptyDomainToDtoMapper,
+    update: emptyDomainToDtoMapper,
+}
+
+class ManufacturerRepository extends CRUDRepository<
+    Manufacturer,
+    Manufacturer,
+    ManufacturerCreate,
+    ManufacturerCreate,
+    ManufacturerUpdate,
+    ManufacturerUpdate,
+    ManufacturerFilters,
+    ManufacturerSortBy
+> implements ManufacturerRepositoryInterface {
+    constructor() {
+        super(Endpoints.manufacturer, manufacturerMappers);
     }
 }
 
-export { ManufacturersRepository };
+export { ManufacturerRepository };

@@ -7,20 +7,23 @@ import type { RepairRequestRepository as RepairRequestRepositoryInterface } from
 import { AuthRepository as AuthRepositoryImplementation } from "@/infrastructure/api/auth.ts";
 import type { AuthRepository as AuthRepositoryInterface } from "@/domain/repositories/auth.ts";
 
-import { EquipmentModelsRepository as EquipmentModelsRepositoryImplementation } from "@/infrastructure/api/equipment-models.ts";
-import type { EquipmentModelsRepository as EquipmentModelsRepositoryInterface } from "@/domain/repositories/equipment-models.ts";
+import { EquipmentModelRepository as EquipmentModelRepositoryImplementation } from "@/infrastructure/api/equipment-models.ts";
+import type { EquipmentModelRepository as EquipmentModelRepositoryInterface } from "@/domain/repositories/equipment-models.ts";
 
-import { SparePartCategoriesRepository as SparePartCategoriesRepositoryImplementation } from "@/infrastructure/api/spare-part-categories.ts";
-import type { SparePartCategoriesRepository as SparePartCategoriesRepositoryInterface } from "@/domain/repositories/spare-part-categories.ts";
+import { SparePartCategoryRepository as SparePartCategoryRepositoryImplementation } from "@/infrastructure/api/spare-part-categories.ts";
+import type { SparePartCategoryRepository as SparePartCategoryRepositoryInterface } from "@/domain/repositories/spare-part-categories.ts";
 
 import { SummaryRepository as SummaryRepositoryImplementation } from "@/infrastructure/api/summary.ts";
 import type { SummaryRepository as SummaryRepositoryInterface } from "@/domain/repositories/summary.ts";
 
-import { SuppliersRepository as SuppliersRepositoryImplementation } from "@/infrastructure/api/suppliers.ts";
-import type { SuppliersRepository as SuppliersRepositoryInterface } from "@/domain/repositories/suppliers.ts";
+import { SupplierRepository as SupplierRepositoryImplementation } from "@/infrastructure/api/suppliers.ts";
+import type { SupplierRepository as SupplierRepositoryInterface } from "@/domain/repositories/suppliers.ts";
 
 import { InstitutionRepository as InstitutionRepositoryImplementation } from "@/infrastructure/api/institution.ts";
 import type { InstitutionRepository as InstitutionRepositoryInterface } from "@/domain/repositories/institution.ts";
+
+import { InstitutionTypeRepository as InstitutionTypeRepositoryImplementation } from "@/infrastructure/api/institution-type.ts";
+import type { InstitutionTypeRepository as InstitutionTypeRepositoryInterface } from "@/domain/repositories/institution-type.ts";
 
 import { EquipmentCategoryRepository as EquipmentCategoryRepositoryImplementation } from "@/infrastructure/api/equipment-category.ts";
 import type { EquipmentCategoryRepository as EquipmentCategoryRepositoryInterface } from "@/domain/repositories/equipment-category.ts";
@@ -28,14 +31,18 @@ import type { EquipmentCategoryRepository as EquipmentCategoryRepositoryInterfac
 import { FailureTypeRepository as FailureTypeRepositoryImplementation } from "@/infrastructure/api/failure-type.ts";
 import type { FailureTypeRepository as FailureTypeRepositoryInterface } from "@/domain/repositories/failure-type.ts";
 
-import { SparePartsRepository as SparePartRepositoryImplementation } from "@/infrastructure/api/spare-part.ts";
-import type { SparePartsRepository as SparePartRepositoryInterface } from "@/domain/repositories/spare-part.ts";
+import { SparePartRepository as SparePartRepositoryImplementation } from "@/infrastructure/api/spare-part.ts";
+import type { SparePartRepository as SparePartRepositoryInterface } from "@/domain/repositories/spare-part.ts";
+
+import { ManufacturerRepository as ManufacturerRepositoryImplementation } from "@/infrastructure/api/manufacturers.ts";
+import type { ManufacturerRepository as ManufacturerRepositoryInterface } from "@/domain/repositories/manufacturers.ts";
+
+import { UserRepository as UserRepositoryImplementation } from "@/infrastructure/api/user.ts";
+import type { UserRepository as UserRepositoryInterface } from "@/domain/repositories/user.ts"
 
 import { AuthService as AuthServiceImplementation } from "@/infrastructure/services/auth.ts";
 import {loginUseCase} from "@/domain/useCases/auth.ts";
 
-import type {IManufacturersRepository} from "@/domain/repositories/manufacturers.ts";
-import { ManufacturersRepository as ManufacturersRepositoryImplementation } from "@/infrastructure/api/manufacturers.ts";
 
 const EquipmentRepository: EquipmentRepositoryInterface = new EquipmentRepositoryImplementation();
 const RepairRequestRepository: RepairRequestRepositoryInterface = new RepairRequestRepositoryImplementation();
@@ -45,10 +52,12 @@ const EquipmentCategoryRepository: EquipmentCategoryRepositoryInterface = new Eq
 const InstitutionRepository: InstitutionRepositoryInterface = new InstitutionRepositoryImplementation();
 const FailureTypeRepository: FailureTypeRepositoryInterface = new FailureTypeRepositoryImplementation();
 const SparePartRepository: SparePartRepositoryInterface = new SparePartRepositoryImplementation();
-const SparePartCategoriesRepository: SparePartCategoriesRepositoryInterface = new SparePartCategoriesRepositoryImplementation()
-const EquipmentModelsRepository: EquipmentModelsRepositoryInterface = new EquipmentModelsRepositoryImplementation();
-const SuppliersRepository: SuppliersRepositoryInterface = new SuppliersRepositoryImplementation();
-const ManufacturersRepository: IManufacturersRepository = new ManufacturersRepositoryImplementation()
+const SparePartCategoryRepository: SparePartCategoryRepositoryInterface = new SparePartCategoryRepositoryImplementation()
+const EquipmentModelRepository: EquipmentModelRepositoryInterface = new EquipmentModelRepositoryImplementation();
+const SupplierRepository: SupplierRepositoryInterface = new SupplierRepositoryImplementation();
+const ManufacturerRepository: ManufacturerRepositoryInterface = new ManufacturerRepositoryImplementation()
+const UserRepository: UserRepositoryInterface = new UserRepositoryImplementation();
+const InstitutionTypeRepository: InstitutionTypeRepositoryInterface = new InstitutionTypeRepositoryImplementation();
 
 const AuthService: AuthServiceImplementation = new AuthServiceImplementation(loginUseCase(AuthRepository));
 
@@ -62,8 +71,10 @@ export {
     InstitutionRepository,
     FailureTypeRepository,
     SparePartRepository,
-    SparePartCategoriesRepository,
-    EquipmentModelsRepository,
-    SuppliersRepository,
-    ManufacturersRepository,
+    SparePartCategoryRepository,
+    EquipmentModelRepository,
+    SupplierRepository,
+    ManufacturerRepository,
+    UserRepository,
+    InstitutionTypeRepository,
 };
