@@ -2,7 +2,7 @@ import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Location} from "@/domain/entities/spare-part.ts";
-import type {SupplierDto} from "@/infrastructure/dto/supplier.ts";
+import type {Supplier} from "@/domain/entities/supplier.ts";
 
 interface SparePartDto {
     id: string;
@@ -12,7 +12,7 @@ interface SparePartDto {
     note: string | null;
 
     locations: Location[];
-    supplier: SupplierDto;
+    supplier: Supplier;
     manufacturer: Manufacturer;
     spare_part_category: SparePartCategory;
 }

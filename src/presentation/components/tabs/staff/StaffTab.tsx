@@ -1,13 +1,11 @@
-import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
-import {Package, Plus, Shield, Wrench} from "lucide-react";
-import {useStaffSummary} from "@/presentation/hooks/summary.ts";
+import {Plus} from "lucide-react";
 import FiltersPanel, {type FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import type {Role} from "@/domain/auth/roles.ts";
 import StaffTable from "@/presentation/components/tabs/staff/StaffTable.tsx";
 import {useCreateUser, useDeleteUser, useUpdateUser, useUsers} from "@/presentation/hooks/entities/user.ts";
-import {UnlimitedPagination} from "@/domain/pagination.ts";
+import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
 import {useAuthSession} from "@/presentation/hooks/auth.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {composeMutationOptions} from "@/presentation/utils.ts";
@@ -18,6 +16,7 @@ import type {UserUpdate} from "@/domain/models/user.ts";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import {memberFields, type MemberFormData} from "@/presentation/components/tabs/staff/memberModal.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
+import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 
 const inlineFilter = {
     key: 'role',
@@ -45,16 +44,15 @@ const emptyMember: MemberFormData = {
 interface SearchParams extends FiltersPanelValues { role: Role | "all"; }
 
 interface Props {
-    page: number;
-    limit: number;
-    url: string;
+    pagination: Pagination
+    onChange: (pagination: Pagination) => void;
 }
-const StaffTab = ({ page, limit, url }: Props) => {
+const StaffTab = ({ pagination, onChange }: Props) => {
     const [values, setValues] = useState<SearchParams>({search: "", role: "all", sortOrder: "asc"});
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [localStaff, setLocalStaff] = useState<User[]>([]);
 
-    const pagination = useMemo(() => ({page: page, limit: limit}), [page, limit]);
+    const [error, setError] = useTimedError<string | null>(null, 5000);
 
     const authSession = useAuthSession();
 
@@ -62,8 +60,6 @@ const StaffTab = ({ page, limit, url }: Props) => {
     const updateMember = useUpdateUser();
     const deleteMember = useDeleteUser();
 
-
-    const {data: summary} = useStaffSummary();
     const {data: institutionsPagination} = useInstitutions({pagination: UnlimitedPagination, sorting: SortByNameAsc});
 
     const {data: staffPagination} = useUsers({
@@ -103,9 +99,16 @@ const StaffTab = ({ page, limit, url }: Props) => {
             }, composeMutationOptions({
                 onSuccess: (data) => {
                     setLocalStaff(prev => [data, ...prev]);
+                    setError(null);
+                },
+                onError: (x) => {
+                    setError(x?.status === 400 ?
+                        "Email уже використовується. Будь ласка, вкажіть інший." :
+                        "Не вдалося створити працівника. Спробуйте ще раз пізніше."
+                    )
                 }
             }, options));
-        }, [createMember]
+        }, [createMember, setError]
     );
 
     const onUpdate = useCallback(
@@ -148,30 +151,25 @@ const StaffTab = ({ page, limit, url }: Props) => {
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <DashboardCard label="Всього" value={summary?.total ?? 0} color="slate" icon={Package} />
-                <DashboardCard label="Інженери" value={summary?.engineers ?? 0} color="blue" icon={Wrench} />
-                <DashboardCard label="Менеджери" value={summary?.managers ?? 0} color="purple" icon={Shield} />
-            </div>
             <FiltersPanel
                 values={values}
                 inlineFilter={inlineFilter}
                 actionButton={createButton}
+                searchPlaceholder={"Пошук за ім'ям та прізвищем працівника"}
                 setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
             />
 
             <StaffTable
                 staff={localStaff}
-                deleteMember={onDelete}
-                updateMember={onUpdate}
-                current={authSession?.currentUser ?? null}
+                delete_={onDelete}
+                update={onUpdate}
                 institutions={institutionsPagination?.items ?? []}
             />
 
             <PaginationControl
-                url={url}
                 items={staffPagination?.total ?? 0}
                 pagination={pagination}
+                onChange={onChange}
             />
 
             <FormModal
@@ -182,7 +180,7 @@ const StaffTab = ({ page, limit, url }: Props) => {
                 initialValues={emptyMember}
                 submit={onCreate}
                 fields={modalFields}
-                errorText="Не вдалося додати нового працівника"
+                errors={error ? [error] : []}
                 submitText="Додати"
             />
         </div>

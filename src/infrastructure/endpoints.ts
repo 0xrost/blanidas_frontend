@@ -169,6 +169,7 @@ const Endpoints = {
     auth: {
         base: BaseURL + "/api/users/",
         login: () => `${Endpoints.auth.base}login`,
+        refresh: () => `${Endpoints.auth.base}refresh`,
     },
     summary: {
         base: BaseURL + "/api/summary/",
@@ -176,7 +177,8 @@ const Endpoints = {
         getRepairRequests: () => `${Endpoints.summary.base}repair-requests`,
         getInstitutions: () => `${Endpoints.summary.base}institutions`,
         getSpareParts: () => `${Endpoints.summary.base}spare-parts`,
-        getUsers: () => `${Endpoints.summary.base}users`
+        getUsers: () => `${Endpoints.summary.base}users`,
+        getEquipment: () => `${Endpoints.summary.base}equipment`,
     },
     equipmentCategory: {
         mappers: {

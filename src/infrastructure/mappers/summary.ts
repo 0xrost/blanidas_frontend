@@ -1,5 +1,5 @@
-import type {RepairRequestSummaryDto, SparePartsSummaryDto} from "@/infrastructure/dto/summary.ts";
-import type {RepairRequestsSummary, SparePartsSummary} from "@/domain/entities/summary.ts";
+import type {EquipmentSummaryDto, RepairRequestSummaryDto, SparePartsSummaryDto} from "@/infrastructure/dto/summary.ts";
+import type {EquipmentSummary, RepairRequestsSummary, SparePartsSummary} from "@/domain/entities/summary.ts";
 
 const mapRepairRequestSummaryDtoToDomain = (dto: RepairRequestSummaryDto): RepairRequestsSummary => {
     return {
@@ -19,7 +19,17 @@ const mapSparePartsSummaryDtoToDomain = (dto: SparePartsSummaryDto): SparePartsS
     };
 };
 
+const mapEquipmentSummaryDtoToDomain = (dto: EquipmentSummaryDto): EquipmentSummary => {
+    return {
+        total: dto.total,
+        notWorking: dto.not_working,
+        underMaintenance: dto.under_maintenance,
+        working: dto.working,
+    };
+};
+
 export {
     mapRepairRequestSummaryDtoToDomain,
     mapSparePartsSummaryDtoToDomain,
+    mapEquipmentSummaryDtoToDomain,
 };

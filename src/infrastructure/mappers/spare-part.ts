@@ -5,7 +5,6 @@ import type {
     SparePartUpdateDto
 } from "@/infrastructure/dto/spare-part.ts";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
-import {mapSupplierDtoToDomain} from "@/infrastructure/mappers/supplier.ts";
 import type {LocationCreate, SparePartCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
 
 const mapSparePartDtoToDomain = (dto: SparePartDto): SparePart => {
@@ -13,12 +12,12 @@ const mapSparePartDtoToDomain = (dto: SparePartDto): SparePart => {
         id: dto.id,
         name: dto.name,
         note: dto.note,
+        supplier: dto.supplier,
         locations: dto.locations,
         minQuantity: dto.min_quantity,
         manufacturer: dto.manufacturer,
         compatibleModels: dto.compatible_models,
         category: dto.spare_part_category,
-        supplier: mapSupplierDtoToDomain(dto.supplier),
     };
 }
 

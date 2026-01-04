@@ -41,7 +41,7 @@ import { UserRepository as UserRepositoryImplementation } from "@/infrastructure
 import type { UserRepository as UserRepositoryInterface } from "@/domain/repositories/user.ts"
 
 import { AuthService as AuthServiceImplementation } from "@/infrastructure/services/auth.ts";
-import {loginUseCase} from "@/domain/useCases/auth.ts";
+import {loginUseCase, refreshUseCase} from "@/domain/useCases/auth.ts";
 
 
 const EquipmentRepository: EquipmentRepositoryInterface = new EquipmentRepositoryImplementation();
@@ -59,7 +59,7 @@ const ManufacturerRepository: ManufacturerRepositoryInterface = new Manufacturer
 const UserRepository: UserRepositoryInterface = new UserRepositoryImplementation();
 const InstitutionTypeRepository: InstitutionTypeRepositoryInterface = new InstitutionTypeRepositoryImplementation();
 
-const AuthService: AuthServiceImplementation = new AuthServiceImplementation(loginUseCase(AuthRepository));
+const AuthService: AuthServiceImplementation = new AuthServiceImplementation(loginUseCase(AuthRepository), refreshUseCase(AuthRepository));
 
 export {
     EquipmentRepository,

@@ -3,7 +3,7 @@ import type {ListQuery} from "@/domain/list-query.ts";
 type InstitutionSortBy = "name";
 interface InstitutionFilters {
     nameOrAddress?: string;
-    categoryId?: string;
+    typeId?: string;
 }
 
 type InstitutionListQuery = ListQuery<InstitutionFilters, InstitutionSortBy>

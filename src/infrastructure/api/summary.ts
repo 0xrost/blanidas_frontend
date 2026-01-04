@@ -1,12 +1,17 @@
 import type { SummaryRepository as SummaryRepositoryInterface } from "@/domain/repositories/summary.ts";
 import type {
+    EquipmentSummary,
     InstitutionsSummary,
     RepairRequestsSummary,
     SparePartsSummary,
     StaffSummary
 } from "@/domain/entities/summary.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
-import {mapRepairRequestSummaryDtoToDomain, mapSparePartsSummaryDtoToDomain} from "@/infrastructure/mappers/summary.ts";
+import {
+    mapEquipmentSummaryDtoToDomain,
+    mapRepairRequestSummaryDtoToDomain,
+    mapSparePartsSummaryDtoToDomain
+} from "@/infrastructure/mappers/summary.ts";
 
 class SummaryRepository implements SummaryRepositoryInterface {
     async getRepairRequests(): Promise<RepairRequestsSummary> {
@@ -27,6 +32,11 @@ class SummaryRepository implements SummaryRepositoryInterface {
     async getStaff(): Promise<StaffSummary> {
         const response = await fetch(Endpoints.summary.getUsers());
         return await response.json()
+    }
+
+    async getEquipment(): Promise<EquipmentSummary> {
+        const response = await fetch(Endpoints.summary.getEquipment());
+        return mapEquipmentSummaryDtoToDomain(await response.json())
     }
 }
 

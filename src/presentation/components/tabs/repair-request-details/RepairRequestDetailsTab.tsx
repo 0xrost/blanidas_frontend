@@ -1,11 +1,9 @@
 import DeviceInfoCard from "@/presentation/components/tabs/repair-request-details/DeviceInfoCard.tsx";
 import {
     useDeleteRepairRequest,
-    useRepairRequestById,
     useRepairRequests,
     useUpdateRepairRequest
 } from "@/presentation/hooks/entities/repair-request.ts";
-import {Route} from "@/presentation/routes/_authenticated/engineer/dashboard/repair-requests/$repairRequestId.tsx";
 import IssueCard from "@/presentation/components/tabs/repair-request-details/IssueCard.tsx";
 import FailureTypesCard from "@/presentation/components/tabs/repair-request-details/FailureTypesCard.tsx";
 import {useFailureTypes} from "@/presentation/hooks/entities/failure-type.ts";
@@ -27,7 +25,6 @@ import NotFoundTab from "@/presentation/components/tabs/not-found/NotFoundTab.ts
 import type {RepairRequestStatusRecordCreate} from "@/domain/models/repair-request.ts";
 import {Card} from "@/presentation/components/ui/card.tsx";
 import {useNavigate} from "@tanstack/react-router";
-import {UnlimitedPagination} from "@/domain/models/pagination.ts";
 
 
 function mergeUsedSpareParts(

@@ -51,6 +51,7 @@ abstract class CRUDRepository<
 
     protected async request<TResponse>(url: string, init?: RequestInit): Promise<TResponse> {
         const response = await fetchWithAuth(url, init);
+        console.log("--------------------------------------------------")
         if (!response.ok) throw new RequestError(response.status);
         if (response.status === 204) return undefined as TResponse;
         return response.json();
@@ -85,8 +86,8 @@ abstract class CRUDRepository<
         return this.mappers.model(json)
     }
 
-    async delete(id: string): Promise<void> {
-        await this.request(this.endpoints.delete(id), { method: "DELETE" });
+    async delete(id: string): Promise<string> {
+        return await this.request(this.endpoints.delete(id), { method: "DELETE" });
     }
 }
 

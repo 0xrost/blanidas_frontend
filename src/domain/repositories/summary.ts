@@ -1,4 +1,5 @@
 import type {
+    EquipmentSummary,
     InstitutionsSummary,
     RepairRequestsSummary,
     SparePartsSummary,
@@ -10,6 +11,7 @@ interface SummaryRepository {
     getInstitutions(): Promise<InstitutionsSummary>;
     getSpareParts(): Promise<SparePartsSummary>;
     getStaff(): Promise<StaffSummary>;
+    getEquipment(): Promise<EquipmentSummary>;
 }
 
 export type { SummaryRepository };

@@ -7,9 +7,9 @@ function composeMutationOptions<T>(...options: (MutationOptions<T> | undefined)[
                 if (option?.onSuccess) option.onSuccess(data);
             });
         },
-        onError: () => {
+        onError: (error) => {
             options.forEach(option => {
-                if (option?.onError) option.onError();
+                if (option?.onError) option.onError(error);
             });
         }
     };

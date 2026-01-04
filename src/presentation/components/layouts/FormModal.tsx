@@ -12,7 +12,6 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { MultiSelect } from "@/presentation/components/ui/multi-select.tsx";
 import { useState } from "react";
 import {Label} from "@/presentation/components/ui/label.tsx";
-import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
 import type {MutationOptions} from "@/presentation/models.ts";
 
@@ -62,7 +61,7 @@ interface Props<T> {
     initialValues: T;
     submit: (data: T, options?: MutationOptions) => void;
     fields: FieldConfig<T>[];
-    errorText?: string;
+    errors?: string[];
     submitText?: string;
     cancelText?: string;
 }
@@ -75,33 +74,26 @@ function FormModal<T>({
     initialValues,
     submit,
     fields,
-    errorText,
+    errors,
     submitText = "Зберегти",
     cancelText = "Скасувати"
 }: Props<T>) {
-    const [error, setError] = useTimedError<boolean>(false, 5000);
     const [formData, setFormData] = useState<T>(initialValues);
 
     const onSubmit = () => {
-        submit(formData, {
-            onSuccess: onClose,
-            onError: () => setError(true),
-        })
+        submit(formData, { onSuccess: onClose, })
     }
 
     const onClose = () => {
-        setError(false);
         setFormData(initialValues);
         close();
     }
 
     const updateField = (field: FieldConfig<T>, value: any) => {
         setFormData(prev => field.setValue(prev, value));
-        setError(false);
     };
 
     const validationErrors = fields.reduce<string[]>((x, field) => {
-
         const value = field.getValue(formData);
         if (!value) return x;
 
@@ -180,9 +172,7 @@ function FormModal<T>({
                         </div>
                     ))}
                 </div>
-                {error && errorText &&
-                    <Notification type="error" message={errorText} />
-                }
+                {errors && errors.length !== 0 && errors.map(x => <Notification type="error" message={x} />)}
                 {validationErrors &&
                     validationErrors.map(x => {
                         return <Notification type="error" message={x} />;

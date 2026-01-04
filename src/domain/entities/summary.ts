@@ -23,9 +23,17 @@ interface InstitutionsSummary {
     equipment: number;
 }
 
+interface EquipmentSummary {
+    total: number;
+    working: number;
+    underMaintenance: number;
+    notWorking: number;
+}
+
 export type {
     RepairRequestsSummary,
     InstitutionsSummary,
     SparePartsSummary,
     StaffSummary,
+    EquipmentSummary,
 };

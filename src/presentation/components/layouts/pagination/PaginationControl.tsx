@@ -7,23 +7,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/presentation/components/ui/select";
-import { Link } from "@tanstack/react-router";
 import {PageButton} from "@/presentation/components/layouts/pagination/PageButton.tsx";
-import {usePaginationNavigate} from "@/presentation/hooks/usePaginationNavigate.ts";
 import type {Pagination} from "@/domain/pagination.ts";
 
 type PaginationControlProps = {
-    url: string;
     items: number;
     pagination: Pagination;
+    onChange: (pagination: Pagination) => void;
 };
 
 const VISIBLE_PAGES = 2;
-const LIMIT_OPTIONS = [10, 15, 20, 50];
+const limitOptions = [10, 15, 20, 50];
 
-const PaginationControl = ({ items, pagination, url }: PaginationControlProps) => {
+const PaginationControl = ({ items, pagination, onChange }: PaginationControlProps) => {
     const { page, limit } = pagination;
-    const goTo = usePaginationNavigate(url);
 
     const totalPages = Math.max(1, Math.ceil(items / limit));
 
@@ -51,7 +48,7 @@ const PaginationControl = ({ items, pagination, url }: PaginationControlProps) =
                 <div className="flex items-center gap-2">
                     <PageButton
                         disabled={page === 1}
-                        onClick={() => goTo({ page: pagination.page - 1, limit: pagination.limit })}
+                        onClick={() => onChange({ page: pagination.page - 1, limit: pagination.limit })}
                     >
                         <ChevronRight className="w-4 h-4 rotate-180" />
                         <span className="hidden sm:inline ml-1">Попередня</span>
@@ -62,7 +59,7 @@ const PaginationControl = ({ items, pagination, url }: PaginationControlProps) =
                             <PageButton
                                 children={1}
                                 selected={false}
-                                onClick={() => goTo({ page: 1, limit: pagination.limit })}
+                                onClick={() => onChange({ page: 1, limit: pagination.limit })}
                             />
                             <span className="px-2 text-slate-400">…</span>
                         </>
@@ -75,7 +72,7 @@ const PaginationControl = ({ items, pagination, url }: PaginationControlProps) =
                         <PageButton
                             key={page}
                             children={page}
-                            onClick={() => goTo({ page: page, limit: pagination.limit })}
+                            onClick={() => onChange({ page: page, limit: pagination.limit })}
                             selected={page === pagination.page}
                         />
                     ))}
@@ -86,14 +83,14 @@ const PaginationControl = ({ items, pagination, url }: PaginationControlProps) =
                             <PageButton
                                 children={totalPages}
                                 disabled={page === totalPages}
-                                onClick={() => goTo({ page: totalPages, limit: pagination.limit })}
+                                onClick={() => onChange({ page: totalPages, limit: pagination.limit })}
                             />
                         </>
                     )}
 
                     <PageButton
                         disabled={page === totalPages}
-                        onClick={() => goTo({ page: totalPages, limit: pagination.limit })}
+                        onClick={() => onChange({ page: totalPages, limit: pagination.limit })}
                     >
                         <span className="hidden sm:inline mr-1">Наступна</span>
                         <ChevronRight className="w-4 h-4" />
@@ -104,15 +101,15 @@ const PaginationControl = ({ items, pagination, url }: PaginationControlProps) =
                     <span>На сторінці:</span>
                     <Select
                         value={pagination.limit.toString()}
-                        onValueChange={value => goTo({page: 1, limit: +value})}
+                        onValueChange={value => onChange({page: 1, limit: +value})}
                     >
                         <SelectTrigger className="w-20 h-9">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            {LIMIT_OPTIONS.map(v => (
-                                <SelectItem key={v} value={v.toString()}>
-                                    <Link to={url} search={{page: pagination.page, limit: v}}>{v}</Link>
+                            {limitOptions.map(option => (
+                                <SelectItem key={option} value={option.toString()}>
+                                    {option}
                                 </SelectItem>
                             ))}
                         </SelectContent>

@@ -1,5 +1,6 @@
 import type { AuthSession } from "@/domain/auth/session";
 import type {UserLogin} from "@/domain/models/auth.ts";
+import type {Token} from "@/domain/auth/token.ts";
 
 type Listener = (value: AuthSession | null) => void;
 
@@ -9,9 +10,14 @@ class AuthService {
     private authSession: AuthSession | null = null;
     private listeners = new Set<Listener>();
     private readonly loginCallback: (command: UserLogin) => Promise<AuthSession>;
+    private readonly refreshCallback: (refreshToken: string) => Promise<Token>;
 
-    constructor(loginCallback: (command: UserLogin) => Promise<AuthSession>) {
+    constructor(
+        loginCallback: (command: UserLogin) => Promise<AuthSession>,
+        refreshCallback: (refreshToken: string) => Promise<Token>,
+    ) {
         this.loginCallback = loginCallback;
+        this.refreshCallback = refreshCallback;
         this.loadFromStorage();
         this.syncBetweenTabs();
     }
@@ -31,6 +37,19 @@ class AuthService {
         this.persist();
         this.notify();
         return this.authSession;
+    }
+
+    async refresh(): Promise<Token> {
+        const session = this.authSession;
+
+        if (session === null) throw new Error("Refresh token is missing");
+        session.token = await this.refreshCallback(session.token.refreshToken);
+
+        this.authSession = session;
+        this.persist();
+        this.notify();
+
+        return this.authSession.token;
     }
 
     logout() {

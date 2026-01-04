@@ -4,9 +4,9 @@ import {useState} from "react";
 
 interface Props {
     edit: () => void;
-    remove: () => void;
+    delete_: () => void;
 }
-const EditDeleteActions = ({ edit, remove }: Props) => {
+const EditDeleteActions = ({ edit, delete_ }: Props) => {
     const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
     return (
@@ -26,7 +26,10 @@ const EditDeleteActions = ({ edit, remove }: Props) => {
                 size="sm"
                 variant="outline"
                 onClick={() => {
-                    if (showConfirmation) remove();
+                    if (showConfirmation) {
+                        delete_();
+                        setShowConfirmation(false);
+                    }
                     else setShowConfirmation(true);
                 }}
                 className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0"

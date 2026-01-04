@@ -12,7 +12,16 @@ interface SparePartsSummaryDto {
     out_of_stock: number;
 }
 
+interface EquipmentSummaryDto {
+    total: number;
+    working: number;
+    under_maintenance: number;
+    not_working: number;
+}
+
+
 export type {
     RepairRequestSummaryDto,
     SparePartsSummaryDto,
+    EquipmentSummaryDto,
 };

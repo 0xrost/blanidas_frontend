@@ -96,16 +96,6 @@ const ManagerDashboardLayoutTabs: DashboardLayoutTab[] = [
         url: "/manager/dashboard/equipment",
     },
     {
-        title: "Працівники",
-        icon: Users,
-        url: "/manager/dashboard/staff",
-    },
-    {
-        title: "Заклади",
-        icon: Building2,
-        url: "/manager/dashboard/institutions",
-    },
-    {
         title: "Інше",
         icon: Settings,
         url: "/manager/dashboard/settings",

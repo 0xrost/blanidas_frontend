@@ -18,4 +18,4 @@ const mapTokenDtoToDomain = (dto: TokenDto): Token => {
     }
 }
 
-export { mapAuthSessionDtoToDomain };
+export { mapAuthSessionDtoToDomain, mapTokenDtoToDomain };

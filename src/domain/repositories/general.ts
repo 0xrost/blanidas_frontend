@@ -11,7 +11,7 @@ interface CRUDRepository<
     list(query: ListQuery<TFilters, TSortBy>): Promise<PaginationResponse<TModel>>;
     create(data: TCreate): Promise<TModel>;
     update(data: TUpdate): Promise<TModel>;
-    delete(id: string): Promise<void>;
+    delete(id: string): Promise<string>;
 }
 
 export type { CRUDRepository };

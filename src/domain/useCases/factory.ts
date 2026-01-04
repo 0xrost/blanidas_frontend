@@ -59,8 +59,8 @@ function createDeleteUseCase<
     TRepository extends CRUDRepository<TModel, TCreate, TUpdate, TFilters, TSortBy>
 >() {
     return (repo: TRepository) => {
-        return async (id: string): Promise<void> => {
-            await repo.delete(id);
+        return async (id: string): Promise<string> => {
+            return await repo.delete(id);
         }
     }
 }

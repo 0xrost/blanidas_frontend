@@ -6,8 +6,8 @@ const institutionFilterMap: Record<keyof InstitutionFilters, FilterDefinition> =
         field: "name__or__address",
         operator: "ilike",
     },
-    categoryId: {
-        field: "category_id",
+    typeId: {
+        field: "institution_type_id",
         operator: "eq",
     },
 };

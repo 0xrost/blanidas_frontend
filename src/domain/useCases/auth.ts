@@ -5,4 +5,8 @@ const loginUseCase = (repo: AuthRepository) => {
     return async (data: UserLogin) => await repo.login(data);
 }
 
-export { loginUseCase };
+const refreshUseCase = (repo: AuthRepository) => {
+    return async (refreshToken: string) => await repo.refresh(refreshToken);
+}
+
+export { loginUseCase, refreshUseCase };

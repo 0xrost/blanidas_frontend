@@ -1,6 +1,7 @@
 import {useMutation, useQuery} from "@tanstack/react-query";
 import type {ListQuery} from "@/domain/list-query.ts";
 import type {PaginationResponse} from "@/domain/pagination.ts";
+import type {RequestError} from "@/infrastructure/errors.ts";
 
 
 type ListQueryFn<TModel, TFilters, TSortBy extends string> = (query: ListQuery<TFilters, TSortBy>) => Promise<PaginationResponse<TModel>>;
@@ -8,9 +9,9 @@ type MutationFn<TInput, TResult> = (data: TInput) => Promise<TResult>;
 
 interface CrudHooks<TModel, TCreate, TUpdate, TFilters, TSortBy extends string> {
     useList: (query: ListQuery<TFilters, TSortBy>) => ReturnType<typeof useQuery<PaginationResponse<TModel>>>;
-    useCreate: () => ReturnType<typeof useMutation<TModel, unknown, TCreate, unknown>>;
-    useUpdate: () => ReturnType<typeof useMutation<TModel, unknown, TUpdate, unknown>>;
-    useDelete: () => ReturnType<typeof useMutation<void, unknown, string, unknown>>;
+    useCreate: () => ReturnType<typeof useMutation<TModel, RequestError, TCreate, unknown>>;
+    useUpdate: () => ReturnType<typeof useMutation<TModel, RequestError, TUpdate, unknown>>;
+    useDelete: () => ReturnType<typeof useMutation<string, RequestError, string, unknown>>;
 }
 
 function createCrudHooks<TModel, TCreate, TUpdate, TFilters, TSortBy extends string>(
@@ -18,7 +19,7 @@ function createCrudHooks<TModel, TCreate, TUpdate, TFilters, TSortBy extends str
     listFn: ListQueryFn<TModel, TFilters, TSortBy>,
     createFn: MutationFn<TCreate, TModel>,
     updateFn: MutationFn<TUpdate, TModel>,
-    deleteFn: MutationFn<string, void>
+    deleteFn: MutationFn<string, string>
 ): CrudHooks<TModel, TCreate, TUpdate, TFilters, TSortBy> {
     return {
         useList: (query: ListQuery<TFilters, TSortBy>) =>
@@ -27,15 +28,15 @@ function createCrudHooks<TModel, TCreate, TUpdate, TFilters, TSortBy extends str
                 queryFn: () => listFn(query),
             }),
         useCreate: () =>
-            useMutation<TModel, unknown, TCreate, unknown>({
+            useMutation<TModel, RequestError, TCreate, unknown>({
                 mutationFn: (data: TCreate) => createFn(data),
             }),
         useUpdate: () =>
-            useMutation<TModel, unknown, TUpdate, unknown>({
+            useMutation<TModel, RequestError, TUpdate, unknown>({
                 mutationFn: (data: TUpdate) => updateFn(data),
             }),
         useDelete: () =>
-            useMutation<void, unknown, string, unknown>({
+            useMutation<string, RequestError, string, unknown>({
                 mutationFn: (id: string) => deleteFn(id),
             }),
     };

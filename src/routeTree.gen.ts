@@ -16,7 +16,9 @@ import { Route as AuthenticatedManagerRouteImport } from './presentation/routes/
 import { Route as AuthenticatedEngineerRouteImport } from './presentation/routes/_authenticated/engineer'
 import { Route as AuthenticatedManagerDashboardStaffRouteImport } from './presentation/routes/_authenticated/manager/dashboard/staff'
 import { Route as AuthenticatedManagerDashboardSparePartsRouteImport } from './presentation/routes/_authenticated/manager/dashboard/spare-parts'
+import { Route as AuthenticatedManagerDashboardSettingsRouteImport } from './presentation/routes/_authenticated/manager/dashboard/settings'
 import { Route as AuthenticatedManagerDashboardInstitutionsRouteImport } from './presentation/routes/_authenticated/manager/dashboard/institutions'
+import { Route as AuthenticatedManagerDashboardEquipmentRouteImport } from './presentation/routes/_authenticated/manager/dashboard/equipment'
 import { Route as AuthenticatedManagerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/_authenticated/manager/dashboard/repair-requests/index'
 import { Route as AuthenticatedEngineerDashboardSparePartsIndexRouteImport } from './presentation/routes/_authenticated/engineer/dashboard/spare-parts/index'
 import { Route as AuthenticatedEngineerDashboardRepairRequestsIndexRouteImport } from './presentation/routes/_authenticated/engineer/dashboard/repair-requests/index'
@@ -60,10 +62,22 @@ const AuthenticatedManagerDashboardSparePartsRoute =
     path: '/dashboard/spare-parts',
     getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
+const AuthenticatedManagerDashboardSettingsRoute =
+  AuthenticatedManagerDashboardSettingsRouteImport.update({
+    id: '/dashboard/settings',
+    path: '/dashboard/settings',
+    getParentRoute: () => AuthenticatedManagerRoute,
+  } as any)
 const AuthenticatedManagerDashboardInstitutionsRoute =
   AuthenticatedManagerDashboardInstitutionsRouteImport.update({
     id: '/dashboard/institutions',
     path: '/dashboard/institutions',
+    getParentRoute: () => AuthenticatedManagerRoute,
+  } as any)
+const AuthenticatedManagerDashboardEquipmentRoute =
+  AuthenticatedManagerDashboardEquipmentRouteImport.update({
+    id: '/dashboard/equipment',
+    path: '/dashboard/equipment',
     getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
 const AuthenticatedManagerDashboardRepairRequestsIndexRoute =
@@ -104,7 +118,9 @@ export interface FileRoutesByFullPath {
   '/manager': typeof AuthenticatedManagerRouteWithChildren
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
+  '/manager/dashboard/equipment': typeof AuthenticatedManagerDashboardEquipmentRoute
   '/manager/dashboard/institutions': typeof AuthenticatedManagerDashboardInstitutionsRoute
+  '/manager/dashboard/settings': typeof AuthenticatedManagerDashboardSettingsRoute
   '/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
   '/manager/dashboard/staff': typeof AuthenticatedManagerDashboardStaffRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
@@ -118,7 +134,9 @@ export interface FileRoutesByTo {
   '/manager': typeof AuthenticatedManagerRouteWithChildren
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
+  '/manager/dashboard/equipment': typeof AuthenticatedManagerDashboardEquipmentRoute
   '/manager/dashboard/institutions': typeof AuthenticatedManagerDashboardInstitutionsRoute
+  '/manager/dashboard/settings': typeof AuthenticatedManagerDashboardSettingsRoute
   '/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
   '/manager/dashboard/staff': typeof AuthenticatedManagerDashboardStaffRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
@@ -134,7 +152,9 @@ export interface FileRoutesById {
   '/_authenticated/manager': typeof AuthenticatedManagerRouteWithChildren
   '/accounts/login': typeof AccountsLoginRoute
   '/repair-request/$equipmentId': typeof RepairRequestEquipmentIdRoute
+  '/_authenticated/manager/dashboard/equipment': typeof AuthenticatedManagerDashboardEquipmentRoute
   '/_authenticated/manager/dashboard/institutions': typeof AuthenticatedManagerDashboardInstitutionsRoute
+  '/_authenticated/manager/dashboard/settings': typeof AuthenticatedManagerDashboardSettingsRoute
   '/_authenticated/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
   '/_authenticated/manager/dashboard/staff': typeof AuthenticatedManagerDashboardStaffRoute
   '/_authenticated/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
@@ -150,7 +170,9 @@ export interface FileRouteTypes {
     | '/manager'
     | '/accounts/login'
     | '/repair-request/$equipmentId'
+    | '/manager/dashboard/equipment'
     | '/manager/dashboard/institutions'
+    | '/manager/dashboard/settings'
     | '/manager/dashboard/spare-parts'
     | '/manager/dashboard/staff'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
@@ -164,7 +186,9 @@ export interface FileRouteTypes {
     | '/manager'
     | '/accounts/login'
     | '/repair-request/$equipmentId'
+    | '/manager/dashboard/equipment'
     | '/manager/dashboard/institutions'
+    | '/manager/dashboard/settings'
     | '/manager/dashboard/spare-parts'
     | '/manager/dashboard/staff'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
@@ -179,7 +203,9 @@ export interface FileRouteTypes {
     | '/_authenticated/manager'
     | '/accounts/login'
     | '/repair-request/$equipmentId'
+    | '/_authenticated/manager/dashboard/equipment'
     | '/_authenticated/manager/dashboard/institutions'
+    | '/_authenticated/manager/dashboard/settings'
     | '/_authenticated/manager/dashboard/spare-parts'
     | '/_authenticated/manager/dashboard/staff'
     | '/_authenticated/engineer/dashboard/repair-requests/$repairRequestId'
@@ -246,11 +272,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManagerDashboardSparePartsRouteImport
       parentRoute: typeof AuthenticatedManagerRoute
     }
+    '/_authenticated/manager/dashboard/settings': {
+      id: '/_authenticated/manager/dashboard/settings'
+      path: '/dashboard/settings'
+      fullPath: '/manager/dashboard/settings'
+      preLoaderRoute: typeof AuthenticatedManagerDashboardSettingsRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
     '/_authenticated/manager/dashboard/institutions': {
       id: '/_authenticated/manager/dashboard/institutions'
       path: '/dashboard/institutions'
       fullPath: '/manager/dashboard/institutions'
       preLoaderRoute: typeof AuthenticatedManagerDashboardInstitutionsRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
+    '/_authenticated/manager/dashboard/equipment': {
+      id: '/_authenticated/manager/dashboard/equipment'
+      path: '/dashboard/equipment'
+      fullPath: '/manager/dashboard/equipment'
+      preLoaderRoute: typeof AuthenticatedManagerDashboardEquipmentRouteImport
       parentRoute: typeof AuthenticatedManagerRoute
     }
     '/_authenticated/manager/dashboard/repair-requests/': {
@@ -312,7 +352,9 @@ const AuthenticatedEngineerRouteWithChildren =
   )
 
 interface AuthenticatedManagerRouteChildren {
+  AuthenticatedManagerDashboardEquipmentRoute: typeof AuthenticatedManagerDashboardEquipmentRoute
   AuthenticatedManagerDashboardInstitutionsRoute: typeof AuthenticatedManagerDashboardInstitutionsRoute
+  AuthenticatedManagerDashboardSettingsRoute: typeof AuthenticatedManagerDashboardSettingsRoute
   AuthenticatedManagerDashboardSparePartsRoute: typeof AuthenticatedManagerDashboardSparePartsRoute
   AuthenticatedManagerDashboardStaffRoute: typeof AuthenticatedManagerDashboardStaffRoute
   AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute: typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
@@ -320,8 +362,12 @@ interface AuthenticatedManagerRouteChildren {
 }
 
 const AuthenticatedManagerRouteChildren: AuthenticatedManagerRouteChildren = {
+  AuthenticatedManagerDashboardEquipmentRoute:
+    AuthenticatedManagerDashboardEquipmentRoute,
   AuthenticatedManagerDashboardInstitutionsRoute:
     AuthenticatedManagerDashboardInstitutionsRoute,
+  AuthenticatedManagerDashboardSettingsRoute:
+    AuthenticatedManagerDashboardSettingsRoute,
   AuthenticatedManagerDashboardSparePartsRoute:
     AuthenticatedManagerDashboardSparePartsRoute,
   AuthenticatedManagerDashboardStaffRoute:

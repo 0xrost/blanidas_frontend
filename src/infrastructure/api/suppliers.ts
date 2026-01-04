@@ -4,33 +4,28 @@ import {Endpoints} from "@/infrastructure/endpoints.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {SupplierCreate, SupplierUpdate} from "@/domain/models/supplier.ts";
 import type {SupplierFilters, SupplierSortBy} from "@/domain/queries/supplier-list.query.ts";
-import type {SupplierCreateDto, SupplierDto, SupplierUpdateDto} from "@/infrastructure/dto/supplier.ts";
-import {
-    mapSupplierCreateDomainToDto,
-    mapSupplierDtoToDomain,
-    mapSupplierUpdateDomainToDto
-} from "@/infrastructure/mappers/supplier.ts";
+import {emptyDomainToDtoMapper, emptyDtoToDomainMapper} from "@/infrastructure/mappers/mapper.ts";
 
 const supplierMappers: CRUDMappers<
     Supplier,
-    SupplierDto,
+    Supplier,
     SupplierCreate,
-    SupplierCreateDto,
+    SupplierCreate,
     SupplierUpdate,
-    SupplierUpdateDto
+    SupplierUpdate
 > = {
-    model: mapSupplierDtoToDomain,
-    create: mapSupplierCreateDomainToDto,
-    update: mapSupplierUpdateDomainToDto,
+    model: emptyDtoToDomainMapper,
+    create: emptyDomainToDtoMapper,
+    update: emptyDomainToDtoMapper,
 }
 
 class SupplierRepository extends CRUDRepository<
     Supplier,
-    SupplierDto,
+    Supplier,
     SupplierCreate,
-    SupplierCreateDto,
+    SupplierCreate,
     SupplierUpdate,
-    SupplierUpdateDto,
+    SupplierUpdate,
     SupplierFilters,
     SupplierSortBy
 > implements SupplierRepositoryInterface {

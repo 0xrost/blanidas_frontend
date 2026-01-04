@@ -6,7 +6,7 @@ import {createCrudHooks} from "@/presentation/hooks/entities/factory.ts";
 import {SparePartCategoryRepository} from "@/dependencies.ts";
 
 const sparePartHooks = createCrudHooks(
-    "spare-part-category",
+    "spare-part-categories",
     listSparePartCategoriesUseCase(SparePartCategoryRepository),
     createSparePartCategoryUseCase(SparePartCategoryRepository),
     updateSparePartCategoryUseCase(SparePartCategoryRepository),

@@ -1,5 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
 import {
+    getEquipmentSummaryUseCase,
     getInstitutionsSummaryUseCase,
     getRepairRequestsSummaryUseCase,
     getSparePartsSummaryUseCase,
@@ -35,10 +36,18 @@ const useStaffSummary = () => {
     })
 }
 
+const useEquipmentSummary = () => {
+    return useQuery({
+        queryKey: ['summary', "equipment"],
+        queryFn: getEquipmentSummaryUseCase(SummaryRepository),
+    })
+}
+
 
 export {
     useRepairRequestsSummary,
     useInstitutionsSummary,
     useSparePartsSummary,
     useStaffSummary,
+    useEquipmentSummary,
 };

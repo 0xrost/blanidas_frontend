@@ -3,8 +3,10 @@ import type {Institution} from "@/domain/entities/institution.ts";
 import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
 import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 
+type Status = "working" | "not_working" | "under_maintenance";
+
 interface Equipment {
-    id: number;
+    id: string;
     location: string;
     serialNumber: string;
     installed: Date;
@@ -14,4 +16,4 @@ interface Equipment {
     manufacturer: Manufacturer;
 }
 
-export type { Equipment };
+export type { Equipment, Status };
