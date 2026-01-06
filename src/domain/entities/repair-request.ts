@@ -31,6 +31,7 @@ interface RepairRequest {
     engineerNote: string;
     createdAt: Date;
     completedAt: Date | null;
+    lastStatus: Status;
 
     photos: string[];
     failureTypes: FailureType[];

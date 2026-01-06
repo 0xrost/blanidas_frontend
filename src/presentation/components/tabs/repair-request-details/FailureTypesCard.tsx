@@ -3,14 +3,14 @@ import type {FailureType} from "@/domain/entities/failure-type.ts";
 import {Checkbox} from "@/presentation/components/ui/checkbox.tsx";
 import {Badge} from "@/presentation/components/ui/badge.tsx";
 
-type FailureTypesCardProps = {
+interface Props {
     isReadonly: boolean;
     failureTypes: FailureType[],
-    selectedFailureTypeIds: number[],
-    onSelectFailureType: (failureTypeId: number) => void,
-    onDeselectFailureType: (failureTypeId: number) => void,
+    selectedFailureTypeIds: string[],
+    onSelectFailureType: (failureTypeId: string) => void,
+    onDeselectFailureType: (failureTypeId: string) => void,
 }
-const FailureTypesCard = ({ isReadonly, failureTypes, selectedFailureTypeIds, onSelectFailureType, onDeselectFailureType }: FailureTypesCardProps) => {
+const FailureTypesCard = ({ isReadonly, failureTypes, selectedFailureTypeIds, onSelectFailureType, onDeselectFailureType }: Props) => {
     return (
         <Card className="bg-white border-slate-200">
             <div className="p-6 space-y-4">

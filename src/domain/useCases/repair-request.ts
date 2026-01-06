@@ -4,6 +4,10 @@ import type {RepairRequestCreate, RepairRequestUpdate} from "@/domain/models/rep
 import type {RepairRequestFilters, RepairRequestSortBy} from "@/domain/queries/repair-request-list.query.ts";
 import type {RepairRequestRepository} from "@/domain/repositories/repair-request.ts";
 
+const getRepairRequestUseCase = (repo: RepairRequestRepository) => {
+    return async (id: string) => await repo.get(id);
+}
+
 const RepairRequestUseCases = createCrudUseCases<
     RepairRequest,
     RepairRequestCreate,
@@ -19,3 +23,5 @@ export const {
     update: updateRepairRequestUseCase,
     delete: deleteRepairRequestUseCase
 } = RepairRequestUseCases;
+
+export { getRepairRequestUseCase }

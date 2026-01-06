@@ -23,7 +23,7 @@ interface RepairRequestUpdate {
     id: string;
     managerNote: string | null;
     engineerNote: string | null;
-    failureTypesIds: number[] | null;
+    failureTypesIds: string[] | null;
     usedSpareParts: UsedSparePartCreate[] | null;
     statusHistory: RepairRequestStatusRecordCreate | null;
 }

@@ -48,7 +48,7 @@ const memberFields = (institutions: Institution[], passwordRequired: boolean): F
         placeholder: "+380XXXXXXXXX",
         ...bindField("phone"),
         required: true,
-        validate: v => /^\+380\d{9}$/.test(v),
+        validate: v => /^(?:\+38)?(?:\s*\d){10}$/.test(v),
         errorMessage: "Введіть правильний номер телефону у форматі +380XXXXXXXXX",
     },
     {

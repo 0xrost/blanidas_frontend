@@ -1,22 +1,20 @@
 import type {RepairRequest} from "@/domain/entities/repair-request.ts";
 import {Card} from "@/presentation/components/ui/card.tsx";
-import {getStatusBadge} from "@/presentation/components/tabs/repair-requests-list/StatusBadge.tsx";
 import {Building2, Calendar, Hash, MapPin, Monitor} from "lucide-react";
 import {formatNumber} from "@/utils.ts";
+import {RepairRequestStatusBadge} from "@/presentation/components/layouts/StatusBadge.tsx";
 
-type DeviceInfoCardProps = {
-    repairRequest: RepairRequest
-}
-const DeviceInfoCard = ({ repairRequest }: DeviceInfoCardProps) => {
+interface Props { repairRequest: RepairRequest }
+const DeviceInfoCard = ({ repairRequest }: Props) => {
     return (
-        <Card className="py-0 bg-white border-slate-200">
+        <Card className="bg-white border-slate-200">
             <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                     <div>
                         <h3 className="text-slate-900">Інформація про пристрій</h3>
                         <p className="text-sm text-slate-600">ID заявки: {formatNumber(repairRequest.id, 8)}</p>
                     </div>
-                    {getStatusBadge(repairRequest.statusHistory[0].status)}
+                    <RepairRequestStatusBadge status={repairRequest.lastStatus} />
 
                 </div>
 

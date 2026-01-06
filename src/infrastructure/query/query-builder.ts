@@ -1,6 +1,7 @@
 import type {Sorting} from "@/domain/sorting.ts";
 import type {Pagination} from "@/domain/pagination.ts";
 import type {ListQuery} from "@/domain/list-query.ts";
+import type {FilterDefinition} from "@/infrastructure/query/map.ts";
 
 
 interface BuildOptions<TFilters, TSortBy extends string> {
@@ -30,6 +31,7 @@ function buildQueries<TFilters, TSortBy extends string>(query: ListQuery<TFilter
 
 function mapFiltersQuery<T>(filters: Partial<T>, queryMap: Record<keyof T, FilterDefinition>): URLSearchParams {
     const params = new URLSearchParams();
+    const data: Record<string, Record<string, unknown>> = {};
 
     for (const key in filters) {
         const value = filters[key];
@@ -38,12 +40,10 @@ function mapFiltersQuery<T>(filters: Partial<T>, queryMap: Record<keyof T, Filte
         const definition = queryMap[key];
         if (!definition) continue;
 
-        params.append(
-            `${definition.field}__${definition.operator}`,
-            String(value)
-        );
+        data[definition.field] = { [definition.operator]: value };
     }
 
+    params.append("filters", JSON.stringify(data));
     return params;
 }
 

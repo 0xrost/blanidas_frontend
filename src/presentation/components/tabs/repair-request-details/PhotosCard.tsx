@@ -1,7 +1,8 @@
 import {Card} from "@/presentation/components/ui/card.tsx";
 import {Image} from "lucide-react";
 
-const PhotosCard = () => {
+interface Props { photos: string[] }
+const PhotosCard = ({ photos }: Props) => {
     return (
         <Card className="bg-white border-slate-200">
             <div className="p-6">
@@ -12,25 +13,11 @@ const PhotosCard = () => {
 
                 <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="flex flex-col items-center gap-2">
-                            <img
-                                src="https://thumbs.dreamstime.com/z/guangyuan-china-glass-plank-road-composed-steels-glasses-good-viewing-platform-phto-taken-jianmen-pass-scenic-area-46616076.jpg?ct=jpeg"
-                                className="w-full h-48 object-cover rounded border border-slate-200"
-                            />
-                        </div>
-                        <div className="flex flex-col items-center gap-2">
-                            <img
-                                src="https://thumbs.dreamstime.com/z/guangyuan-china-glass-plank-road-composed-steels-glasses-good-viewing-platform-phto-taken-jianmen-pass-scenic-area-46616076.jpg?ct=jpeg"
-                                className="w-full h-48 object-cover rounded border border-slate-200"
-                            />
-                        </div>
-                        <div className="flex flex-col items-center gap-2">
-                            <img
-                                src="https://thumbs.dreamstime.com/z/guangyuan-china-glass-plank-road-composed-steels-glasses-good-viewing-platform-phto-taken-jianmen-pass-scenic-area-46616076.jpg?ct=jpeg"
-                                className="w-full h-48 object-cover rounded border border-slate-200"
-                            />
-                        </div>
-
+                        {photos.map((photo) => (
+                            <div key={photo} className="flex flex-col items-center gap-2">
+                                <img alt="Фото поломки" src={photo} className="w-full h-48 object-cover rounded border border-slate-200" />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -6,19 +6,24 @@ import type {SparePartDto} from "@/infrastructure/dto/spare-part.ts";
 import type {InstitutionDto} from "@/infrastructure/dto/institution.ts";
 
 interface RepairRequestDto {
-    id: number;
+    id: string;
     issue: string;
     urgency: Urgency;
     manager_note: string;
     engineer_note: string;
     created_at: Date;
     completed_at: Date;
+    last_status: Status;
 
-    photos: string[];
+    photos: FileDto[];
     failure_types: FailureType[];
     used_spare_parts: UsedSparePartDto[];
     status_history: RepairRequestStatusRecordDto[];
     equipment: EquipmentDto;
+}
+
+interface FileDto {
+    file_path: string;
 }
 
 interface RepairRequestStatusRecordDto {
@@ -53,7 +58,7 @@ interface RepairRequestUpdateDto {
     manager_note: string | null;
     engineer_note: string | null;
 
-    failure_types_ids: number[] | null;
+    failure_types_ids: string[] | null;
     used_spare_parts: UsedSparePartCreateDto[] | null;
     status_history: RepairRequestStatusRecordCreateDto | null;
 }

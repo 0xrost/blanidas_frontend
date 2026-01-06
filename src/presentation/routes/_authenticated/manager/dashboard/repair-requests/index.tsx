@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import RepairRequestsListPage from "@/presentation/pages/manager/RepairRequestsListPage.tsx";
-import type {Pagination} from "@/domain/models/pagination.ts";
+import RepairRequestsPage from "@/presentation/pages/manager/RepairRequestsPage.tsx";
+import type {Pagination} from "@/domain/pagination.ts";
 
 export const Route = createFileRoute('/_authenticated/manager/dashboard/repair-requests/')({
-  component: RepairRequestsListPage,
+  component: RepairRequestsPage,
   validateSearch: (search: {
     page?: number
     limit?: string

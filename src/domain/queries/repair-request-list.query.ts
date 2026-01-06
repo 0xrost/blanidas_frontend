@@ -7,7 +7,6 @@ interface RepairRequestFilters {
     equipmentId?: string;
     urgency?: Urgency;
     idNotEqualTo?: string;
-    serialNumber?: string;
     institutionId?: string;
     equipmentCategoryId?: string;
     serialNumberOrEquipmentName?: string;

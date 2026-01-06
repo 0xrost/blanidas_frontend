@@ -81,12 +81,12 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
             cell: institution => (
                 <div className="space-y-1">
                     <div className="flex items-center gap-1 text-xs text-slate-600">
-                        <Phone className="w-3 h-3" />
-                        {institution.contactPhone}
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-slate-600">
                         <Mail className="w-3 h-3" />
                         {institution.contactEmail}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-slate-600">
+                        <Phone className="w-3 h-3" />
+                        {institution.contactPhone}
                     </div>
                 </div>
             ),

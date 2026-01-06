@@ -1,8 +1,8 @@
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
 import {useEquipmentSummary} from "@/presentation/hooks/summary.ts";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
-import {AlertTriangle, CheckCircle, Monitor, Package, Plus, XCircle} from "lucide-react";
-import FiltersPanel, {type FilterConfig} from "@/presentation/components/layouts/FiltersPanel.tsx";
+import {Monitor, Plus} from "lucide-react";
+import FiltersPanel from "@/presentation/components/layouts/FiltersPanel.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {filtersFactory, type SearchParams} from "@/presentation/components/tabs/equipment/filters.ts";
 import {useInstitutions} from "@/presentation/hooks/entities/institution.ts";
@@ -89,7 +89,7 @@ const EquipmentTab = ({ pagination, onSearchChange }: Props) => {
                 values={values}
                 actionButton={createButton}
                 filters={filters}
-                searchPlaceholder={"Пошук за назвою або кодом запчастини"}
+                searchPlaceholder={"Пошук за назвою або серійним кодом"}
             />
 
             <EquipmentTable equipment={localEquipment} showQr={setSelectedEquipment} />

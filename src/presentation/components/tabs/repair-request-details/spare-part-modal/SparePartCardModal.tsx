@@ -11,6 +11,7 @@ import type {
     RepairRequestUsedSparePartVM
 } from "@/presentation/components/tabs/repair-request-details/RepairRequestDetailsTab.tsx";
 import {getEffectivePartQuantity} from "@/presentation/components/tabs/repair-request-details/spare-part-modal/utils.ts";
+import {SortByNameAsc} from "@/domain/sorting.ts";
 
 
 
@@ -58,11 +59,11 @@ const SparePartCardModal = ({ onHideSparePartModal, newUsedSpareParts, setUsedSp
         onHideSparePartModal();
     }
 
-    const { data: sparePartsPagination, refetch } = useSpareParts(
-        { page: 1, limit: 15 },
-        { name: search },
-        { enabled: false }
-    );
+    const { data: sparePartsPagination, refetch } = useSpareParts({
+        pagination:{ page: 1, limit: 15 },
+        filters: { name: search },
+        sorting: SortByNameAsc,
+    });
 
     useEffect(() => {
         if (isSearchLongEnough) {

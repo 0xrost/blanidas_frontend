@@ -30,7 +30,7 @@ const institutionFields = (types: InstitutionType[]): FieldConfig<InstitutionFor
         placeholder: "+380XXXXXXXXX",
         ...bindField("contactPhone"),
         required: true,
-        validate: v => /^\+380\d{9}$/.test(v),
+        validate: v => /^(?:\+38)?(?:\s*\d){10}$/.test(v),
         errorMessage: "Введіть правильний номер телефону у форматі +380XXXXXXXXX",
     },
     {

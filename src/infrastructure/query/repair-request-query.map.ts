@@ -10,16 +10,12 @@ const repairRequestsFilterMap: Record<keyof RepairRequestFilters, FilterDefiniti
         field: "equipment_id",
         operator: "eq",
     },
-    serialNumber: {
-        field: "equipment__serial_number",
-        operator: "ilike",
-    },
     institutionId: {
-        field: "equipment__institution_id",
+        field: "equipment_institution_id",
         operator: "eq",
     },
     equipmentCategoryId: {
-        field: "equipment__equipment_category_id",
+        field: "equipment_category_id",
         operator: "eq",
     },
     status: {
@@ -31,16 +27,20 @@ const repairRequestsFilterMap: Record<keyof RepairRequestFilters, FilterDefiniti
         operator: "eq",
     },
     serialNumberOrEquipmentName: {
-        field: "equipment__serial_number__or__equipment__equipment_model__name",
+        field: "equipment_serial_number_or_equipment_equipment_model_name",
         operator: "ilike",
     }
 };
 
+
+
 const repairRequestsSortMap: Record<RepairRequestSortBy, string> = {
     date: "created_at",
     status: "status",
-    model: "equipment__equipment_model__name",
+    model: "equipment_model_name",
     urgency: "urgency",
 }
+
+
 
 export { repairRequestsFilterMap, repairRequestsSortMap };

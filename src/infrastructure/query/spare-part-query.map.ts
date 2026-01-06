@@ -25,7 +25,7 @@ const sparePartsFilterMap: Record<keyof SparePartFilters, FilterDefinition> = {
 };
 
 const sparePartsSortMap: Record<SparePartSortBy, string> = {
-    status: "status",
+    status: "stock_status",
     name: "name",
     quantity: "quantity",
 }

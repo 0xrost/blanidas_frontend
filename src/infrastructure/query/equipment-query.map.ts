@@ -3,7 +3,7 @@ import type {EquipmentFilters, EquipmentSortBy} from "@/domain/queries/equipment
 
 const equipmentFilterMap: Record<keyof EquipmentFilters, FilterDefinition> = {
     nameOrSerialNumber: {
-        field: "equipment_model__name__or__serial_number",
+        field: "equipment_model_name_or_serial_number",
         operator: "ilike",
     },
     institutionId: {

@@ -1,6 +1,6 @@
 import DeviceInfoCard from "@/presentation/components/tabs/repair-request-details/DeviceInfoCard.tsx";
 import {
-    useDeleteRepairRequest,
+    useDeleteRepairRequest, useRepairRequestById,
     useRepairRequests,
     useUpdateRepairRequest
 } from "@/presentation/hooks/entities/repair-request.ts";
@@ -24,7 +24,8 @@ import {useAuthSession} from "@/presentation/hooks/auth.ts";
 import NotFoundTab from "@/presentation/components/tabs/not-found/NotFoundTab.tsx";
 import type {RepairRequestStatusRecordCreate} from "@/domain/models/repair-request.ts";
 import {Card} from "@/presentation/components/ui/card.tsx";
-import {useNavigate} from "@tanstack/react-router";
+import {UnlimitedPagination} from "@/domain/pagination.ts";
+import {SortByNameAsc} from "@/domain/sorting.ts";
 
 
 function mergeUsedSpareParts(
@@ -56,44 +57,42 @@ interface RepairRequestUsedSparePartVM {
     institution: Institution | null;
 }
 
-interface Props { repairRequestId: string }
-const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
+interface Props {
+    repairRequestId: string
+    goToEngineerDashboard: () => void
+    goToManagerDashboard: () => void
+}
+const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEngineerDashboard }: Props) => {
     const authSession = useAuthSession();
     const isManager = authSession?.currentUser.role === "manager";
 
-    const { data: failureTypes } = useFailureTypes(UnlimitedPagination);
+    const { data: failureTypes } = useFailureTypes({pagination: UnlimitedPagination, sorting: SortByNameAsc});
     const { data: repairRequest, isSuccess, refetch } = useRepairRequestById(repairRequestId);
-    const { data: repairHistoryPagination } = useRepairRequests(
-        { page: 1, limit: 5 },
-        {
+    const { data: repairHistoryPagination } = useRepairRequests({
+        pagination: { page: 1, limit: 5 },
+        filters: {
             equipmentId: repairRequest?.equipment.id.toString() ?? "",
             idNotEqualTo: repairRequestId
         },
-        {
-            sortBy: "date",
-            sortOrder: "desc",
-        }
-    )
+        sorting: { sortBy: "date", sortOrder: "desc" }
+    })
 
     const updateRepairRequest = useUpdateRepairRequest();
     const deleteRepairRequest = useDeleteRepairRequest();
-    const navigate = useNavigate();
 
     const [showDeleteFailMessage, setShowDeleteFailMessage] = useState<boolean>(false);
     const [showUpdateFailMessage, setShowUpdateFailMessage] = useState<boolean>(false);
     const [showUpdateSuccessMessage, setShowUpdateSuccessMessage] = useState<boolean>(false);
 
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
-    const [showFinishUpdateConfirmationModal, setShowFinishUpdateConfirmationModal] = useState<boolean>(false);
 
-    const [selectedFailureTypeIds, setSelectedFailureTypeIds] = useState<number[]>([]);
+    const [selectedFailureTypeIds, setSelectedFailureTypeIds] = useState<string[]>([]);
     const [repairRequestStatus, setRepairRequestStatus] = useState<Status | null>(null);
     const [initialUsedSpareParts, setInitialUsedSpareParts] = useState<RepairRequestUsedSparePartVM[]>([]);
     const [newUsedSpareParts, setNewUsedSpareParts] = useState<RepairRequestUsedSparePartVM[]>([]);
     const [notes, setNotes] = useState<string | null>(null);
 
     const [showSparePartModal, setShowSparePartModal] = useState(false);
-    const lastStatus = repairRequest?.statusHistory[repairRequest?.statusHistory.length - 1];
 
     const allUsedSpareParts = useMemo(() =>
         mergeUsedSpareParts(initialUsedSpareParts, newUsedSpareParts), [initialUsedSpareParts, newUsedSpareParts])
@@ -101,7 +100,14 @@ const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
     const onRepairRequestDelete = () => {
         setShowDeleteConfirmationModal(false)
         deleteRepairRequest.mutate(repairRequestId, {
-            onSuccess: () => {navigate({to: isManager ? "/manager/dashboard" : "/engineer/dashboard/repair-requests"})},
+            onSuccess: () => {
+                if (isManager) {
+                    goToManagerDashboard()
+                    return
+                }
+
+                goToEngineerDashboard()
+            },
             onError: () => {setShowDeleteFailMessage(true)},
         });
     }
@@ -111,13 +117,13 @@ const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
             status: repairRequestStatus ?? 'not_taken',
             assignedEngineerId: authSession!.currentUser.id ?? null,
         }
-
+        console.log(notes, !isManager ? notes : null, isManager)
         updateRepairRequest.mutate({
             id: repairRequestId,
             managerNote: isManager ? notes : null,
             engineerNote: !isManager ? notes : null,
             failureTypesIds: selectedFailureTypeIds,
-            statusHistory: (repairRequestStatus !== lastStatus?.status) ? statusHistory : null,
+            statusHistory: (repairRequestStatus !== repairRequest?.lastStatus) ? statusHistory : null,
             usedSpareParts: allUsedSpareParts.map(part => ({
                     note: part.note,
                     quantity: part.quantity,
@@ -148,7 +154,7 @@ const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
         if (!repairRequest || initialized.current) return;
         setNotes(isManager ? repairRequest.managerNote : repairRequest.engineerNote);
         setSelectedFailureTypeIds(repairRequest.failureTypes.map(t => t.id));
-        setRepairRequestStatus(repairRequest.statusHistory[repairRequest.statusHistory.length - 1].status);
+        setRepairRequestStatus(repairRequest.lastStatus);
         setInitialUsedSpareParts(repairRequest.usedSpareParts);
 
         initialized.current = true;
@@ -169,7 +175,7 @@ const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
                     <div className="lg:col-span-2 space-y-6">
                         <DeviceInfoCard repairRequest={repairRequest} />
                         <IssueCard issue={repairRequest?.issue} />
-                        <PhotosCard />
+                        <PhotosCard photos={repairRequest?.photos ?? []} />
                         <FailureTypesCard
                             isReadonly={isReadonly}
                             failureTypes={failureTypes?.items ?? []}
@@ -179,7 +185,7 @@ const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
                         />
                         {!isReadonly &&
                             <StatusBarCard
-                                status={repairRequestStatus ?? lastStatus!.status}
+                                status={repairRequestStatus ?? repairRequest?.lastStatus}
                                 onStatusChange={setRepairRequestStatus}
                             />
                         }
@@ -238,18 +244,11 @@ const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
                             {!isReadonly &&
                                 <Button
                                     variant="outline"
-                                    onClick={() => {
-                                        if (repairRequestStatus === "finished") {
-                                            setShowFinishUpdateConfirmationModal(true);
-                                            return;
-                                        }
-
-                                        onRepairRequestUpdate()
-                                    }}
+                                    onClick={onRepairRequestUpdate}
                                     className="w-full h-12 flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
                                     disabled={
                                         notes === (isManager ? repairRequest.managerNote : repairRequest?.engineerNote) &&
-                                        repairRequestStatus === lastStatus?.status &&
+                                        repairRequestStatus === repairRequest?.lastStatus &&
                                         newUsedSpareParts?.length === 0 &&
                                         initialUsedSpareParts.length === repairRequest?.usedSpareParts.length &&
                                         repairRequest?.usedSpareParts.every(part => {
@@ -314,35 +313,6 @@ const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
                     setUsedSpareParts={setNewUsedSpareParts}
                 />
             }
-            {showFinishUpdateConfirmationModal &&
-                <div className="fixed inset-0 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <Card className="bg-white max-w-2xl w-full">
-                        <div className="p-6">
-                            <div className="text-center">
-                                <h3 className="text-center text-slate-900">Ви впевнені, що хочете змінити статус на "Завершено"?</h3>
-                                <span className="size-1">Після цього ви не зможете редагувати заявку або вносити зміни</span>
-                            </div>
-                            <div className="flex flex-row gap-3">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => {setShowFinishUpdateConfirmationModal(false)}}
-                                    className="flex-1"
-                                >
-                                    Скасувати
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    onClick={onRepairRequestUpdate}
-                                    className="flex-1 border-gray-300 hover:bg-gray-100"
-                                >
-                                    <Trash className="w-5 h-5" />
-                                    Видалити заявку
-                                </Button>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            }
             {showDeleteConfirmationModal &&
                 <div className="fixed inset-0 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <Card className="bg-white max-w-md w-full">
@@ -373,5 +343,5 @@ const RepairRequestDetailsPage = ({ repairRequestId }: Props) => {
     );
 };
 
-export default RepairRequestDetailsPage;
+export default RepairRequestDetailsTab;
 export type { RepairRequestUsedSparePartVM };

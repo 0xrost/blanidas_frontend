@@ -1,10 +1,18 @@
-import {RepairRequestRepository} from "@/dependencies.ts";
+import {EquipmentRepository, RepairRequestRepository} from "@/dependencies.ts";
 import {
-    createRepairRequestUseCase, deleteRepairRequestUseCase,
+    createRepairRequestUseCase, deleteRepairRequestUseCase, getRepairRequestUseCase,
     listRepairRequestsUseCase,
     updateRepairRequestUseCase
 } from "@/domain/useCases/repair-request.ts";
 import {createCrudHooks} from "@/presentation/hooks/entities/factory.ts";
+import {useQuery} from "@tanstack/react-query";
+
+const useRepairRequestById = (id: string) => {
+    return useQuery({
+        queryKey: ['repair-request', id],
+        queryFn: () => getRepairRequestUseCase(RepairRequestRepository)(id)
+    })
+}
 
 const repairRequestHooks = createCrudHooks(
     "repair-request",
@@ -24,4 +32,5 @@ export {
     useCreateRepairRequest,
     useUpdateRepairRequest,
     useDeleteRepairRequest,
+    useRepairRequestById,
 };
