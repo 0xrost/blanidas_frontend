@@ -1,19 +1,18 @@
 import {Badge} from "@/presentation/components/ui/badge.tsx";
 import {
     AlertTriangle,
-    Building2, Check,
+    Building2,
     CheckCircle2,
     ChevronDown,
     ChevronUp,
-    Edit, Trash2,
     Warehouse,
-    X,
     XCircle
 } from "lucide-react";
-import {Button} from "@/presentation/components/ui/button.tsx";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
-import {useMemo, useState} from "react";
 import type {MutationOptions} from "@/presentation/models.ts";
+import {clsx} from "clsx";
+import {pluralize} from "@/presentation/pages/utils.ts";
+import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 
 interface Props {
     sparePart: SparePart;
@@ -25,30 +24,16 @@ interface Props {
     setLocationVisible: (visible: boolean) => void;
 }
 const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, showModal, deleteSparePart }: Props) => {
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-
-    const quantity = useMemo(() => {
-        return sparePart.locations.reduce((quantity, current) => quantity + current.quantity, 0)
-    }, [sparePart]);
-
-    const onDeleteSparePart = () => {
-        deleteSparePart({
-            onSuccess: () => setShowDeleteConfirmation(false),
-            onError: () => setShowDeleteConfirmation(true),
-        })
-    }
-
     return (
         <>
             <tr
-                className={`hover:bg-slate-50 transition-colors ${
-                        (quantity < sparePart.minQuantity && quantity > 0) 
-                            ? 'bg-yellow-50/30' 
-                            : (quantity === 0 ) 
-                                ? 'bg-red-50/30' 
-                                : ''
-                    }`
-                }
+                className={clsx(
+                    "hover:bg-slate-50 transition-colors",
+                    {
+                        "bg-yellow-50/30": sparePart.stockStatus === "low_stock",
+                        "bg-red-50/30": sparePart.stockStatus === "out_of_stock",
+                    }
+                )}
             >
                 <td className="px-4 py-4">
                     <div className="space-y-1">
@@ -78,13 +63,7 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                     >
                         <Warehouse className="w-3 h-3" />
                         <span className="truncate max-w-30">
-                            {sparePart.locations.length} {
-                            sparePart.locations.length === 1
-                                ? "склад"
-                                : sparePart.locations.length > 1 && sparePart.locations.length < 5
-                                    ? "склади"
-                                    : "складів"
-                        }
+                            {sparePart.locations.length} {pluralize(sparePart.locations.length, "склад", "склади", "складів")}
                         </span>
                         {areLocationVisible ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                     </button>
@@ -98,26 +77,26 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                 <td className="px-4 py-4">
                     <div className="text-center">
                         <div className="flex items-center justify-center gap-1">
-                            <p className="text-sm text-slate-900">{quantity}</p>
+                            <p className="text-sm text-slate-900">{sparePart.totalQuantity}</p>
                         </div>
                         <p className="text-xs text-slate-500">мін: {sparePart.minQuantity}</p>
                     </div>
                 </td>
 
                 <td className="px-4 py-4 text-center">
-                    {quantity >= sparePart.minQuantity && (
+                    {sparePart.stockStatus == "in_stock" && (
                         <Badge className="bg-green-100 text-green-700 border-green-200">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Є в наявності
                         </Badge>
                     )}
-                    {quantity < sparePart.minQuantity && quantity > 0 && (
+                    {sparePart.stockStatus == "low_stock" && (
                         <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
                             <AlertTriangle className="w-3 h-3 mr-1" />
                             Мало
                         </Badge>
                     )}
-                    {quantity === 0 && (
+                    {sparePart.stockStatus == "out_of_stock" && (
                         <Badge className="bg-red-100 text-red-700 border-red-200">
                             <XCircle className="w-3 h-3 mr-1" />
                             Немає
@@ -126,36 +105,7 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                 </td>
 
                 <td className="px-4 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                                if (showDeleteConfirmation) {
-                                    setShowDeleteConfirmation(false);
-                                    return;
-                                }
-                                showModal();
-                            }}
-                            className="border-blue-300 text-blue-700 hover:bg-blue-50 h-8 w-8 p-0"
-                        >
-                            {showDeleteConfirmation ? <X className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                                if (showDeleteConfirmation) {
-                                    onDeleteSparePart();
-                                    return;
-                                }
-                                setShowDeleteConfirmation(true)
-                            }}
-                            className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0"
-                        >
-                            {showDeleteConfirmation ? <Check className="w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
-                        </Button>
-                    </div>
+                    <EditDeleteActions edit={showModal} delete_={deleteSparePart} />
                 </td>
             </tr>
         </>

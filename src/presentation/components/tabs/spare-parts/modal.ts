@@ -1,0 +1,81 @@
+import type {InstitutionType} from "@/domain/entities/institution-type.ts";
+import {bindField, type FieldConfig} from "@/presentation/components/layouts/FormModal.tsx";
+import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
+import type {Supplier} from "@/domain/entities/supplier.ts";
+import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
+import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
+
+interface ModalFormData {
+    name: string;
+    minQuantity: number;
+    sparePartCategoryId: string;
+    supplierId: string;
+    manufacturerId: string;
+    compatibleModelIds: string[];
+}
+
+const modalFieldsFactory = (
+    types: InstitutionType[],
+    categories: SparePartCategory[],
+    suppliers: Supplier[],
+    manufacturers: Manufacturer[],
+    models: EquipmentModel[],
+): FieldConfig<ModalFormData>[] => [
+    {
+        id: "name",
+        label: "Назва",
+        colSpan: 4,
+        placeholder: "Введіть назву",
+        ...bindField("name"),
+        required: true,
+    },
+    {
+        id: "minQuantity",
+        label: "Мінімальна кільксть",
+        type: "number",
+        placeholder: "Вкажіть мінімальну кількість",
+        ...bindField("minQuantity"),
+        required: true,
+        validate: (value) => +value > 0,
+        errorMessage: "Мінімальна кількість повинна бути більша за 0"
+    },
+    {
+        id: "category",
+        label: "Категорія",
+        type: "select",
+        placeholder: "Оберіть категорію",
+        ...bindField("sparePartCategoryId"),
+        required: true,
+        options: categories.map(x => ({ value: x.id, label: x.name }))
+    },
+    {
+        id: "supplier",
+        label: "Постачальник",
+        type: "select",
+        placeholder: "Оберіть постачальника",
+        ...bindField("supplierId"),
+        required: true,
+        options: suppliers.map(x => ({ value: x.id, label: x.name }))
+    },
+    {
+        id: "manufacturer",
+        label: "Виробник",
+        type: "select",
+        placeholder: "Оберіть виробника",
+        options: manufacturers.map(type => ({ value: type.id, label: type.name })),
+        ...bindField("manufacturerId"),
+        required: true,
+    },
+    {
+        id: "models",
+        label: "Сумісні моделі",
+        type: "multiselect",
+        colSpan: 4,
+        placeholder: "Оберіть сумісні моделі",
+        options: models.map(type => ({ value: type.id, label: type.name })),
+        ...bindField("compatibleModelIds"),
+    },
+];
+
+export { modalFieldsFactory };
+export type { ModalFormData };

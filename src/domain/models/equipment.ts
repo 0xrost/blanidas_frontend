@@ -9,6 +9,7 @@ interface EquipmentCreate {
 }
 
 interface EquipmentUpdate {
+    id: string;
     location?: string | null;
     serialNumber?: string | null;
     installed?: Date | null;

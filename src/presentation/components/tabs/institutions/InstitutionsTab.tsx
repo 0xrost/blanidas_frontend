@@ -12,39 +12,31 @@ import {
     useDeleteInstitution,
     useInstitutions
 } from "@/presentation/hooks/entities/institution.ts";
-import {
-    institutionFields,
-    type InstitutionFormData
-} from "@/presentation/components/tabs/institutions/institutionModal.ts";
+import {modalFieldsFactory} from "@/presentation/components/tabs/institutions/modal.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import type { Institution } from "@/domain/entities/institution.ts";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
-
-const emptyInlineFilter = {
-    key: 'typeId',
-    options: [{ value: 'all', label: 'Усі типи' }],
-};
-
-interface SearchParams extends FiltersPanelValues { typeId: string | "all"; }
-
-const emptyFormData: InstitutionFormData = {
-    name: "",
-    address: "",
-    typeId: "",
-    contactPhone: "",
-    contactEmail: "",
-};
+import {filterFieldsFactory, type SearchParams} from "@/presentation/components/tabs/institutions/filter.ts";
+import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 
 interface Props {
     pagination: Pagination;
     onChange: (pagination: Pagination) => void;
 }
 
+const errorMessages = {
+    name: "Заклад з такою назвою вже існує, оберіть іншу.",
+    create: "Не вдалося створити заклад. Спробуйте ще раз пізніше.",
+    delete: "Не вдалося видалити заклад. Спробуйте ще раз пізніше.",
+    update: "Не вдалося оновити інформацію про заклад. Спробуйте ще раз пізніше."
+}
+
 const InstitutionsTab = ({ pagination, onChange }: Props) => {
     const [values, setValues] = useState<SearchParams>({ search: "", typeId: "all", sortOrder: "asc" });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [localInstitutions, setLocalInstitutions] = useState<Institution[]>([]);
+    const [creatingError, setCreatingError] = useState<string | null>(null);
 
     const { data: institutionTypesPagination } = useInstitutionTypes({ pagination: UnlimitedPagination, sorting: SortByNameAsc });
     const { data: institutionsPagination } = useInstitutions({
@@ -61,27 +53,27 @@ const InstitutionsTab = ({ pagination, onChange }: Props) => {
     const deleteInstitution = useDeleteInstitution();
 
     const modalFields = useMemo(
-        () => institutionFields(institutionTypesPagination?.items ?? []),
-        [institutionTypesPagination]
-    );
+        () => modalFieldsFactory(institutionTypesPagination?.items ?? []),
+    [institutionTypesPagination]);
 
-    const inlineFilter = useMemo(() => {
-        if (!institutionTypesPagination) return emptyInlineFilter;
-        return {
-            ...emptyInlineFilter,
-            options: [
-                emptyInlineFilter.options[0],
-                ...institutionTypesPagination.items.map(({ id, name }) => ({ value: id, label: name }))
-            ]
-        };
-    }, [institutionTypesPagination]);
+    const inlineFilter = useMemo(
+        () => filterFieldsFactory(institutionTypesPagination?.items ?? []),
+    [institutionTypesPagination]);
 
     useEffect(() => {
         if (institutionsPagination) setLocalInstitutions(institutionsPagination.items);
     }, [institutionsPagination]);
 
-    const onCreate = useHandleMutation(createInstitution, (data: Institution) =>
-        setLocalInstitutions(prev => [data, ...prev])
+    const onCreate = useHandleMutation(createInstitution,
+        (data: Institution) => {
+            setLocalInstitutions(prev => [data, ...prev]);
+            setCreatingError(false);
+        },
+        (error) =>  { setCreatingError(
+            error?.code == "value already exists" && error.fields == "name"
+                ? errorMessages.name
+                : errorMessages.create
+        );}
     );
 
     const onUpdate = useHandleMutation(updateInstitution, (data: Institution) =>
@@ -89,25 +81,15 @@ const InstitutionsTab = ({ pagination, onChange }: Props) => {
     );
 
     const onDelete = useHandleMutation(deleteInstitution, (id: string) => {
-        if (id) setLocalInstitutions(prev => prev.filter(x => x.id !== id));
+        setLocalInstitutions(prev => prev.filter(x => x.id !== id));
     });
-
-    const createButton = (
-        <Button
-            onClick={() => setIsModalOpen(true)}
-            className="px-4! h-12 text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2"
-        >
-            <Plus className="w-8 h-8" />
-            Додати заклад
-        </Button>
-    );
 
     return (
         <div className="space-y-6">
             <FiltersPanel
                 values={values}
                 inlineFilter={inlineFilter}
-                actionButton={createButton}
+                actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати заклад" />}
                 searchPlaceholder="Пошук за назвою або адресою закладу"
                 setValues={(key, value) => setValues(prev => ({ ...prev, [key]: value }))}
             />
@@ -124,16 +106,22 @@ const InstitutionsTab = ({ pagination, onChange }: Props) => {
                 close={() => setIsModalOpen(false)}
                 title="Додати заклад"
                 description="Внесіть інформацію про новий заклад"
-                initialValues={emptyFormData}
                 submit={onCreate}
-                fields={modalFields}
-                errorText="Не вдалося додати нового працівника"
                 submitText="Додати"
+                fields={modalFields}
+                errors={creatingError ? [creatingError] : []}
+                initialValues={{
+                    name: "",
+                    address: "",
+                    typeId: "",
+                    contactPhone: "",
+                    contactEmail: "",
+                }}
             />
 
             <PaginationControl
                 onChange={onChange}
-                items={localInstitutions.length}
+                items={institutionsPagination?.total ?? 0}
                 pagination={pagination}
             />
         </div>
@@ -141,3 +129,4 @@ const InstitutionsTab = ({ pagination, onChange }: Props) => {
 };
 
 export default InstitutionsTab;
+export { errorMessages };

@@ -1,7 +1,6 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {type Pagination, type PaginationResponse} from "@/domain/pagination.ts";
-import {Button} from "@/presentation/components/ui/button.tsx";
-import {type LucideIcon, Plus} from "lucide-react";
+import {type LucideIcon} from "lucide-react";
 import FiltersPanel, {type FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import type {UseMutationResult, UseQueryResult} from "@tanstack/react-query";
@@ -17,6 +16,7 @@ import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {composeMutationOptions} from "@/presentation/utils.ts";
 import type {RequestError} from "@/infrastructure/errors.ts";
+import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 
 interface Config {
     list: (query: ListQuery<{ name?: string }, "name">) => UseQueryResult<PaginationResponse<Entity>>;
@@ -31,6 +31,13 @@ interface Props {
     pagination: Pagination;
     onPaginationChange: (pagination: Pagination) => void;
     config: Config
+}
+
+const errorMessages = {
+    name: "Ця назва вже використовується, оберіть іншу.",
+    create: "Не вдалося створити заклад. Спробуйте ще раз пізніше.",
+    delete: "Не вдалося видалити заклад. Спробуйте ще раз пізніше.",
+    update: "Не вдалося оновити інформацію про заклад. Спробуйте ще раз пізніше."
 }
 
 const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
@@ -62,7 +69,7 @@ const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
             ];
         });
     };
-
+    console.log(localEntities);
     const onCreate = useHandleMutation(createEntity,
         (data: Entity) =>
             setLocalEntities(prev =>
@@ -72,7 +79,6 @@ const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
                         : x
                 )
             ),
-        (error?: RequestError) => console.log(error?.status, "fsdfdsfdfsd"),
     );
 
     const onUpdate = useHandleMutation(updateEntity, (data: Entity) =>
@@ -101,21 +107,11 @@ const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
         onUpdate({id: data.uiId, name: data.name}, options);
     }
 
-    const createButton = (
-        <Button
-            onClick={onAdd}
-            className="px-4! h-12 text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-2"
-        >
-            <Plus className="w-8 h-8" />
-            Додати
-        </Button>
-    );
-
     return (
         <div className="space-y-6">
             <FiltersPanel
                 values={values}
-                actionButton={createButton}
+                actionButton={<AddButton onClick={onAdd} title="Додати" />}
                 searchPlaceholder="Пошук за назвою"
                 setValues={(key, value) => setValues(prev => ({ ...prev, [key]: value }))}
             />
@@ -137,3 +133,4 @@ const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
 };
 
 export default NameOnlyTab;
+export { errorMessages };

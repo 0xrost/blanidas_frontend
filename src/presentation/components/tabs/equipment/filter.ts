@@ -1,14 +1,22 @@
 import type {FilterConfig, FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 import type {Status} from "@/domain/entities/equipment.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
-import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
 import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import type {EquipmentSortBy} from "@/domain/queries/equipment-list.query.ts";
+import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 
 
-const filtersFactory = (
+interface SearchParams extends FiltersPanelValues {
+    institutionId: string | "all";
+    modelId: string | "all";
+    manufacturerId: string | "all";
+    status: Status | "all";
+    sortBy: EquipmentSortBy;
+}
+
+const filterFieldsFactory = (
     institutions: Institution[],
-    categories: EquipmentCategory[],
+    models: EquipmentModel[],
     manufacturers: Manufacturer[],
 ): FilterConfig[] => [
     {
@@ -19,10 +27,10 @@ const filtersFactory = (
         ],
     },
     {
-        key: 'categoryId',
+        key: 'modelId',
         options: [
-            { value: 'all', label: 'Всі категорії' },
-            ...categories.map(x => ({ value: x.id, label: x.name}))
+            { value: 'all', label: 'Всі моделі' },
+            ...models.map(x => ({ value: x.id, label: x.name}))
         ],
     },
     {
@@ -52,13 +60,5 @@ const filtersFactory = (
     },
 ];
 
-interface SearchParams extends FiltersPanelValues {
-    institutionId: string | "all";
-    categoryId: string | "all";
-    manufacturerId: string | "all";
-    status: Status | "all";
-    sortBy: EquipmentSortBy;
-}
-
-export { filtersFactory };
+export { filterFieldsFactory };
 export type { SearchParams };

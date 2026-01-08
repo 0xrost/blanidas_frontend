@@ -17,4 +17,10 @@ function formatDuration(startDate: Date | string, endDate: Date | string): strin
     return `${diffDays} днів ${diffHours} год ${diffMinutes} хв`;
 }
 
-export { formatDuration };
+function pluralize(count: number, one: string, few: string, many: string): string {
+    if (count === 1) return one;
+    if (count >= 2 && count <= 4) return few;
+    return many;
+}
+
+export { formatDuration, pluralize };

@@ -5,7 +5,6 @@ import type {Pagination} from "@/domain/pagination.ts";
 
 const RepairRequestsPage = () => {
     const {page, limit} = Route.useSearch();
-
     const navigate = Route.useNavigate();
 
     const onPaginationChange = (pagination: Pagination) => { navigate({ search: pagination }); };

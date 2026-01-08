@@ -10,8 +10,8 @@ const equipmentFilterMap: Record<keyof EquipmentFilters, FilterDefinition> = {
         field: "institution_id",
         operator: "eq",
     },
-    categoryId: {
-        field: "equipment_category_id",
+    modelId: {
+        field: "equipment_model_id",
         operator: "eq",
     },
     manufacturerId: {
@@ -25,10 +25,10 @@ const equipmentFilterMap: Record<keyof EquipmentFilters, FilterDefinition> = {
 };
 
 const equipmentSortMap: Record<EquipmentSortBy, string> = {
-    name: "equipment_model__name",
-    institution: "institution__name",
-    category: "equipment_category__name",
-    manufacturer: "manufacturer__name",
+    name: "name",
+    institution: "institution_name",
+    category: "equipment_category_name",
+    manufacturer: "manufacturer_name",
 };
 
 export { equipmentFilterMap, equipmentSortMap };

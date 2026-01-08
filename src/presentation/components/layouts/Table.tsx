@@ -2,18 +2,20 @@ import * as React from "react";
 import {Card} from "@/presentation/components/ui/card.tsx";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
 
-export interface Column<T> {
+interface Column<T> {
     key: string;
     header: React.ReactNode;
     cell: (row: T) => React.ReactNode;
     className?: string;
 }
 
+type RowErrors = Record<string, string>;
+
 interface TableProps<T> {
     data: T[];
     columns: Column<T>[];
     rowKey: (row: T) => string;
-    rowError?: Record<string, string>
+    rowError?: RowErrors;
 }
 
 function Table<T>({ data, columns, rowKey, rowError }: TableProps<T>) {
@@ -72,3 +74,4 @@ function Table<T>({ data, columns, rowKey, rowError }: TableProps<T>) {
 }
 
 export default Table;
+export type { Column, RowErrors };

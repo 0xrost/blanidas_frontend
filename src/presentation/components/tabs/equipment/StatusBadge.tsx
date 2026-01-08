@@ -15,7 +15,7 @@ const schemes: Record<Status, Scheme> = {
         icon: CheckCircle
     },
     not_working: {
-        styles: "bg-red-500",
+        styles: "bg-red-100 text-red-700 border-red-200",
         title: "Не працює",
         icon: XCircle,
     },

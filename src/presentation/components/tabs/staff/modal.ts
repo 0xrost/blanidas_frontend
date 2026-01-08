@@ -16,7 +16,7 @@ interface MemberFormData {
     receiveRepairRequestCreatedNotification: boolean;
 }
 
-const memberFields = (institutions: Institution[], passwordRequired: boolean): FieldConfig<MemberFormData>[] => [
+const modalFieldsFactory = (institutions: Institution[], passwordRequired: boolean): FieldConfig<MemberFormData>[] => [
     {
         id: "firstName",
         label: "Ім'я",
@@ -115,4 +115,4 @@ const memberFields = (institutions: Institution[], passwordRequired: boolean): F
 ];
 
 export type { MemberFormData };
-export { memberFields };
+export { modalFieldsFactory };

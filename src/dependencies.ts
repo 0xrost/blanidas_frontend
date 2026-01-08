@@ -41,7 +41,12 @@ import { UserRepository as UserRepositoryImplementation } from "@/infrastructure
 import type { UserRepository as UserRepositoryInterface } from "@/domain/repositories/user.ts"
 
 import { AuthService as AuthServiceImplementation } from "@/infrastructure/services/auth.ts";
+import { QrCodeService as QrCodeServiceImplementation } from "@/infrastructure/services/qrCode.ts";
+
 import {loginUseCase, refreshUseCase} from "@/domain/useCases/auth.ts";
+import {Route} from "@/presentation/routes/repair-request/$equipmentId.tsx";
+import {routeTree} from "@/routeTree.gen.ts";
+import {BaseClientURL} from "@/options.ts";
 
 
 const EquipmentRepository: EquipmentRepositoryInterface = new EquipmentRepositoryImplementation();
@@ -59,7 +64,9 @@ const ManufacturerRepository: ManufacturerRepositoryInterface = new Manufacturer
 const UserRepository: UserRepositoryInterface = new UserRepositoryImplementation();
 const InstitutionTypeRepository: InstitutionTypeRepositoryInterface = new InstitutionTypeRepositoryImplementation();
 
+console.log(Route)
 const AuthService: AuthServiceImplementation = new AuthServiceImplementation(loginUseCase(AuthRepository), refreshUseCase(AuthRepository));
+const QrCodeService: QrCodeServiceImplementation = new QrCodeServiceImplementation(BaseClientURL + "/repair-request/$equipmentId");
 
 export {
     EquipmentRepository,
@@ -77,4 +84,5 @@ export {
     ManufacturerRepository,
     UserRepository,
     InstitutionTypeRepository,
+    QrCodeService,
 };

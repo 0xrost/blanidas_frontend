@@ -9,11 +9,12 @@ import type { MutationOptions } from "@/presentation/models";
 import RoleBadge from "@/presentation/components/tabs/staff/RoleBadge";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions";
 import FormModal from "@/presentation/components/layouts/FormModal";
-import { memberFields, type MemberFormData } from "@/presentation/components/tabs/staff/memberModal";
+import { modalFieldsFactory, type MemberFormData } from "@/presentation/components/tabs/staff/modal.ts";
 import { useTimedError } from "@/presentation/hooks/useTimedError";
 import { Button } from "@/presentation/components/ui/button";
 import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
 import {composeMutationOptions} from "@/presentation/utils.ts";
+import {errorMessages} from "@/presentation/components/tabs/staff/StaffTab.tsx";
 
 interface Props {
     staff: User[];
@@ -47,10 +48,10 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
             composeMutationOptions({
                 onSuccess: () => { setUpdateError(null); },
                 onError: (error) => {
-                    setUpdateError(error?.status === 400 ?
-                        "Email уже використовується. Будь ласка, вкажіть інший." :
-                        "Не вдалося оновити інформацію про працівника. Спробуйте ще раз пізніше."
-                    )
+                    setUpdateError(error?.code === "value already exists" && error?.fields == "email"
+                        ? errorMessages.email
+                        : errorMessages.update
+                    );
                 },
             }, options)
         );
@@ -163,7 +164,7 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                     close={() => setEditingMember(null)}
                     title="Редагувати працівника"
                     description="Внесіть зміни до інформації про працівника"
-                    fields={memberFields(institutions, false)}
+                    fields={modalFieldsFactory(institutions, false)}
                     submit={onUpdate}
                     submitText="Зберегти зміни"
                     errors={updateError ? [updateError] : []}

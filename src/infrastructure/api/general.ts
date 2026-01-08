@@ -51,10 +51,10 @@ abstract class CRUDRepository<
 
     protected async request<TResponse>(url: string, init?: RequestInit): Promise<TResponse> {
         const response = await fetchWithAuth(url, init);
-        console.log("--------------------------------------------------")
-        if (!response.ok) throw new RequestError(response.status);
+        const json = await response.json();
+        if (!response.ok) throw new RequestError(response.status, json.code, json.message, json.fields);
         if (response.status === 204) return undefined as TResponse;
-        return response.json();
+        return json;
     }
 
     async list(query: ListQuery<TFilters, TSortBy>): Promise<PaginationResponse<TModel>> {

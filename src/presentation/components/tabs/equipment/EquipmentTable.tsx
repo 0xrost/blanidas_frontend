@@ -1,68 +1,63 @@
 import {useCallback, useMemo, useState} from "react";
-import type {User} from "@/domain/entities/user.ts";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
-import {memberFields, type MemberFormData} from "@/presentation/components/tabs/staff/memberModal.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {composeMutationOptions} from "@/presentation/utils.ts";
 import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
-import {Edit, Mail, MapPin, Monitor, Phone, QrCode, X} from "lucide-react";
-import RoleBadge from "@/presentation/components/tabs/staff/RoleBadge.tsx";
+import {Monitor, QrCode} from "lucide-react";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import type {Equipment} from "@/domain/entities/equipment.ts";
 import type {EquipmentUpdate} from "@/domain/models/equipment.ts";
 import StatusBadge from "@/presentation/components/tabs/equipment/StatusBadge.tsx";
+import type {Institution} from "@/domain/entities/institution.ts";
+import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
+import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
+import {modalFieldsFactory, type ModalFormData} from "@/presentation/components/tabs/equipment/modal.ts";
+import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
+import {errorMessages} from "@/presentation/components/tabs/equipment/EquipmentTab.tsx";
 
 
 interface Props {
     equipment: Equipment[];
+    institutions: Institution[];
+    models: EquipmentModel[];
+    manufacturers: Manufacturer[];
+    categories: EquipmentCategory[]
+
     update: (member: EquipmentUpdate, options?: MutationOptions) => void;
-    delete_?: (id: string, options: MutationOptions) => void;
+    delete_: (id: string, options: MutationOptions) => void;
     showQr: (equipment: Equipment) => void;
 }
 
-const EquipmentTable = ({equipment, update, delete_, showQr}: Props) => {
-    const [editingMember, setEditingMember] = useState<User | null>(null);
-    const [failedDeletingMemberIds, setFailedDeletingMemberIds] = useTimedError<string[]>([], 5000);
-    const [updateError, setUpdateError] = useTimedError<string | null>(null, 5000);
+const EquipmentTable = ({equipment, institutions, models, manufacturers, categories, update, delete_, showQr}: Props) => {
+    const [editingEquipment, setEditingEquipment] = useState<Equipment | null>(null);
+    const [failedDeletingEquipmentIds, setFailedDeletingEquipmentIds] = useTimedError<string[]>([], 5000);
+    const [updatingError, setUpdatingError] = useTimedError<string | null>(null, 5000);
 
-    const onUpdate = (data: MemberFormData, options?: MutationOptions) => {
-        if (!editingMember) return;
+    const onUpdate = (data: ModalFormData, options?: MutationOptions) => {
+        if (!editingEquipment) return;
 
-        update(
-            {
-                id: editingMember.id,
-                role: data.role,
-                phone: data.phone,
-                email: data.email,
-                hireAt: data.hireAt,
-                workplaceId: data.workplaceId,
-                department: data.department,
-                username: `${data.firstName} ${data.lastName}`,
-                receiveLowStockNotification: data.receiveLowStockNotification,
-                receiveRepairRequestCreatedNotification: data.receiveRepairRequestCreatedNotification,
-                password: data.password.trim() || undefined,
-            },
-            composeMutationOptions({
-                onSuccess: () => { setUpdateError(null); },
-                onError: (error) => {
-                    setUpdateError(error?.status === 400 ?
-                        "Email уже використовується. Будь ласка, вкажіть інший." :
-                        "Не вдалося оновити інформацію про працівника. Спробуйте ще раз пізніше."
-                    )
-                },
-            }, options)
-        );
+        update({...data, id: editingEquipment.id }, composeMutationOptions({
+            onSuccess: () => { setUpdatingError(null); },
+            onError: (error) => setUpdatingError(
+                error?.code == "value already exists" && error.fields == "serial_number"
+                    ? errorMessages.serialNumber
+                    : errorMessages.update
+            )
+        }, options));
     };
 
     const onDelete = useCallback((id: string) => {
-        if (!delete_) return;
         delete_(id, {
-            onSuccess: () => setFailedDeletingMemberIds(prev => prev.filter(x => x !== id)),
-            onError: () => setFailedDeletingMemberIds(prev => [...prev, id]),
+            onSuccess: () => setFailedDeletingEquipmentIds(prev => prev.filter(x => x !== id)),
+            onError: () => setFailedDeletingEquipmentIds(prev => [...prev, id]),
         });
-    }, [delete_, setFailedDeletingMemberIds]);
+    }, [delete_, setFailedDeletingEquipmentIds]);
+
+    const modalFields = useMemo(
+        () => modalFieldsFactory(institutions, models, manufacturers, categories),
+    [institutions, models, manufacturers, categories])
 
     const columns: Column<Equipment>[] = useMemo(() => [
         {
@@ -101,7 +96,7 @@ const EquipmentTable = ({equipment, update, delete_, showQr}: Props) => {
             key: "status",
             header: "Статус",
             className: "py-3 px-4 text-sm",
-            cell: item => <StatusBadge status={"under_maintenance"} />
+            cell: item => <StatusBadge status={item.status} />
         },
         {
             key: "actions",
@@ -117,11 +112,14 @@ const EquipmentTable = ({equipment, update, delete_, showQr}: Props) => {
                     >
                         <QrCode />
                     </Button>
-                    <EditDeleteActions />
+                    <EditDeleteActions
+                        edit={() => setEditingEquipment(item)}
+                        delete_={() => onDelete(item.id)}
+                    />
                 </div>
             )
         }
-    ], [delete_, onDelete, setEditingMember]);
+    ], [onDelete, setEditingEquipment, showQr]);
 
     return (
         <>
@@ -129,9 +127,30 @@ const EquipmentTable = ({equipment, update, delete_, showQr}: Props) => {
                 data={equipment}
                 columns={columns}
                 rowKey={m => m.id}
-                rowError={Object.fromEntries(failedDeletingMemberIds.map(x => [x, "Не вдалося видалити працівника"]))}
+                rowError={Object.fromEntries(failedDeletingEquipmentIds.map(x => [x, errorMessages.delete]))}
             />
 
+            {editingEquipment && (
+                <FormModal
+                    isOpen
+                    close={() => setEditingEquipment(null)}
+                    title="Редагувати обладнання"
+                    description="Внесіть зміни до інформації про обладнання"
+                    fields={modalFields}
+                    submit={onUpdate}
+                    submitText="Зберегти зміни"
+                    errors={updatingError ? [updatingError] : []}
+                    initialValues={{
+                        location: editingEquipment.location,
+                        serialNumber: editingEquipment.serialNumber,
+                        institutionId: editingEquipment.institution.id,
+                        modelId: editingEquipment.model.id,
+                        manufacturerId: editingEquipment.manufacturer.id,
+                        categoryId: editingEquipment.category.id,
+                        installed: editingEquipment.installed,
+                    }}
+                />
+            )}
         </>
     );
 };

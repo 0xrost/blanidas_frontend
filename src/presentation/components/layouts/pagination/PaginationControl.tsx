@@ -33,7 +33,6 @@ const PaginationControl = ({ items, pagination, onChange }: PaginationControlPro
     const hasLeftEllipsis = startPage > 2;
     const hasRightEllipsis = endPage < totalPages - 1;
 
-    console.log(pagination);
     return (
         <Card className="mt-6 bg-white border-slate-200">
             <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">

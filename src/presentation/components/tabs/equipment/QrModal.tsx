@@ -24,9 +24,10 @@ const initialFgColor = "#000000";
 
 interface Props {
     equipment: Equipment | null;
+    dataToShow: string;
     close: () => void;
 }
-const QrModal = ({ equipment, close }: Props) => {
+const QrModal = ({ equipment, close, dataToShow }: Props) => {
     const [level, setLevel] = useState<ErrorCorrectionLevel>(initialError);
     const [size, setSize] = useState<number>(initialSize);
     const [bgColor, setBgColor] = useState<string>(initialBgColor);
@@ -77,8 +78,7 @@ const QrModal = ({ equipment, close }: Props) => {
                         <QRCodeSVG
                             ref={svgRef}
                             className="border border-gray-400"
-                            id="qr-code-svg"
-                            value={"https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Origin?utm_source=mozilla&utm_medium=devtools-netmonitor&utm_campaign=default"}
+                            value={dataToShow}
                             size={size}
                             fgColor={fgColor}
                             bgColor={bgColor}

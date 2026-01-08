@@ -1,73 +1,62 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
-import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
+import Table, {type Column, type RowErrors} from "@/presentation/components/layouts/Table.tsx";
 import {Check, type LucideIcon, X} from "lucide-react";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 import {Input} from "@/presentation/components/ui/input.tsx";
 import type {UIEntity} from "@/presentation/components/layouts/name-only-tab/models.ts";
 import {Button} from "@/presentation/components/ui/button.tsx";
+import {errorMessages} from "@/presentation/components/layouts/name-only-tab/NameOnlyTab.tsx";
 
 
 interface Props {
     save: (data: UIEntity, options?: MutationOptions) => void;
     delete_: (data: UIEntity, options?: MutationOptions) => void;
     entities: UIEntity[];
-
     icon: LucideIcon;
 }
 
 const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
     const [editingEntity, setEditingEntity] = useState<UIEntity | null>(null);
-    const [failedSaveId, setFailedSaveId] = useTimedError<string | null>(null, 5000);
-    const [failedDeleteIds, setFailedDeleteIds] = useTimedError<Set<string>>(new Set(), 5000);
-
+    const [failedSaveMessages, setFailedSaveMessages] = useTimedError<RowErrors | null>(null, 5000);
+    const [failedDeleteIds, setFailedDeleteIds] = useTimedError<string[]>([], 5000);
+    console.log(editingEntity)
     useEffect(() => {
         const newEntity = entities.find(x => x.isNew && !editingEntity);
         if (newEntity) setEditingEntity(newEntity);
     }, [entities, editingEntity]);
 
     const rowError = useMemo(() => {
-        const errors: Record<string, string> = {};
-
-        failedDeleteIds.forEach(id => {
-            errors[id] = "Не вдалося видалити. Спробуйте ще раз";
-        });
-
-        if (failedSaveId) {
-            errors[failedSaveId] =
-                editingEntity?.isNew
-                    ? "Не вдалося створити. Спробуйте ще раз"
-                    : "Не вдалося оновити. Спробуйте ще раз";
-        }
+        const errors: RowErrors = failedSaveMessages ?? {};
+        failedDeleteIds.forEach(id => { errors[id] = errorMessages.delete; });
 
         return errors;
-    }, [failedDeleteIds, failedSaveId, editingEntity]);
+    }, [failedDeleteIds, failedSaveMessages]);
 
     const onDelete = useCallback((data: UIEntity) => {
         delete_(data, {
             onSuccess: () => {
-                setFailedDeleteIds(prev => {
-                    const next = new Set(prev);
-                    next.delete(data.uiId);
-                    return next;
-                });
+                setFailedDeleteIds(prev => prev.filter(x => x != data.uiId));
+                setEditingEntity(null);
             },
-            onError: () => {
-                setFailedDeleteIds(prev => new Set(prev).add(data.uiId));
-            },
+            onError: () => { setFailedDeleteIds(prev => [data.uiId, ...prev]); },
         });
     }, [delete_, setFailedDeleteIds]);
 
     const onSave = useCallback((entity: UIEntity) => {
         save(entity, {
             onSuccess: () => {
-                setFailedSaveId(null);
+                setFailedSaveMessages(null);
                 setEditingEntity(null);
             },
-            onError: (x) => { setFailedSaveId(entity.uiId); console.log("sdfnj;ldfsjldfsjkdfskj", x) },
+            onError: (error) => {
+                let message = entity.isNew ? errorMessages.create : errorMessages.update;
+                if (error?.code == "value already exists" && error?.fields == "name") { message = errorMessages.name; }
+                setFailedSaveMessages(prev => ({[entity.uiId]: message, ...prev}));
+            },
         });
-    }, [save, setEditingEntity, setFailedSaveId]);
+    }, [save, setEditingEntity, setFailedSaveMessages]);
 
     const columns: Column<UIEntity>[] = useMemo(() => [
         {
@@ -82,7 +71,7 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
                             autoFocus={true}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") onSave(editingEntity);
-                                if (e.key === "Escape") setEditingEntity(null);
+                                if (e.key === "Escape") onDelete(editingEntity);
                             }}
                             onChange={(e) => {
                                 setEditingEntity(prev => {

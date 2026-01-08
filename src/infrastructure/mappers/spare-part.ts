@@ -15,6 +15,8 @@ const mapSparePartDtoToDomain = (dto: SparePartDto): SparePart => {
         supplier: dto.supplier,
         locations: dto.locations,
         minQuantity: dto.min_quantity,
+        totalQuantity: dto.total_quantity,
+        stockStatus: dto.stock_status,
         manufacturer: dto.manufacturer,
         compatibleModels: dto.compatible_models,
         category: dto.spare_part_category,

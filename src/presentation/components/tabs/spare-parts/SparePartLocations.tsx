@@ -9,6 +9,7 @@ import type {MutationOptions} from "@/presentation/models.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
+import {errorMessages} from "@/presentation/components/tabs/spare-parts/SparePartsTab.tsx";
 
 interface Props {
     locations: UILocation[];
@@ -42,9 +43,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
         );
     }, [localLocations, locations]);
 
-    useEffect(() => {
-        setLocalLocations(locations);
-    }, [locations]);
+    useEffect(() => { setLocalLocations(locations); }, [locations]);
 
     const onSave = () => {
         if (!isDirty) return;
@@ -100,7 +99,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
                     </div>
 
                     <div className="space-y-2">
-                        {error && <Notification type="error" message="Не вдалося оновити інформацію про наявність на складах. Спробуйте ще раз" />}
+                        {error && <Notification type="error" message={errorMessages.locations} />}
                         {localLocations.map((location) => {
                             return <LocationItem
                                 key={location.institution.id}

@@ -8,11 +8,13 @@ import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActio
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import {
-    institutionFields,
-    type InstitutionFormData
-} from "@/presentation/components/tabs/institutions/institutionModal.ts";
+    modalFieldsFactory,
+    type ModalFormData
+} from "@/presentation/components/tabs/institutions/modal.ts";
 import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 import type {InstitutionUpdate} from "@/domain/models/institution.ts";
+import {errorMessages} from "@/presentation/components/tabs/institutions/InstitutionsTab.tsx";
+import {composeMutationOptions} from "@/presentation/utils.ts";
 
 interface Props {
     institutions: Institution[];
@@ -23,23 +25,20 @@ interface Props {
 const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: Props) => {
     const [editingInstitution, setEditingInstitution] = useState<Institution | null>(null);
     const [failedDeletingInstitutionIds, setFailedDeletingMemberIds] = useTimedError<string[]>([], 5000);
+    const [updatingError, setUpdatingError] = useTimedError<string | null>(null, 5000);
 
-    const modalFields = useMemo(() => institutionFields(institutionTypes), [institutionTypes]);
+    const modalFields = useMemo(() => modalFieldsFactory(institutionTypes), [institutionTypes]);
 
-    const onUpdate = (data: InstitutionFormData, options?: MutationOptions) => {
+    const onUpdate = (data: ModalFormData, options?: MutationOptions) => {
         if (!editingInstitution) return;
-
-        update(
-            {
-                id: editingInstitution.id,
-                name: data.name,
-                address: data.address,
-                typeId: data.typeId,
-                contactPhone: data.contactPhone,
-                contactEmail: data.contactEmail,
-            },
-            options
-        );
+        update({id: editingInstitution.id, ...data}, composeMutationOptions({
+            onSuccess: () => { setUpdatingError(null); },
+            onError: (error) => { setUpdatingError(
+                error?.code == "value already exists" && error?.fields == "name"
+                    ? errorMessages.name
+                    : errorMessages.update
+            )},
+        }, options));
     };
 
     const onDelete = useCallback((id: string) => {
@@ -112,7 +111,7 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
                 data={institutions}
                 columns={columns}
                 rowKey={i => i.id}
-                rowError={Object.fromEntries(failedDeletingInstitutionIds.map(x => [x, "Не вдалося видалити заклад"]))}
+                rowError={Object.fromEntries(failedDeletingInstitutionIds.map(x => [x, errorMessages.delete]))}
             />
 
             {editingInstitution && (
@@ -124,7 +123,7 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
                     fields={modalFields}
                     submit={onUpdate}
                     submitText="Зберегти зміни"
-                    errorText="Не вдалося оновити дані про заклад"
+                    errors={updatingError ? [updatingError] : []}
                     initialValues={{
                         name: editingInstitution.name,
                         address: editingInstitution.address,

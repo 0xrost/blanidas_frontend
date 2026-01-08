@@ -12,12 +12,8 @@ import type {MutationOptions} from "@/presentation/models.ts";
 
 interface Props {
     spareParts: SparePart[];
-    updateLocations: (
-        sparePartId: string,
-        locations: LocationCreate[],
-        options?: MutationOptions
-    ) => void;
 
+    updateLocations: (sparePartId: string, locations: LocationCreate[], options?: MutationOptions) => void;
     updateSparePart: (data: SparePartUpdate, options?: MutationOptions) => void;
     deleteSparePart: (id: string, options?: MutationOptions) => void;
 
@@ -28,7 +24,7 @@ interface Props {
     manufacturers: Manufacturer[];
 }
 
-const SparePartsList = ({
+const SparePartsTable = ({
     spareParts, updateLocations, institutions, suppliers, models, categories, manufacturers, updateSparePart, deleteSparePart
 }: Props) => {
     return (
@@ -90,4 +86,4 @@ const SparePartsList = ({
     );
 };
 
-export default SparePartsList;
+export default SparePartsTable;

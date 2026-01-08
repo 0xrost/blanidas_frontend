@@ -8,7 +8,6 @@ import type {UILocation} from "@/presentation/components/tabs/spare-parts/models
 
 interface Props {
     institutions: Institution[];
-
     submit(data: UILocation): void;
 }
 const LocationForm = ({ institutions, submit }: Props) => {

@@ -1,13 +1,15 @@
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
-import type {Location} from "@/domain/entities/spare-part.ts";
+import type {Location, StockStatus} from "@/domain/entities/spare-part.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
 
 interface SparePartDto {
     id: string;
     name: string;
     min_quantity: number;
+    total_quantity: number;
+    stock_status: StockStatus;
     compatible_models: EquipmentModel[];
     note: string | null;
 

@@ -90,7 +90,7 @@ const FiltersPanel = ({
                 </div>
 
                 {filters && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
                         {filters.map(filter => renderSelect(filter, "w-full"))}
                     </div>
                 )}

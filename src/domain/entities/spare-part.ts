@@ -16,6 +16,8 @@ interface SparePart {
     id: string;
     name: string;
     minQuantity: number;
+    totalQuantity: number;
+    stockStatus: StockStatus;
     compatibleModels: EquipmentModel[];
     note: string | null;
 

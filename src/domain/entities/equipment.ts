@@ -10,6 +10,7 @@ interface Equipment {
     location: string;
     serialNumber: string;
     installed: Date;
+    status: Status;
     model: EquipmentModel;
     institution: Institution;
     category: EquipmentCategory;

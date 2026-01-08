@@ -7,7 +7,7 @@ interface EquipmentFilters {
     nameOrSerialNumber?: string | null;
     manufacturerId?: string | null;
     institutionId?: string | null;
-    categoryId?: string | null;
+    modelId?: string | null;
     status?: Status | null;
 }
 

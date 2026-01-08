@@ -1,7 +1,7 @@
 import {bindField, type FieldConfig} from "@/presentation/components/layouts/FormModal.tsx";
 import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 
-interface InstitutionFormData {
+interface ModalFormData {
     name: string;
     address: string;
     typeId: string;
@@ -9,7 +9,7 @@ interface InstitutionFormData {
     contactEmail: string;
 }
 
-const institutionFields = (types: InstitutionType[]): FieldConfig<InstitutionFormData>[] => [
+const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData>[] => [
     {
         id: "name",
         label: "Назва",
@@ -54,5 +54,5 @@ const institutionFields = (types: InstitutionType[]): FieldConfig<InstitutionFor
     },
 ];
 
-export type { InstitutionFormData };
-export { institutionFields };
+export type { ModalFormData };
+export { modalFieldsFactory };

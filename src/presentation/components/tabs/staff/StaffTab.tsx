@@ -1,8 +1,5 @@
-import {Plus} from "lucide-react";
-import FiltersPanel, {type FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
+import FiltersPanel from "@/presentation/components/layouts/FiltersPanel.tsx";
 import {useCallback, useEffect, useMemo, useState} from "react";
-import {Button} from "@/presentation/components/ui/button.tsx";
-import type {Role} from "@/domain/auth/roles.ts";
 import StaffTable from "@/presentation/components/tabs/staff/StaffTable.tsx";
 import {useCreateUser, useDeleteUser, useUpdateUser, useUsers} from "@/presentation/hooks/entities/user.ts";
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
@@ -14,39 +11,26 @@ import {useInstitutions} from "@/presentation/hooks/entities/institution.ts";
 import {SortByNameAsc} from "@/domain/sorting.ts";
 import type {UserUpdate} from "@/domain/models/user.ts";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
-import {memberFields, type MemberFormData} from "@/presentation/components/tabs/staff/memberModal.ts";
+import {modalFieldsFactory, type MemberFormData} from "@/presentation/components/tabs/staff/modal.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
+import {filterFields, type SearchParams} from "@/presentation/components/tabs/staff/filter.ts";
+import AddButton from "@/presentation/components/layouts/AddButton.tsx";
+import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 
-const inlineFilter = {
-    key: 'role',
-    options: [
-        { value: 'all', label: 'Усі ролі' },
-        { value: 'engineer', label: "Інженер" },
-        { value: "manager", label: "Менеджер" },
-    ],
-};
-
-const emptyMember: MemberFormData = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    password: "",
-    role: "manager",
-    department: "",
-    workplaceId: "",
-    hireAt: new Date(),
-    receiveLowStockNotification: false,
-    receiveRepairRequestCreatedNotification: false,
-};
-
-interface SearchParams extends FiltersPanelValues { role: Role | "all"; }
 
 interface Props {
     pagination: Pagination
     onChange: (pagination: Pagination) => void;
 }
+
+const errorMessages = {
+    email: "Цей Email вже використовується, оберіть інший.",
+    create: "Не вдалося створити співробітника. Спробуйте ще раз пізніше.",
+    delete: "Не вдалося видалити співробітника. Спробуйте ще раз пізніше.",
+    update: "Не вдалося оновити інформацію про співробтіника. Спробуйте ще раз пізніше."
+}
+
 const StaffTab = ({ pagination, onChange }: Props) => {
     const [values, setValues] = useState<SearchParams>({search: "", role: "all", sortOrder: "asc"});
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -75,41 +59,29 @@ const StaffTab = ({ pagination, onChange }: Props) => {
     });
 
     const modalFields = useMemo(() => {
-        return memberFields(institutionsPagination?.items ?? [], true);
+        return modalFieldsFactory(institutionsPagination?.items ?? [], true);
     }, [institutionsPagination]);
 
-    useEffect(() => {
-        if (staffPagination === undefined) return;
-        setLocalStaff(staffPagination.items);
-    }, [staffPagination]);
+    useEffect(() => { if (staffPagination !== undefined) setLocalStaff(staffPagination.items); }, [staffPagination]);
 
-    const onCreate = useCallback(
-        (data: MemberFormData, options?: MutationOptions<User>) => {
-            createMember.mutate({
-                role: data.role,
-                phone: data.phone,
-                email: data.email,
-                hireAt: data.hireAt,
-                department: data.department,
-                workplaceId: data.workplaceId,
-                password: data.password.trim(),
-                username: data.firstName + " " + data.lastName,
-                receiveLowStockNotification: data.receiveLowStockNotification,
-                receiveRepairRequestCreatedNotification: data.receiveRepairRequestCreatedNotification,
-            }, composeMutationOptions({
-                onSuccess: (data) => {
-                    setLocalStaff(prev => [data, ...prev]);
-                    setError(null);
-                },
-                onError: (x) => {
-                    setError(x?.status === 400 ?
-                        "Email уже використовується. Будь ласка, вкажіть інший." :
-                        "Не вдалося створити працівника. Спробуйте ще раз пізніше."
-                    )
-                }
-            }, options));
-        }, [createMember, setError]
-    );
+    const onCreate = (data: MemberFormData, options?: MutationOptions<User>) => {
+        createMember.mutate({
+            ...data,
+            password: data.password.trim(),
+            username: data.firstName + " " + data.lastName,
+        }, composeMutationOptions({
+            onSuccess: (data) => {
+                setLocalStaff(prev => [data, ...prev]);
+                setError(null);
+            },
+            onError: (error) => {
+                setError(error?.code === "value already exists" && error?.fields == "email"
+                    ? errorMessages.email
+                    : errorMessages.create
+                );
+            }
+        }, options));
+    }
 
     const onUpdate = useCallback(
         (data: UserUpdate, options?: MutationOptions<User>) => {
@@ -128,34 +100,17 @@ const StaffTab = ({ pagination, onChange }: Props) => {
         }, [authSession, updateMember]
     );
 
-    const onDelete = useCallback(
-        (id: string, options?: MutationOptions) => {
-            deleteMember.mutate(id, composeMutationOptions({
-                onSuccess: () => {
-                    setLocalStaff(prev => {
-                        return prev.filter(x => x.id !== id);
-                    })
-                }
-            }, options));
-        }, [deleteMember]
+    const onDelete = useHandleMutation(deleteMember,
+        (id) => { setLocalStaff(prev => { return prev.filter(x => x.id !== id); })}
     )
-
-    const createButton = (
-        <Button
-            onClick={() => setIsModalOpen(true)}
-            className="px-4! h-12 text-sm bg-slate-100 text-slate-700 hover:bg-slate-200">
-            <Plus className="w-8 h-8" />
-            Додати співробітника
-        </Button>
-    );
 
     return (
         <div className="space-y-6">
             <FiltersPanel
                 values={values}
-                inlineFilter={inlineFilter}
-                actionButton={createButton}
+                inlineFilter={filterFields}
                 searchPlaceholder={"Пошук за ім'ям та прізвищем працівника"}
+                actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати співробітника" />}
                 setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
             />
 
@@ -177,14 +132,27 @@ const StaffTab = ({ pagination, onChange }: Props) => {
                 close={() => setIsModalOpen(false)}
                 title="Додати працівника"
                 description="Внесіть інформацію про нового працівника"
-                initialValues={emptyMember}
                 submit={onCreate}
                 fields={modalFields}
                 errors={error ? [error] : []}
                 submitText="Додати"
+                initialValues={{
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    phone: "",
+                    password: "",
+                    role: "manager",
+                    department: "",
+                    workplaceId: "",
+                    hireAt: new Date(),
+                    receiveLowStockNotification: false,
+                    receiveRepairRequestCreatedNotification: false,
+                }}
             />
         </div>
     );
 };
 
 export default StaffTab;
+export { errorMessages };
