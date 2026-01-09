@@ -1,10 +1,8 @@
 import {useQuery} from "@tanstack/react-query";
 import {
     getEquipmentSummaryUseCase,
-    getInstitutionsSummaryUseCase,
     getRepairRequestsSummaryUseCase,
     getSparePartsSummaryUseCase,
-    getStaffSummaryUseCase
 } from "@/domain/useCases/summary.ts";
 import {SummaryRepository} from "@/dependencies.ts";
 
@@ -15,13 +13,6 @@ const useRepairRequestsSummary = () => {
     })
 }
 
-const useInstitutionsSummary = () => {
-    return useQuery({
-        queryKey: ['summary', "institutions"],
-        queryFn: getInstitutionsSummaryUseCase(SummaryRepository),
-    })
-}
-
 const useSparePartsSummary = () => {
     return useQuery({
         queryKey: ['summary', "spare-parts"],
@@ -29,12 +20,6 @@ const useSparePartsSummary = () => {
     })
 }
 
-const useStaffSummary = () => {
-    return useQuery({
-        queryKey: ['summary', "staff"],
-        queryFn: getStaffSummaryUseCase(SummaryRepository),
-    })
-}
 
 const useEquipmentSummary = () => {
     return useQuery({
@@ -46,8 +31,6 @@ const useEquipmentSummary = () => {
 
 export {
     useRepairRequestsSummary,
-    useInstitutionsSummary,
     useSparePartsSummary,
-    useStaffSummary,
     useEquipmentSummary,
 };
