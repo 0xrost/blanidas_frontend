@@ -1,6 +1,6 @@
 import {DashboardHeader} from "@/presentation/components/layouts/Header.tsx";
 import NavigationTab from "@/presentation/components/layouts/NavigationTab.tsx";
-import {BarChart3, Building2, ClipboardList, type LucideIcon, Monitor, Package, Settings, Users} from "lucide-react";
+import {BarChart3, ClipboardList, type LucideIcon, Monitor, Package, Settings} from "lucide-react";
 import {DashboardFooter} from "@/presentation/components/layouts/Footer.tsx";
 import {useAuthSession, useLogout} from "@/presentation/hooks/auth.ts";
 import {useLocation, useNavigate} from "@tanstack/react-router";

@@ -8,6 +8,7 @@ import {Input} from "@/presentation/components/ui/input.tsx";
 import type {UIEntity} from "@/presentation/components/layouts/name-only-tab/models.ts";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {errorMessages} from "@/presentation/components/layouts/name-only-tab/NameOnlyTab.tsx";
+import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
 
 
 interface Props {
@@ -140,6 +141,7 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
                 columns={columns}
                 rowKey={i => i.uiId}
                 rowError={rowError}
+                empty={<EmptyTable title="Нічого не знайдено" />}
             />
         </>
     );

@@ -3,7 +3,7 @@ import type {InstitutionFilters, InstitutionSortBy} from "@/domain/queries/insti
 
 const institutionFilterMap: Record<keyof InstitutionFilters, FilterDefinition> = {
     nameOrAddress: {
-        field: "name__or__address",
+        field: "name_or_address",
         operator: "ilike",
     },
     typeId: {

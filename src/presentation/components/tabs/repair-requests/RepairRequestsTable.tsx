@@ -1,4 +1,4 @@
-import {Building2, Calendar, ChevronRight, MapPin, Monitor} from "lucide-react";
+import {Building2, Calendar, ChevronRight, ClipboardList, MapPin, Monitor} from "lucide-react";
 import {Badge} from "@/presentation/components/ui/badge.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import type {RepairRequest} from "@/domain/entities/repair-request.ts";
@@ -6,6 +6,7 @@ import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
 import {useMemo} from "react";
 import {PriorityBadge} from "@/presentation/components/tabs/repair-requests/PriorityBadge.tsx";
 import {RepairRequestStatusBadge} from "@/presentation/components/layouts/StatusBadge.tsx";
+import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
 
 type RepairRequestsListProps = {
     repairRequests: RepairRequest[];
@@ -128,6 +129,7 @@ const RepairRequestsTable = ({ repairRequests, onGoToDetails }: RepairRequestsLi
             data={repairRequests}
             columns={columns}
             rowKey={m => m.id}
+            empty={<EmptyTable title="Заявки не знайдено" icon={ClipboardList} />}
         />
     );
 };

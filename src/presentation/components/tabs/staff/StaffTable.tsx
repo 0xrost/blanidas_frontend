@@ -1,5 +1,5 @@
 import {useCallback, useMemo, useState} from "react";
-import { Edit, Mail, MapPin, Phone } from "lucide-react";
+import {Edit, Mail, MapPin, Phone, User2} from "lucide-react";
 
 import type { User } from "@/domain/entities/user";
 import type { UserUpdate } from "@/domain/models/user";
@@ -15,6 +15,7 @@ import { Button } from "@/presentation/components/ui/button";
 import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
 import {composeMutationOptions} from "@/presentation/utils.ts";
 import {errorMessages} from "@/presentation/components/tabs/staff/StaffTab.tsx";
+import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
 
 interface Props {
     staff: User[];
@@ -158,6 +159,7 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                 columns={columns}
                 rowKey={m => m.id}
                 rowError={Object.fromEntries(failedDeletingMemberIds.map(x => [x, "Не вдалося видалити працівника"]))}
+                empty={<EmptyTable title="Співробітників не знайдено" icon={User2}/>}
             />
 
             {editingMember && (

@@ -16,6 +16,7 @@ import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import {modalFieldsFactory, type ModalFormData} from "@/presentation/components/tabs/equipment/modal.ts";
 import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
 import {errorMessages} from "@/presentation/components/tabs/equipment/EquipmentTab.tsx";
+import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
 
 
 interface Props {
@@ -128,6 +129,7 @@ const EquipmentTable = ({equipment, institutions, models, manufacturers, categor
                 columns={columns}
                 rowKey={m => m.id}
                 rowError={Object.fromEntries(failedDeletingEquipmentIds.map(x => [x, errorMessages.delete]))}
+                empty={<EmptyTable title="Обладнання не знайдено" icon={Monitor}/>}
             />
 
             {editingEquipment && (

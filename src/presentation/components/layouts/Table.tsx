@@ -13,12 +13,13 @@ type RowErrors = Record<string, string>;
 
 interface TableProps<T> {
     data: T[];
+    empty: React.ReactNode;
     columns: Column<T>[];
     rowKey: (row: T) => string;
     rowError?: RowErrors;
 }
 
-function Table<T>({ data, columns, rowKey, rowError }: TableProps<T>) {
+function Table<T>({ data, columns, empty, rowKey, rowError }: TableProps<T>) {
     return (
         <Card className="bg-white border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
@@ -65,6 +66,7 @@ function Table<T>({ data, columns, rowKey, rowError }: TableProps<T>) {
                         })}
                     </tbody>
                 </table>
+                {data.length === 0 && (<>{ empty }</>)}
             </div>
         </Card>
     );

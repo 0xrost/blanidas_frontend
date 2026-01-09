@@ -15,6 +15,7 @@ import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 import type {InstitutionUpdate} from "@/domain/models/institution.ts";
 import {errorMessages} from "@/presentation/components/tabs/institutions/InstitutionsTab.tsx";
 import {composeMutationOptions} from "@/presentation/utils.ts";
+import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
 
 interface Props {
     institutions: Institution[];
@@ -116,6 +117,7 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
                 columns={columns}
                 rowKey={i => i.id}
                 rowError={Object.fromEntries(failedDeletingInstitutionIds.map(x => [x, errorMessages.delete]))}
+                empty={<EmptyTable title="Заклади не знайдено" icon={Building2}/>}
             />
 
             {editingInstitution && (
