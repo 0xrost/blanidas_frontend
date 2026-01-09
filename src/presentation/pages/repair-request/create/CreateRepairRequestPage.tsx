@@ -6,9 +6,9 @@ import RequestSuccess from "@/presentation/pages/repair-request/create/RequestSu
 import BaseLayout from "@/presentation/components/layouts/BaseLayout.tsx";
 import {useEquipmentById} from "@/presentation/hooks/entities/equipment.ts";
 import {useCreateRepairRequest} from "@/presentation/hooks/entities/repair-request.ts";
-import {useState} from "react";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
 import EquipmentNotFound from "@/presentation/pages/repair-request/create/EquipmentNotFound.tsx";
+import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 
 interface RepairRequestFormData {
     description: string;
@@ -17,14 +17,14 @@ interface RepairRequestFormData {
 }
 
 const CreateRepairRequestPage = () => {
-    const [showCreateRepairRequestErrorMessage, setShowCreateRepairRequestErrorMessage] = useState<boolean>(false);
-
     const { equipmentId } = Route.useParams();
-    const equipmentQuery = useEquipmentById(equipmentId);
+
+    const [showCreateRepairRequestErrorMessage, setShowCreateRepairRequestErrorMessage] = useTimedError<boolean>(false, 5000);
+
+    const equipment = useEquipmentById(equipmentId);
     const createRepairRequest = useCreateRepairRequest()
 
     const sendForm = (data: RepairRequestFormData) => {
-        setShowCreateRepairRequestErrorMessage(false)
         createRepairRequest.mutate({
             ...data,
             equipmentId: equipmentId,
@@ -36,7 +36,7 @@ const CreateRepairRequestPage = () => {
 console.log(createRepairRequest)
     return (
         <BaseLayout>
-            {equipmentQuery.isError
+            {equipment.isError
                 ? <EquipmentNotFound />
                 : (
                     <>
@@ -44,10 +44,10 @@ console.log(createRepairRequest)
                             ? <RequestSuccess repairRequestId={createRepairRequest.data.id.toString()} />
                             : (
                                 <div className="space-y-6">
-                                    <DeviceInfoPanel equipment={equipmentQuery.isLoading ? null : equipmentQuery.data!} isLoading={equipmentQuery.isLoading} />
+                                    <DeviceInfoPanel equipment={equipment.isLoading ? null : equipment.data!} isLoading={equipment.isLoading} />
                                     <CreateRepairRequestForm
                                         sendForm={sendForm}
-                                        isLoading={equipmentQuery.isLoading}
+                                        isLoading={equipment.isLoading}
                                         isSubmitting={createRepairRequest.isPending}
                                     />
                                     {showCreateRepairRequestErrorMessage &&

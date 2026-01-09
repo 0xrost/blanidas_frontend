@@ -70,7 +70,7 @@ class RepairRequestRepository extends CRUDRepository<
         const json = await response.json();
         if (!response.ok) throw new RequestError(response.status, json.code, json.message, json.fields);
 
-        return mapRepairRequestDtoToDomain(await response.json())
+        return mapRepairRequestDtoToDomain(json)
     }
 }
 
