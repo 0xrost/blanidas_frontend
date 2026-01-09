@@ -22,9 +22,9 @@ interface SparePart {
     note: string | null;
 
     locations: Location[];
-    supplier: Supplier;
-    manufacturer: Manufacturer;
-    category: SparePartCategory;
+    supplier: Supplier | null;
+    manufacturer: Manufacturer | null;
+    category: SparePartCategory | null;
 }
 
 export type { SparePart, Location, StockStatus };

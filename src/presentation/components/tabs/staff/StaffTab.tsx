@@ -1,15 +1,13 @@
 import FiltersPanel from "@/presentation/components/layouts/FiltersPanel.tsx";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import StaffTable from "@/presentation/components/tabs/staff/StaffTable.tsx";
 import {useCreateUser, useDeleteUser, useUpdateUser, useUsers} from "@/presentation/hooks/entities/user.ts";
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
-import {useAuthSession} from "@/presentation/hooks/auth.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {composeMutationOptions} from "@/presentation/utils.ts";
 import type {User} from "@/domain/entities/user.ts";
 import {useInstitutions} from "@/presentation/hooks/entities/institution.ts";
 import {SortByNameAsc} from "@/domain/sorting.ts";
-import type {UserUpdate} from "@/domain/models/user.ts";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import {modalFieldsFactory, type MemberFormData} from "@/presentation/components/tabs/staff/modal.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
@@ -37,8 +35,6 @@ const StaffTab = ({ pagination, onChange }: Props) => {
     const [localStaff, setLocalStaff] = useState<User[]>([]);
 
     const [error, setError] = useTimedError<string | null>(null, 5000);
-
-    const authSession = useAuthSession();
 
     const createMember = useCreateUser();
     const updateMember = useUpdateUser();
@@ -83,22 +79,9 @@ const StaffTab = ({ pagination, onChange }: Props) => {
         }, options));
     }
 
-    const onUpdate = useCallback(
-        (data: UserUpdate, options?: MutationOptions<User>) => {
-            updateMember.mutate(data, composeMutationOptions({
-                onSuccess: (data) => {
-                    if (data.id === authSession?.currentUser.id) {
-                        return;
-                    }
-
-                    setLocalStaff(prev => prev.map(x => {
-                        if (x.id !== data.id) return x;
-                        return data;
-                    }))
-                }
-            }, options))
-        }, [authSession, updateMember]
-    );
+    const onUpdate = useHandleMutation(updateMember,
+        (data) => { setLocalStaff(prev => prev.map(x => { return x.id !== data.id ? x : data; }))
+    })
 
     const onDelete = useHandleMutation(deleteMember,
         (id) => { setLocalStaff(prev => { return prev.filter(x => x.id !== id); })}

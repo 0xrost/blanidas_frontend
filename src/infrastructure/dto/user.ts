@@ -8,7 +8,7 @@ interface UserDto {
     phone_number: string;
     role: Role;
     department: string;
-    workplace: Institution;
+    workplace: Institution | null;
     hire_at: Date;
 
     receive_low_stock_notification: boolean;

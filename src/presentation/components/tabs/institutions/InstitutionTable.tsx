@@ -68,9 +68,13 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
             header: "Тип",
             className: "py-3 px-4",
             cell: institution => (
-                <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                    {institution.type.name}
-                </Badge>
+                <>
+                    {institution.type && (
+                        <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                            {institution.type.name ?? ""}
+                        </Badge>
+                    )}
+                </>
             ),
         },
         {
@@ -127,7 +131,7 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
                     initialValues={{
                         name: editingInstitution.name,
                         address: editingInstitution.address,
-                        typeId: editingInstitution.type.id,
+                        typeId: editingInstitution.type?.id ?? "",
                         contactPhone: editingInstitution.contactPhone,
                         contactEmail: editingInstitution.contactEmail,
                     }}

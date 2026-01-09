@@ -4,7 +4,7 @@ interface Institution {
     id: string;
     name: string;
     address: string;
-    type: InstitutionType;
+    type: InstitutionType | null;
     contactPhone: string;
     contactEmail: string;
 }

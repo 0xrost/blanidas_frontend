@@ -15,7 +15,7 @@ export const Route = createFileRoute('/_authenticated/manager/dashboard/settings
     limit?: string
   }): SearchParams => {
     return {
-      tab: search.tab ?? "sparePartCategories",
+      tab: search.tab ?? "staff",
       page: Number(search?.page ?? 1),
       limit: Number(search?.limit ?? 15),
     }

@@ -91,13 +91,12 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
 
     const modalFields = useMemo(
         () => modalFieldsFactory(
-            institutionsPagination?.items ?? [],
             sparePartCategoriesPagination?.items ?? [],
             suppliersPagination?.items ?? [],
             manufacturersPagination?.items ?? [],
             equipmentModelsPagination?.items ?? [],
         ),
-    [institutionsPagination, sparePartCategoriesPagination, equipmentModelsPagination, suppliersPagination, manufacturersPagination])
+    [sparePartCategoriesPagination, equipmentModelsPagination, suppliersPagination, manufacturersPagination])
 
     useEffect(() => {
         if (sparePartsPagination) { setLocalSpareParts(sparePartsPagination.items); }

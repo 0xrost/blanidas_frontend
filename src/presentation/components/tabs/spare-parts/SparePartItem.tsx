@@ -51,8 +51,8 @@ const SparePartItem = ({
     const [deletingError, setDeletingError] = useTimedError<boolean>(false, 5000);
 
     const modalFields = useMemo(
-        () => modalFieldsFactory(institutions, categories, suppliers, manufacturers, models),
-    [institutions, categories, suppliers, manufacturers, models])
+        () => modalFieldsFactory(categories, suppliers, manufacturers, models),
+    [categories, suppliers, manufacturers, models])
 
     const onUpdate = (data: ModalFormData, options?: MutationOptions) => {
         updateSparePart({
@@ -112,9 +112,9 @@ const SparePartItem = ({
                 initialValues={{
                     name: sparePart.name,
                     minQuantity: sparePart.minQuantity,
-                    sparePartCategoryId: sparePart.category.id,
-                    supplierId: sparePart.supplier.id,
-                    manufacturerId: sparePart.manufacturer.id,
+                    sparePartCategoryId: sparePart.category?.id ?? "",
+                    supplierId: sparePart.supplier?.id ?? "",
+                    manufacturerId: sparePart.manufacturer?.id ?? "",
                     compatibleModelIds: sparePart.compatibleModels.map(x => x.id),
                 }}
             />

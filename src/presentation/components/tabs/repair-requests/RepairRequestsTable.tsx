@@ -22,16 +22,16 @@ const RepairRequestsTable = ({ repairRequests, onGoToDetails }: RepairRequestsLi
                     <Monitor className="w-4 h-4 text-slate-400 shrink-0 mt-1" />
                     <div className="min-w-0">
                         <p
-                            title={repairRequest.equipment?.model?.name}
+                            title={repairRequest.equipment.model.name}
                             className="text-sm text-slate-900 truncate max-w-80"
                         >
-                            {repairRequest.equipment?.model?.name}
+                            {repairRequest.equipment.model.name}
                         </p>
                         <p
-                            title={repairRequest.equipment?.serialNumber}
+                            title={repairRequest.equipment.serialNumber}
                             className="text-xs text-slate-500 truncate"
                         >
-                            {repairRequest.equipment?.serialNumber}
+                            {repairRequest.equipment.serialNumber}
                         </p>
                     </div>
                 </div>
@@ -46,19 +46,19 @@ const RepairRequestsTable = ({ repairRequests, onGoToDetails }: RepairRequestsLi
                     <div className="flex items-center gap-1 text-sm text-slate-900 mb-1">
                         <Building2 className="w-3 h-3 text-slate-400" />
                         <span
-                            title={repairRequest.equipment?.institution?.name}
+                            title={repairRequest.equipment.institution.name}
                             className="truncate max-w-80"
                         >
-                        {repairRequest.equipment?.institution?.name}
+                        {repairRequest.equipment.institution.name}
                     </span>
                     </div>
                     <div className="flex items-center gap-1 text-xs text-slate-500">
                         <MapPin className="w-3 h-3 text-slate-400" />
                         <span
-                            title={repairRequest.equipment?.location}
+                            title={repairRequest.equipment.location}
                             className="truncate max-w-80"
                         >
-                        {repairRequest.equipment?.location}
+                        {repairRequest.equipment.location}
                     </span>
                     </div>
                 </div>
@@ -69,12 +69,16 @@ const RepairRequestsTable = ({ repairRequests, onGoToDetails }: RepairRequestsLi
             header: "Категорія",
             className: "px-3 py-4 whitespace-nowrap",
             cell: repairRequest => (
-                <Badge
-                    variant="outline"
-                    className="bg-purple-50 text-purple-700 border-purple-200"
-                >
-                    {repairRequest.equipment?.category?.name}
-                </Badge>
+                <>
+                    {repairRequest.equipment.category && (
+                        <Badge
+                            variant="outline"
+                            className="bg-purple-50 text-purple-700 border-purple-200"
+                        >
+                            {repairRequest.equipment.category.name}
+                        </Badge>
+                    )}
+                </>
             )
         },
         {

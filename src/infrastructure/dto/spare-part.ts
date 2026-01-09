@@ -14,9 +14,9 @@ interface SparePartDto {
     note: string | null;
 
     locations: Location[];
-    supplier: Supplier;
-    manufacturer: Manufacturer;
-    spare_part_category: SparePartCategory;
+    supplier: Supplier | null;
+    manufacturer: Manufacturer | null;
+    spare_part_category: SparePartCategory | null;
 }
 
 interface LocationCreateDto {

@@ -9,7 +9,7 @@ interface User {
     phoneNumber: string;
     role: Role;
     department: string;
-    workplace: Institution;
+    workplace: Institution | null;
     hireAt: Date;
 
     receiveLowStockNotification: boolean;

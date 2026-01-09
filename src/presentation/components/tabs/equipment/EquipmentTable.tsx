@@ -69,7 +69,7 @@ const EquipmentTable = ({equipment, institutions, models, manufacturers, categor
                     <Monitor className="w-4 h-4 text-slate-400" />
                     <div className="text-sm">
                         <span className="text-slate-900 block text-nowrap">{item.model.name}</span>
-                        <span className="text-slate-500">{item.manufacturer.name}</span>
+                        <span className="text-slate-500">{item.manufacturer?.name}</span>
                     </div>
                 </div>
             )
@@ -145,8 +145,8 @@ const EquipmentTable = ({equipment, institutions, models, manufacturers, categor
                         serialNumber: editingEquipment.serialNumber,
                         institutionId: editingEquipment.institution.id,
                         modelId: editingEquipment.model.id,
-                        manufacturerId: editingEquipment.manufacturer.id,
-                        categoryId: editingEquipment.category.id,
+                        manufacturerId: editingEquipment.manufacturer?.id ?? "",
+                        categoryId: editingEquipment.category?.id ?? "",
                         installed: editingEquipment.installed,
                     }}
                 />

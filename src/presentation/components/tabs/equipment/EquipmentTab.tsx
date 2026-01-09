@@ -1,7 +1,7 @@
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
 import {useEquipmentSummary} from "@/presentation/hooks/summary.ts";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
-import {Monitor, Plus} from "lucide-react";
+import {Monitor} from "lucide-react";
 import FiltersPanel from "@/presentation/components/layouts/FiltersPanel.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {filterFieldsFactory, type SearchParams} from "@/presentation/components/tabs/equipment/filter.ts";
@@ -9,7 +9,6 @@ import {useInstitutions} from "@/presentation/hooks/entities/institution.ts";
 import {useManufacturers} from "@/presentation/hooks/entities/manufacturer.ts";
 import {useEquipmentCategories} from "@/presentation/hooks/entities/equipment-category.ts";
 import {SortByNameAsc} from "@/domain/sorting.ts";
-import {Button} from "@/presentation/components/ui/button.tsx";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import {
     useCreateEquipment,

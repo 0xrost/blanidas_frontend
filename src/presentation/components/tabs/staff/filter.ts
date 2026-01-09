@@ -3,7 +3,6 @@ import type {Role} from "@/domain/auth/roles.ts";
 
 interface SearchParams extends FiltersPanelValues { role: Role | "all"; }
 
-
 const filterFields = {
     key: 'role',
     options: [

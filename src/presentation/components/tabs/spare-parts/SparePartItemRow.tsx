@@ -56,9 +56,11 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                     </div>
                 </td>
                 <td className="px-4 py-4">
-                    <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                        <span className="truncate max-w-40">{sparePart.category.name}</span>
-                    </Badge>
+                    {sparePart.category && (
+                        <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                            <span className="truncate max-w-40">{sparePart.category.name}</span>
+                        </Badge>
+                    )}
                 </td>
 
                 <td className="px-4 py-4">
@@ -74,10 +76,12 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                     </button>
                 </td>
                 <td className="px-4 py-4">
-                    <div className="flex items-center gap-1 text-sm text-slate-600">
-                        <Building2 className="w-3 h-3 text-slate-400" />
-                        <span className="truncate max-w-45">{sparePart.supplier.name}</span>
-                    </div>
+                    {sparePart.supplier && (
+                        <div className="flex items-center gap-1 text-sm text-slate-600">
+                            <Building2 className="w-3 h-3 text-slate-400" />
+                            <span className="truncate max-w-45">{sparePart.supplier.name}</span>
+                        </div>
+                    )}
                 </td>
                 <td className="px-4 py-4">
                     <div className="text-center">

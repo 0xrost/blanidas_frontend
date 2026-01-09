@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Plus } from "lucide-react";
-import FiltersPanel, { type FiltersPanelValues } from "@/presentation/components/layouts/FiltersPanel.tsx";
-import { Button } from "@/presentation/components/ui/button.tsx";
+import FiltersPanel from "@/presentation/components/layouts/FiltersPanel.tsx";
 import { useInstitutionTypes } from "@/presentation/hooks/entities/institution-type.ts";
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
 import { SortByNameAsc } from "@/domain/sorting.ts";
@@ -67,7 +65,7 @@ const InstitutionsTab = ({ pagination, onChange }: Props) => {
     const onCreate = useHandleMutation(createInstitution,
         (data: Institution) => {
             setLocalInstitutions(prev => [data, ...prev]);
-            setCreatingError(false);
+            setCreatingError(null);
         },
         (error) =>  { setCreatingError(
             error?.code == "value already exists" && error.fields == "name"

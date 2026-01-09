@@ -12,8 +12,8 @@ interface EquipmentDto {
     status: Status;
     institution: InstitutionDto;
     equipment_model: EquipmentModel;
-    equipment_category: EquipmentCategory;
-    manufacturer: Manufacturer
+    equipment_category: EquipmentCategory | null;
+    manufacturer: Manufacturer | null;
 }
 
 interface EquipmentCreateDto {

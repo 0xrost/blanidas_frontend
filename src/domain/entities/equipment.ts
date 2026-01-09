@@ -13,8 +13,8 @@ interface Equipment {
     status: Status;
     model: EquipmentModel;
     institution: Institution;
-    category: EquipmentCategory;
-    manufacturer: Manufacturer;
+    category: EquipmentCategory | null;
+    manufacturer: Manufacturer | null;
 }
 
 export type { Equipment, Status };

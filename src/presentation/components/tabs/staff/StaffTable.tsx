@@ -73,10 +73,12 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
             cell: member => (
                 <div>
                     <p className="text-slate-900">{member.username}</p>
-                    <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
-                        <MapPin className="w-3 h-3" />
-                        <span>{member.workplace?.name ?? "-"}</span>
-                    </div>
+                    {member.workplace && (
+                        <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
+                            <MapPin className="w-3 h-3" />
+                            <span>{member.workplace.name}</span>
+                        </div>
+                    )}
                 </div>
             )
         },
