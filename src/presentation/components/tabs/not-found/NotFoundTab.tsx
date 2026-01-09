@@ -2,7 +2,7 @@ import {ArrowLeft, FileQuestion} from "lucide-react";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {Link} from "@tanstack/react-router";
 
-type NotFoundTabProps = { redirectTo: string };
+type NotFoundTabProps = { redirectTo?: string };
 const NotFoundTab = ({ redirectTo }: NotFoundTabProps) => {
     return (
         <div className="flex-1 flex items-center justify-center px-4">
@@ -20,12 +20,14 @@ const NotFoundTab = ({ redirectTo }: NotFoundTabProps) => {
                     </p>
                 </div>
 
-                <Link to={redirectTo}>
-                    <Button className="h-11 px-6 bg-cyan-500 hover:bg-cyan-600 text-white">
-                        <ArrowLeft className="w-5 h-5 mr-2" />
-                        Повернутись назад
-                    </Button>
-                </Link>
+                {redirectTo && (
+                    <Link to={redirectTo}>
+                        <Button className="h-11 px-6 bg-cyan-500 hover:bg-cyan-600 text-white">
+                            <ArrowLeft className="w-5 h-5 mr-2" />
+                            Повернутись назад
+                        </Button>
+                    </Link>
+                )}
             </div>
         </div>
     );

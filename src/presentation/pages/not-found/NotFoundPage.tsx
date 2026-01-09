@@ -1,10 +1,12 @@
 import BaseLayout from "@/presentation/components/layouts/BaseLayout.tsx";
 import NotFoundTab from "@/presentation/components/tabs/not-found/NotFoundTab.tsx";
 
-const NotFoundPage = () => {
+type Scope = "dashboard" | "default";
+interface Props { scope: Scope }
+const NotFoundPage = ({ scope }: Props) => {
     return (
         <BaseLayout>
-            <NotFoundTab redirectTo={"/accounts/login"} />
+            <NotFoundTab redirectTo={scope === "dashboard" ? "/accounts/login/" : undefined} />
         </BaseLayout>
     );
 };

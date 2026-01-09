@@ -16,5 +16,5 @@ interface RouterContext {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
     component: RootLayout,
-    notFoundComponent: NotFoundPage,
+    notFoundComponent: () => <NotFoundPage scope="default" />,
 })
