@@ -3,12 +3,12 @@ import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 import type {InstitutionTypeCreate, InstitutionTypeUpdate} from "@/domain/models/institution-type.ts";
 import type {InstitutionTypeFilters, InstitutionTypeSortBy} from "@/domain/queries/institution-type-list.query.ts";
 
-interface InstitutionTypeRepository extends CRUDRepository<
+type InstitutionTypeRepository = CRUDRepository<
     InstitutionType,
     InstitutionTypeCreate,
     InstitutionTypeUpdate,
     InstitutionTypeFilters,
     InstitutionTypeSortBy
-> {}
+>;
 
 export type { InstitutionTypeRepository };

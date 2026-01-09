@@ -42,11 +42,8 @@ function Table<T>({ data, columns, rowKey, rowError }: TableProps<T>) {
                         {data.map(row => {
                             const error = rowError ? (rowError[rowKey(row)] || "") : "";
                             return (
-                                <>
-                                    <tr
-                                        key={rowKey(row)}
-                                        className="hover:bg-slate-50 transition-colors border-slate-100 border-b"
-                                    >
+                                <React.Fragment key={rowKey(row)}>
+                                    <tr className="hover:bg-slate-50 transition-colors border-slate-100 border-b">
                                         {columns.map(col => (
                                             <td
                                                 key={col.key}
@@ -63,7 +60,7 @@ function Table<T>({ data, columns, rowKey, rowError }: TableProps<T>) {
                                             </td>
                                         </tr>
                                     }
-                                </>
+                                </React.Fragment>
                             );
                         })}
                     </tbody>

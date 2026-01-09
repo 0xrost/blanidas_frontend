@@ -8,6 +8,15 @@ import {Select, SelectItem, SelectContent, SelectTrigger, SelectValue} from "@/p
 import type {RepairRequestFormData} from "@/presentation/pages/repair-request/create/CreateRepairRequestPage.tsx";
 import type {Urgency} from "@/domain/entities/repair-request.ts";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
+import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
+
+
+const allowed_types = ["image/jpeg", "image/png", "image/webp"];
+const errorMessages = {
+    unsupportedType: "Можна завантажувати лише зображення (JPEG, PNG, WEBP).",
+    issue: "Опис проблеми не може перевищувати 600 символів",
+    photos: "Ви не можете додати більше ніж 6 фото",
+}
 
 type RepairRequestFormProps = {
     sendForm: (data: RepairRequestFormData) => void;
@@ -21,6 +30,7 @@ const CreateRepairRequestForm = ({ sendForm, isLoading, isSubmitting }: RepairRe
         photos: []
     });
 
+    const [unsupportedTypeError, setUnsupportedTypeError] = useTimedError<boolean>(false, 5000);
     const showDescriptionTooLongMessage = formData.description.length > 600;
     const showPhotoLimitMessage = formData.photos.length > 6;
 
@@ -28,6 +38,11 @@ const CreateRepairRequestForm = ({ sendForm, isLoading, isSubmitting }: RepairRe
         const files = e.target.files;
         if (files) {
             Array.from(files).forEach(file => {
+                if (!allowed_types.includes(file.type)) {
+                    setUnsupportedTypeError(true);
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     setFormData(prev => ({
@@ -136,10 +151,11 @@ const CreateRepairRequestForm = ({ sendForm, isLoading, isSubmitting }: RepairRe
                             </SelectContent>
                         </Select>
                     </div>
-                    {(showDescriptionTooLongMessage || showPhotoLimitMessage) &&
+                    {(showDescriptionTooLongMessage || showPhotoLimitMessage || unsupportedTypeError) &&
                         <div className="mt-1 mb-0">
-                            {showDescriptionTooLongMessage && <Notification type="error" message="Опис проблеми не може перевищувати 600 символів" />}
-                            {showPhotoLimitMessage && <Notification className="mt-2" type="error" message="Ви не можете додати більше ніж 6 фото" />}
+                            {showDescriptionTooLongMessage && <Notification type="error" message={errorMessages.issue} />}
+                            {showPhotoLimitMessage && <Notification className="mt-2" type="error" message={errorMessages.photos} />}
+                            {unsupportedTypeError && <Notification className="mt-2" type="error" message={errorMessages.unsupportedType} />}
                         </div>
                     }
                     <Button

@@ -21,7 +21,7 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
     const [editingEntity, setEditingEntity] = useState<UIEntity | null>(null);
     const [failedSaveMessages, setFailedSaveMessages] = useTimedError<RowErrors | null>(null, 5000);
     const [failedDeleteIds, setFailedDeleteIds] = useTimedError<string[]>([], 5000);
-    console.log(editingEntity)
+
     useEffect(() => {
         const newEntity = entities.find(x => x.isNew && !editingEntity);
         if (newEntity) setEditingEntity(newEntity);

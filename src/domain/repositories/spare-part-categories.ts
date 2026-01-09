@@ -6,13 +6,13 @@ import type {
 import type {CRUDRepository} from "@/domain/repositories/general.ts";
 import type {SparePartCategoryCreate, SparePartCategoryUpdate} from "@/domain/models/spare-part-category.ts";
 
-interface SparePartCategoryRepository extends CRUDRepository<
+type SparePartCategoryRepository = CRUDRepository<
     SparePartCategory,
     SparePartCategoryCreate,
     SparePartCategoryUpdate,
     SparePartCategoryFilters,
     SparePartCategorySortBy
-> {}
+>;
 
 export type { SparePartCategoryRepository };
 

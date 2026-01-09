@@ -33,7 +33,7 @@ const CreateRepairRequestPage = () => {
             onError: () => setShowCreateRepairRequestErrorMessage(true),
         })
     }
-console.log(createRepairRequest)
+
     return (
         <BaseLayout>
             {equipment.isError

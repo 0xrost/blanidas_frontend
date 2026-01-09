@@ -3,7 +3,6 @@ const equipmentIdPlaceholder = "$equipmentId";
 class QrCodeService {
     private readonly url: string;
     constructor(equipmentIdUrl: string) {
-        console.log("equipmentIdUrl", equipmentIdUrl);
         if (!equipmentIdUrl.includes(equipmentIdPlaceholder)) {
             throw new Error(`URL must contain the ${equipmentIdPlaceholder} placeholder`);
         }

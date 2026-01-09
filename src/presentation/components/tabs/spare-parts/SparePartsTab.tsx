@@ -80,7 +80,7 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
             sortOrder: values.sortOrder,
         }
     })
-    console.log(values)
+
     const filterFields = useMemo<FilterConfig[]>(() =>
         filterFieldsFactory(
             institutionsPagination?.items ?? [],

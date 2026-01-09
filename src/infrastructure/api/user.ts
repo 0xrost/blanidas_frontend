@@ -1,5 +1,5 @@
 import {type CRUDMappers, CRUDRepository} from "@/infrastructure/api/general.ts";
-import type {UserRepository as UserRepositoryInterface} from "@/domain/repositories/users.ts";
+import type {UserRepository as UserRepositoryInterface} from "@/domain/repositories/user.ts";
 import {Endpoints} from "@/infrastructure/endpoints.ts";
 import type {User} from "@/domain/entities/user.ts";
 import type {UserCreateDto, UserDto, UserUpdateDto} from "@/infrastructure/dto/user.ts";

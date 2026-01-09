@@ -69,7 +69,7 @@ const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
             ];
         });
     };
-    console.log(localEntities);
+
     const onCreate = useHandleMutation(createEntity,
         (data: Entity) =>
             setLocalEntities(prev =>

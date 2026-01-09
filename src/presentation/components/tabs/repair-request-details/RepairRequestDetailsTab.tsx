@@ -223,7 +223,7 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
                                     disabled={!isDirty}
                                 >
                                     <Save className="w-5 h-5"/>
-                                    Зберегти заявку
+                                    Зберегти зміни
                                 </Button>
                             }
                             {showUpdateFailMessage &&

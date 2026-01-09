@@ -3,12 +3,12 @@ import type {EquipmentModelFilters, EquipmentModelSortBy} from "@/domain/queries
 import type {EquipmentModelCreate, EquipmentModelUpdate} from "@/domain/models/equipment-model.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 
-interface EquipmentModelRepository extends CRUDRepository<
+type EquipmentModelRepository = CRUDRepository<
     EquipmentModel,
     EquipmentModelCreate,
     EquipmentModelUpdate,
     EquipmentModelFilters,
     EquipmentModelSortBy
-> {}
+>;
 
 export type { EquipmentModelRepository };

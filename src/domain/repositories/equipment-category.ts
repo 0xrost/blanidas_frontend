@@ -3,12 +3,12 @@ import type {EquipmentCategoryCreate, EquipmentCategoryUpdate} from "@/domain/mo
 import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
 import type {CRUDRepository} from "@/domain/repositories/general.ts";
 
-interface EquipmentCategoryRepository extends CRUDRepository<
+type EquipmentCategoryRepository = CRUDRepository<
     EquipmentCategory,
     EquipmentCategoryCreate,
     EquipmentCategoryUpdate,
     EquipmentCategoryFilters,
     EquipmentCategorySortBy
-> {}
+>;
 
 export type { EquipmentCategoryRepository };
