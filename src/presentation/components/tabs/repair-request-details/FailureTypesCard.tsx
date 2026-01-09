@@ -29,7 +29,7 @@ const FailureTypesCard = ({ isReadonly, failureTypes, selectedFailureTypeIds, on
                                     checked={selectedFailureTypeIds.includes(type.id)}
                                     onCheckedChange={(checked: boolean) =>
                                         checked ? onSelectFailureType(type.id) : onDeselectFailureType(type.id)}
-                                    className="mt-0.5"
+                                    className="mt-0.5 border-slate-400"
                                 />
                             }
                             <div className="flex-1">

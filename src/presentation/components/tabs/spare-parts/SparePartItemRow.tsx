@@ -13,6 +13,7 @@ import type {MutationOptions} from "@/presentation/models.ts";
 import {clsx} from "clsx";
 import {pluralize} from "@/presentation/pages/utils.ts";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
+import {useMemo} from "react";
 
 interface Props {
     sparePart: SparePart;
@@ -24,6 +25,8 @@ interface Props {
     setLocationVisible: (visible: boolean) => void;
 }
 const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, showModal, deleteSparePart }: Props) => {
+    const modelsTitle = useMemo(() => sparePart.compatibleModels.map(x => x.name).join("\n"), [sparePart]);
+
     return (
         <>
             <tr
@@ -40,13 +43,15 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                         <p className="text-sm text-slate-900">{sparePart.name}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
                             {sparePart.compatibleModels?.slice(0, 1).map((model, index) => (
-                                <Badge key={index} variant="secondary" className="text-xs">
+                                <Badge key={index} title={modelsTitle} variant="secondary" className="text-xs">
                                     <span className="truncate max-w-50">{model.name}</span>
                                 </Badge>
                             ))}
-                            <Badge variant="secondary" className="text-xs">
-                                +{sparePart.compatibleModels.length - 1}
-                            </Badge>
+                            {sparePart.compatibleModels.length > 1 && (
+                                <Badge variant="secondary" className="text-xs">
+                                    +{sparePart.compatibleModels.length - 1}
+                                </Badge>
+                            )}
                         </div>
                     </div>
                 </td>

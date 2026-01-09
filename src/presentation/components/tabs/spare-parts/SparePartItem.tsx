@@ -58,7 +58,7 @@ const SparePartItem = ({
         updateSparePart({
             ...data,
             id: sparePart.id,
-            sparePartCategoryId: data.categoryId,
+            sparePartCategoryId: data.sparePartCategoryId,
         }, composeMutationOptions({
             onSuccess: () => { setUpdatingError(null); },
             onError: (error) => {setUpdatingError(

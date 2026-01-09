@@ -7,18 +7,17 @@ import {
 import IssueCard from "@/presentation/components/tabs/repair-request-details/IssueCard.tsx";
 import FailureTypesCard from "@/presentation/components/tabs/repair-request-details/FailureTypesCard.tsx";
 import {useFailureTypes} from "@/presentation/hooks/entities/failure-type.ts";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import type {Status} from "@/domain/entities/repair-request.ts";
 import StatusBarCard from "@/presentation/components/tabs/repair-request-details/StatusBarCard.tsx";
-import SparePartCard from "@/presentation/components/tabs/repair-request-details/SparePartCard.tsx";
-import SparePartCardModal from "@/presentation/components/tabs/repair-request-details/spare-part-modal/SparePartCardModal.tsx";
+import SparePartCard from "@/presentation/components/tabs/repair-request-details/spare-parts/SparePartCard.tsx";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 import NotesCard from "@/presentation/components/tabs/repair-request-details/NotesCard.tsx";
 import StatusHistory from "@/presentation/components/tabs/repair-request-details/StatusHistory.tsx";
 import RepairHistory from "@/presentation/components/tabs/repair-request-details/RepairHistory.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
-import {FileText, Save, Trash} from "lucide-react";
+import {Save, Trash} from "lucide-react";
 import PhotosCard from "@/presentation/components/tabs/repair-request-details/PhotosCard.tsx";
 import {useAuthSession} from "@/presentation/hooks/auth.ts";
 import NotFoundTab from "@/presentation/components/tabs/not-found/NotFoundTab.tsx";
@@ -28,33 +27,11 @@ import {UnlimitedPagination} from "@/domain/pagination.ts";
 import {SortByNameAsc} from "@/domain/sorting.ts";
 
 
-function mergeUsedSpareParts(
-    initial: RepairRequestUsedSparePartVM[],
-    added: RepairRequestUsedSparePartVM[]
-): RepairRequestUsedSparePartVM[] {
-    const map = new Map<string, RepairRequestUsedSparePartVM>();
-
-    for (const part of [...initial, ...added]) {
-        if (!part.sparePart || !part.institution) continue;
-
-        const key = `${part.sparePart.id}_${part.institution.id}`;
-        if (!map.has(key)) {
-            map.set(key, { ...part });
-        } else {
-            const existing = map.get(key)!;
-            existing.quantity += part.quantity;
-            if (part.note) existing.note = part.note;
-        }
-    }
-
-    return Array.from(map.values());
-}
-
 interface RepairRequestUsedSparePartVM {
     note: string;
     quantity: number;
-    sparePart: SparePart | null;
-    institution: Institution | null;
+    sparePart: SparePart;
+    institution: Institution;
 }
 
 interface Props {
@@ -63,9 +40,6 @@ interface Props {
     goToManagerDashboard: () => void
 }
 const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEngineerDashboard }: Props) => {
-    const authSession = useAuthSession();
-    const isManager = authSession?.currentUser.role === "manager";
-
     const { data: failureTypes } = useFailureTypes({pagination: UnlimitedPagination, sorting: SortByNameAsc});
     const { data: repairRequest, isSuccess, refetch } = useRepairRequestById(repairRequestId);
     const { data: repairHistoryPagination } = useRepairRequests({
@@ -76,6 +50,10 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
         },
         sorting: { sortBy: "date", sortOrder: "desc" }
     })
+
+    const authSession = useAuthSession();
+    const isManager = authSession?.currentUser.role === "manager";
+    const isReadonly = repairRequest?.lastStatus === "finished";
 
     const updateRepairRequest = useUpdateRepairRequest();
     const deleteRepairRequest = useDeleteRepairRequest();
@@ -88,14 +66,10 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
 
     const [selectedFailureTypeIds, setSelectedFailureTypeIds] = useState<string[]>([]);
     const [repairRequestStatus, setRepairRequestStatus] = useState<Status | null>(null);
-    const [initialUsedSpareParts, setInitialUsedSpareParts] = useState<RepairRequestUsedSparePartVM[]>([]);
-    const [newUsedSpareParts, setNewUsedSpareParts] = useState<RepairRequestUsedSparePartVM[]>([]);
     const [notes, setNotes] = useState<string | null>(null);
+    const [usedSparePartsToUpdate, setUsedSparePartsToUpdate] = useState<RepairRequestUsedSparePartVM[]>([]);
+    const [areUsedSparePartsDirty, setAreUsedSparePartsDirty] = useState<boolean>(false);
 
-    const [showSparePartModal, setShowSparePartModal] = useState(false);
-
-    const allUsedSpareParts = useMemo(() =>
-        mergeUsedSpareParts(initialUsedSpareParts, newUsedSpareParts), [initialUsedSpareParts, newUsedSpareParts])
 
     const onRepairRequestDelete = () => {
         setShowDeleteConfirmationModal(false)
@@ -115,7 +89,7 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
     const onRepairRequestUpdate = () => {
         const statusHistory: RepairRequestStatusRecordCreate = {
             status: repairRequestStatus ?? 'not_taken',
-            assignedEngineerId: authSession!.currentUser.id ?? null,
+            assignedEngineerId: authSession?.currentUser.id ?? null,
         }
         console.log(notes, !isManager ? notes : null, isManager)
         updateRepairRequest.mutate({
@@ -124,11 +98,11 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
             engineerNote: !isManager ? notes : null,
             failureTypesIds: selectedFailureTypeIds,
             statusHistory: (repairRequestStatus !== repairRequest?.lastStatus) ? statusHistory : null,
-            usedSpareParts: allUsedSpareParts.map(part => ({
+            usedSpareParts: usedSparePartsToUpdate.map(part => ({
                     note: part.note,
                     quantity: part.quantity,
-                    sparePartId: part.sparePart!.id.toString(),
-                    institutionId: part.institution!.id.toString(),
+                    sparePartId: part.sparePart.id,
+                    institutionId: part.institution.id,
                 }))
         }, {
             onSuccess: () => {
@@ -141,31 +115,42 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
     }
 
     useEffect(() => {
-        if (showUpdateFailMessage) {
-            setShowUpdateFailMessage(false);
-        }
-        if (showUpdateSuccessMessage) {
-            setShowUpdateSuccessMessage(false);
-        }
-    }, [notes, repairRequestStatus, newUsedSpareParts, selectedFailureTypeIds]);
+        setShowUpdateFailMessage(false);
+        setShowUpdateSuccessMessage(false);
+    }, [notes, repairRequestStatus, usedSparePartsToUpdate, selectedFailureTypeIds]);
 
-    const initialized = useRef(false);
     useEffect(() => {
-        if (!repairRequest || initialized.current) return;
+        if (!repairRequest) return;
+
         setNotes(isManager ? repairRequest.managerNote : repairRequest.engineerNote);
         setSelectedFailureTypeIds(repairRequest.failureTypes.map(t => t.id));
         setRepairRequestStatus(repairRequest.lastStatus);
-        setInitialUsedSpareParts(repairRequest.usedSpareParts);
+    }, [repairRequestId, repairRequest, isManager]);
 
-        initialized.current = true;
-    }, [repairRequest, isManager]);
+    const initialFailureTypeIds = useMemo(
+        () => new Set(repairRequest?.failureTypes.map(ft => ft.id)),
+        [repairRequest]
+    );
 
-    const isReadonly = repairRequest?.statusHistory[0].status === "finished";
+    const isFailureTypesDirty =
+        selectedFailureTypeIds.length !== initialFailureTypeIds.size ||
+        selectedFailureTypeIds.some(id => !initialFailureTypeIds.has(id));
+
+    const isNotesDirty = notes !== (isManager ? repairRequest?.managerNote : repairRequest?.engineerNote);
+    const isStatusDirty = repairRequestStatus !== repairRequest?.lastStatus;
+
+    const isDirty =
+        isNotesDirty ||
+        isStatusDirty ||
+        areUsedSparePartsDirty ||
+        isFailureTypesDirty;
 
     if (!isSuccess) {
         return <NotFoundTab redirectTo={isManager
-            ? "/manager/dashboard"
-            : "/engineer/dashboard/repair-requests"} />
+                ? "/manager/dashboard/repair-requests"
+                : "/engineer/dashboard/repair-requests"
+            }
+        />
     }
 
     return (
@@ -191,20 +176,9 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
                         }
                         <SparePartCard
                             isReadonly={isReadonly}
-                            usedSpareParts={allUsedSpareParts}
-                            onOpenModal={() => setShowSparePartModal(true)}
-                            onDeleteSparePart={(x) => {
-                                setNewUsedSpareParts((prev) =>
-                                    prev.filter(vm =>
-                                        vm.institution?.id !== x.institution?.id ||
-                                        vm.sparePart?.id !== x.sparePart?.id
-                                    ));
-                                setInitialUsedSpareParts((prev) =>
-                                    prev.filter(vm =>
-                                        vm.institution?.id !== x.institution?.id ||
-                                        vm.sparePart?.id !== x.sparePart?.id
-                                    ))
-                            }}
+                            setIdDirty={setAreUsedSparePartsDirty}
+                            usedSpareParts={repairRequest?.usedSpareParts ?? []}
+                            setUsedSparePartsToUpdate={setUsedSparePartsToUpdate}
                         />
                         {!isReadonly &&
                             <NotesCard
@@ -246,23 +220,7 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
                                     variant="outline"
                                     onClick={onRepairRequestUpdate}
                                     className="w-full h-12 flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
-                                    disabled={
-                                        notes === (isManager ? repairRequest.managerNote : repairRequest?.engineerNote) &&
-                                        repairRequestStatus === repairRequest?.lastStatus &&
-                                        newUsedSpareParts?.length === 0 &&
-                                        initialUsedSpareParts.length === repairRequest?.usedSpareParts.length &&
-                                        repairRequest?.usedSpareParts.every(part => {
-                                            const match = initialUsedSpareParts.find(x =>
-                                                part.sparePart?.id === x.sparePart?.id &&
-                                                part.institution?.id === x.institution?.id &&
-                                                part.quantity === x.quantity &&
-                                                part.note === x.note
-                                            );
-                                            return !!match;
-                                        }) &&
-                                        selectedFailureTypeIds.length === repairRequest?.failureTypes.length &&
-                                        selectedFailureTypeIds.every(id => new Set(repairRequest.failureTypes.map(ft => ft.id)).has(id))
-                                    }
+                                    disabled={!isDirty}
                                 >
                                     <Save className="w-5 h-5"/>
                                     Зберегти заявку
@@ -278,13 +236,6 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
                                     Заявка успішно оновлена
                                 </div>
                             }
-                            <Button
-                                variant="outline"
-                                className="w-full h-12 flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
-                            >
-                                <FileText className="w-5 h-5" />
-                                Експортувати звіт (PDF)
-                            </Button>
                             {isManager &&
                                 <>
                                     <Button
@@ -306,13 +257,6 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
                     </div>
                 </div>
             </div>
-            {showSparePartModal &&
-                <SparePartCardModal
-                    onHideSparePartModal={() => setShowSparePartModal(false)}
-                    newUsedSpareParts={newUsedSpareParts}
-                    setUsedSpareParts={setNewUsedSpareParts}
-                />
-            }
             {showDeleteConfirmationModal &&
                 <div className="fixed inset-0 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <Card className="bg-white max-w-md w-full">

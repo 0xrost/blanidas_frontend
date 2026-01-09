@@ -1,4 +1,3 @@
-import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 import {bindField, type FieldConfig} from "@/presentation/components/layouts/FormModal.tsx";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
@@ -15,7 +14,6 @@ interface ModalFormData {
 }
 
 const modalFieldsFactory = (
-    types: InstitutionType[],
     categories: SparePartCategory[],
     suppliers: Supplier[],
     manufacturers: Manufacturer[],
