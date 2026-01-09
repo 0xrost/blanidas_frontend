@@ -49,7 +49,7 @@ const DashboardHeader = ({ username, role, onLogout, children, showFullLogo }: D
                             }
                         </div>
                     </div>
-                    <div className="hidden md:flex gap-2">
+                    <div className="hidden overflow-x-auto md:flex gap-2">
                         {children}
                     </div>
                     <div className="flex items-center gap-4">
@@ -64,7 +64,7 @@ const DashboardHeader = ({ username, role, onLogout, children, showFullLogo }: D
                         </Button>
                     </div>
                 </div>
-                <div className="flex md:hidden gap-2 mt-4 border-t border-slate-200 pt-4">
+                <div className="flex overflow-x-auto md:hidden gap-2 mt-4 border-t border-slate-200 pt-4">
                     {children}
                 </div>
             </div>
