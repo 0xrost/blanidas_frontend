@@ -65,7 +65,7 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
 
     return (
         <Dialog open={true} onOpenChange={open => !open && onClose()}>
-            <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>QR-код обладнання</DialogTitle>
                     <DialogDescription>
