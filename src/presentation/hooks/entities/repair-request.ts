@@ -1,4 +1,4 @@
-import {EquipmentRepository, RepairRequestRepository} from "@/dependencies.ts";
+import {RepairRequestRepository} from "@/dependencies.ts";
 import {
     createRepairRequestUseCase, deleteRepairRequestUseCase, getRepairRequestUseCase,
     listRepairRequestsUseCase,

@@ -12,6 +12,15 @@ function mapStatus(status: Status): string {
 
 type StatusHistoryProps = { statusHistory: RepairRequestStatusRecord[] };
 const StatusHistory = ({ statusHistory }: StatusHistoryProps) => {
+    const formatter = new Intl.DateTimeFormat('uk-UA', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    });
+
     return (
         <Card className="bg-white border-slate-200">
             <div className="p-6">
@@ -23,7 +32,7 @@ const StatusHistory = ({ statusHistory }: StatusHistoryProps) => {
                             <div>
                                 <p className="text-slate-900">{mapStatus(item.status)}</p>
                                 <p className="text-xs text-slate-500 mt-1">
-                                    {new Date(item.createdAt).toLocaleDateString('uk-UA')}
+                                    {formatter.format(new Date(item.createdAt))}
                                 </p>
                                 <p className="text-xs text-slate-600 mt-1">{item.assignedEngineer?.username ?? "Система"}</p>
                             </div>

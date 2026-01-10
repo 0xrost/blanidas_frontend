@@ -14,8 +14,9 @@ import { useTimedError } from "@/presentation/hooks/useTimedError";
 import { Button } from "@/presentation/components/ui/button";
 import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
 import {composeMutationOptions} from "@/presentation/utils.ts";
-import {errorMessages} from "@/presentation/components/tabs/staff/StaffTab.tsx";
+import {errorCodeMap, errorMessages} from "@/presentation/components/tabs/staff/StaffTab.tsx";
 import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
+import type {RequestError} from "@/infrastructure/errors.ts";
 
 interface Props {
     staff: User[];
@@ -48,15 +49,21 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
             },
             composeMutationOptions({
                 onSuccess: () => { setUpdateError(null); },
-                onError: (error) => {
-                    setUpdateError(error?.code === "value already exists" && error?.fields == "email"
-                        ? errorMessages.email
-                        : errorMessages.update
-                    );
-                },
+                onError: onError,
             }, options)
         );
     };
+
+    const onError = (error?: RequestError): void => {
+        if (!error) return;
+
+        if (error.code in errorCodeMap) {
+            setUpdateError(errorCodeMap[error.code]);
+            return;
+        }
+
+        setUpdateError(errorMessages.update);
+    }
 
     const onDelete = useCallback((id: string) => {
         if (!delete_) return;
@@ -75,7 +82,7 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                 <div>
                     <p className="text-slate-900">{member.username}</p>
                     {member.workplace && (
-                        <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
+                        <div className="flex items-center text-nowrap gap-1 text-xs text-slate-500 mt-0.5">
                             <MapPin className="w-3 h-3" />
                             <span>{member.workplace.name}</span>
                         </div>

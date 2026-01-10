@@ -22,6 +22,13 @@ const colSpanMap: Record<number, string> = {
     4: "col-span-4",
 };
 
+const smColSpanMap: Record<number, string> = {
+    1: "sm:col-span-1",
+    2: "sm:col-span-2",
+    3: "sm:col-span-3",
+    4: "sm:col-span-4",
+};
+
 export type FieldType = "text"
     | "number"
     | "email"
@@ -41,6 +48,7 @@ export interface FieldConfig<T> {
     id: string;
     label: string;
     type?: FieldType;
+    fullSizeOnMobile?: boolean;
     options?: { value: string; label: string }[];
     maxCount?: number;
     getValue: (formData: T) => any;
@@ -50,7 +58,7 @@ export interface FieldConfig<T> {
     colSpan?: 1 | 2 | 3 | 4;
     validate?: (value: any, formData: T) => boolean;
     errorMessage?: string;
-    renderCustom?: (value: any, onChange: (value: any) => void) => JSX.Element;
+    renderCustom?: (value: any, onChange: (value: any) => void) => React.ReactNode;
 }
 
 interface Props<T> {
@@ -59,7 +67,7 @@ interface Props<T> {
     title: string;
     description?: string;
     initialValues: T;
-    submit: (data: T) => void;
+    submit: (data: T, options?: MutationOptions) => void;
     fields: FieldConfig<T>[];
     errors?: string[];
     submitText?: string;
@@ -81,7 +89,7 @@ function FormModal<T>({
     const [formData, setFormData] = useState<T>(initialValues);
 
     const onSubmit = () => {
-        submit(formData, { onSuccess: onClose, })
+        submit(formData, { onSuccess: onClose })
     }
 
     const onClose = () => {
@@ -108,68 +116,75 @@ function FormModal<T>({
 
     return (
         <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-            <DialogContent className="max-w-4xl">
+            <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     {description && <DialogDescription>{description}</DialogDescription>}
                 </DialogHeader>
                     <div className="grid grid-cols-4 gap-4 py-4">
-                        {fields.map(field => (
-                            <div className={`space-y-2 ${colSpanMap[field.colSpan ?? 2]}`} key={field.id}>
-                                {field.type !== "checkbox" &&
-                                    <Label htmlFor={field.id}>{field.label} {field.required ? " *" : ""}</Label>
-                                }
+                        {fields.map(field => {
+                            const colSpan = colSpanMap[field.colSpan ?? 2];
+                            const smColSpan = smColSpanMap[field.colSpan ?? 2];
+                            return (
+                                <div className={
+                                    `space-y-2 ${field.fullSizeOnMobile ? "col-span-4" : colSpan} ${smColSpan}`
+                                } key={field.id}>
+                                    {field.type !== "checkbox" &&
+                                        <Label htmlFor={field.id}>{field.label} {field.required ? " *" : ""}</Label>
+                                    }
 
-                                {field.renderCustom ? (
-                                    field.renderCustom(field.getValue(formData), (v) => updateField(field, v))
-                                ) : field.type === "select" ? (
-                                    <Select
-                                        value={field.getValue(formData) || ""}
-                                        onValueChange={value => updateField(field, value)}
-                                    >
-                                        <SelectTrigger className="flex-1 w-full h-9 bg-white border border-slate-200 rounded-lg">
-                                            <SelectValue placeholder={field.placeholder || "Оберіть..."} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {field.options?.map(o => (
-                                                <SelectItem key={o.value} value={o.value}>
-                                                    {o.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                ) : field.type === "multiselect" ? (
-                                    <MultiSelect
-                                        maxCount={field.maxCount}
-                                        className="font-normal"
-                                        placeholder={field.placeholder || "Оберіть..."}
-                                        defaultValue={field.getValue(formData) || []}
-                                        onValueChange={value => updateField(field, value)}
-                                        options={field.options || []}
-                                    />
-                                ) : field.type === "checkbox" ? (
-                                    <Label className="flex items-center gap-2 cursor-pointer">
-                                        <Input
-                                            type="checkbox"
-                                            checked={Boolean(field.getValue(formData))}
-                                            onChange={e => updateField(field, e.target.checked)}
-                                            className="h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
+                                    {field.renderCustom ? (
+                                        field.renderCustom(field.getValue(formData), (v) => updateField(field, v))
+                                    ) : field.type === "select" ? (
+                                        <Select
+                                            value={field.getValue(formData) || ""}
+                                            onValueChange={value => updateField(field, value)}
+                                        >
+                                            <SelectTrigger className="flex-1 w-full h-9 bg-white border border-slate-200 rounded-lg">
+                                                <SelectValue placeholder={field.placeholder || "Оберіть..."} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {field.options?.map(o => (
+                                                    <SelectItem key={o.value} value={o.value}>
+                                                        {o.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    ) : field.type === "multiselect" ? (
+                                        <MultiSelect
+                                            maxCount={field.maxCount}
+                                            className="font-normal"
+                                            responsive={true}
+                                            placeholder={field.placeholder || "Оберіть..."}
+                                            defaultValue={field.getValue(formData) || []}
+                                            onValueChange={value => updateField(field, value)}
+                                            options={field.options || []}
                                         />
-                                        <span className="text-sm text-slate-700">{field.label}</span>
-                                    </Label>
-                                ) : (
-                                    <Input
-                                        id={field.id}
-                                        type={field.type || "text"}
-                                        value={field.getValue(formData) || ""}
-                                        onChange={e => updateField(field, e.target.value)}
-                                        placeholder={field.placeholder}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg"
-                                    />
-                                )}
+                                    ) : field.type === "checkbox" ? (
+                                        <Label className="flex items-center gap-2 cursor-pointer">
+                                            <Input
+                                                type="checkbox"
+                                                checked={Boolean(field.getValue(formData))}
+                                                onChange={e => updateField(field, e.target.checked)}
+                                                className="h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
+                                            />
+                                            <span className="text-sm text-slate-700">{field.label}</span>
+                                        </Label>
+                                    ) : (
+                                        <Input
+                                            id={field.id}
+                                            type={field.type || "text"}
+                                            value={field.getValue(formData) || ""}
+                                            onChange={e => updateField(field, e.target.value)}
+                                            placeholder={field.placeholder}
+                                            className="w-full px-4 py-2 border border-slate-200 rounded-lg"
+                                        />
+                                    )}
 
-                            </div>
-                        ))}
+                                </div>
+                            );
+                        })}
                     </div>
                     {errors && errors.length !== 0 && errors.map(x => <Notification type="error" message={x} />)}
                     {validationErrors &&

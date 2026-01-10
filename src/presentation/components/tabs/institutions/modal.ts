@@ -13,6 +13,7 @@ const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData
     {
         id: "name",
         label: "Назва",
+        fullSizeOnMobile: true,
         placeholder: "Введіть назву",
         ...bindField("name"),
         required: true,
@@ -20,6 +21,7 @@ const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData
     {
         id: "address",
         label: "Адреса",
+        fullSizeOnMobile: true,
         placeholder: "Місто, вулиця, будинок",
         ...bindField("address"),
         required: true,
@@ -28,6 +30,7 @@ const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData
         id: "phone",
         label: "Контактний номер телефону",
         placeholder: "+380XXXXXXXXX",
+        fullSizeOnMobile: true,
         ...bindField("contactPhone"),
         required: true,
         validate: v => /^(?:\+38)?(?:\s*\d){10}$/.test(v),
@@ -36,6 +39,7 @@ const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData
     {
         id: "email",
         label: "Контактна пошта",
+        fullSizeOnMobile: true,
         placeholder: "example@mail.com",
         ...bindField("contactEmail"),
         required: true,
@@ -45,6 +49,7 @@ const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData
     {
         id: "type",
         label: "Тип закладу",
+        fullSizeOnMobile: true,
         type: "select",
         colSpan: 4,
         placeholder: "Оберіть тип закладу",

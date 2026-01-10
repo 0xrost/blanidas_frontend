@@ -139,7 +139,7 @@ const SparePartCard = ({ usedSpareParts, setIdDirty, setUsedSparePartsToUpdate, 
                                         </td>
                                         <td className="py-3 px-4 text-sm text-slate-900">{part.quantity}</td>
                                         <td className="text-nowrap break-all py-3 px-4 text-slate-600 text-sm">
-                                            <p className="truncate max-w-25" title={part.note}>
+                                            <p className="truncate max-w-60" title={part.note}>
                                                 {part.note}
                                             </p>
                                         </td>

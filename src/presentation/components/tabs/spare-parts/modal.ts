@@ -2,27 +2,25 @@ import {bindField, type FieldConfig} from "@/presentation/components/layouts/For
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
-import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 
 interface ModalFormData {
     name: string;
     minQuantity: number;
     sparePartCategoryId: string;
     supplierId: string;
-    manufacturerId: string;
     compatibleModelIds: string[];
 }
 
 const modalFieldsFactory = (
     categories: SparePartCategory[],
     suppliers: Supplier[],
-    manufacturers: Manufacturer[],
     models: EquipmentModel[],
 ): FieldConfig<ModalFormData>[] => [
     {
         id: "name",
         label: "Назва",
         colSpan: 4,
+        fullSizeOnMobile: true,
         placeholder: "Введіть назву",
         ...bindField("name"),
         required: true,
@@ -33,6 +31,7 @@ const modalFieldsFactory = (
         type: "number",
         placeholder: "Вкажіть мінімальну кількість",
         ...bindField("minQuantity"),
+        fullSizeOnMobile: true,
         required: true,
         validate: (value) => +value > 0,
         errorMessage: "Мінімальна кількість повинна бути більша за 0"
@@ -41,6 +40,7 @@ const modalFieldsFactory = (
         id: "category",
         label: "Категорія",
         type: "select",
+        fullSizeOnMobile: true,
         placeholder: "Оберіть категорію",
         ...bindField("sparePartCategoryId"),
         required: true,
@@ -50,25 +50,19 @@ const modalFieldsFactory = (
         id: "supplier",
         label: "Постачальник",
         type: "select",
+        fullSizeOnMobile: true,
+        colSpan: 4,
         placeholder: "Оберіть постачальника",
         ...bindField("supplierId"),
         required: true,
         options: suppliers.map(x => ({ value: x.id, label: x.name }))
     },
     {
-        id: "manufacturer",
-        label: "Виробник",
-        type: "select",
-        placeholder: "Оберіть виробника",
-        options: manufacturers.map(type => ({ value: type.id, label: type.name })),
-        ...bindField("manufacturerId"),
-        required: true,
-    },
-    {
         id: "models",
         label: "Сумісні моделі",
         type: "multiselect",
         colSpan: 4,
+        fullSizeOnMobile: true,
         placeholder: "Оберіть сумісні моделі",
         options: models.map(type => ({ value: type.id, label: type.name })),
         ...bindField("compatibleModelIds"),

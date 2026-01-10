@@ -71,7 +71,7 @@ const SparePartLocationDetails = ({ sparePart, newUsedSpareParts, deletedSparePa
                                             <span className="text-slate-700">{location.institution.name}</span>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                          <span className={`${quantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                          <span className={`text-nowrap ${quantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                             {quantity} шт.
                                           </span>
                                         </div>
@@ -127,7 +127,7 @@ const SparePartLocationDetails = ({ sparePart, newUsedSpareParts, deletedSparePa
                                     >
                                         <div className="flex items-center justify-between w-full">
                                             <span>{location.institution?.name}</span>
-                                            <span className={`ml-4
+                                            <span className={`ml-4 text-nowrap
                                                 ${quantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                 {quantity > 0 ? `${quantity} шт.` : 'Немає'}
                                             </span>

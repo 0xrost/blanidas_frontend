@@ -1,5 +1,5 @@
 import type {SparePart} from "@/domain/entities/spare-part.ts";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import type {Institution} from "@/domain/entities/institution.ts";
 import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
@@ -10,7 +10,6 @@ import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
-import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import {composeMutationOptions} from "@/presentation/utils.ts";
 import {modalFieldsFactory, type ModalFormData} from "@/presentation/components/tabs/spare-parts/modal.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
@@ -31,7 +30,6 @@ interface Props {
     suppliers: Supplier[];
     models: EquipmentModel[];
     categories: SparePartCategory[];
-    manufacturers: Manufacturer[];
 }
 
 const SparePartItem = ({
@@ -41,7 +39,6 @@ const SparePartItem = ({
    suppliers,
    models,
    categories,
-   manufacturers,
    updateSparePart,
    deleteSparePart
 }: Props) => {
@@ -50,9 +47,13 @@ const SparePartItem = ({
     const [updatingError, setUpdatingError] = useTimedError<string | null>(null, 5000);
     const [deletingError, setDeletingError] = useTimedError<boolean>(false, 5000);
 
+    useEffect(() => {
+        setAreLocationsVisible(false);
+    }, [sparePart]);
+
     const modalFields = useMemo(
-        () => modalFieldsFactory(categories, suppliers, manufacturers, models),
-    [categories, suppliers, manufacturers, models])
+        () => modalFieldsFactory(categories, suppliers, models),
+    [categories, suppliers, models])
 
     const onUpdate = (data: ModalFormData, options?: MutationOptions) => {
         updateSparePart({
@@ -103,7 +104,7 @@ const SparePartItem = ({
             <FormModal
                 title="Додати запчастину"
                 description="Внесіть інформацію про нову запчастину"
-                submitText="Додати"
+                submitText="Зберегти зміни"
                 submit={onUpdate}
                 isOpen={isModalOpen}
                 close={() => setIsModalOpen(false)}
@@ -114,7 +115,6 @@ const SparePartItem = ({
                     minQuantity: sparePart.minQuantity,
                     sparePartCategoryId: sparePart.category?.id ?? "",
                     supplierId: sparePart.supplier?.id ?? "",
-                    manufacturerId: sparePart.manufacturer?.id ?? "",
                     compatibleModelIds: sparePart.compatibleModels.map(x => x.id),
                 }}
             />

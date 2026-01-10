@@ -30,6 +30,13 @@ const RepairRequestListTab = ({pagination, onPaginationChange, onGoToDetails}: P
         urgency: 'all'
     });
 
+    const onSetValue = (key: string, value: string) => {
+        setValues((prev) => ({ ...prev, [key]: value }))
+        if (key !== "sortBy" && key !== "sortOrder") {
+            onPaginationChange({ ...pagination, page: 1 })
+        }
+    }
+
     const { data: summary } = useRepairRequestsSummary();
     const { data: equipmentCategoriesPagination } = useEquipmentCategories({pagination: UnlimitedPagination, sorting: SortByNameAsc});
     const { data: institutionsPagination } = useInstitutions({pagination: UnlimitedPagination, sorting: SortByNameAsc});
@@ -44,6 +51,7 @@ const RepairRequestListTab = ({pagination, onPaginationChange, onGoToDetails}: P
         },
         sorting: { sortBy: values.sortBy, sortOrder: values.sortOrder }
     });
+
 
     const filters = useMemo<FilterConfig[]>(() => {
         return filtersFactory(institutionsPagination?.items ?? [], equipmentCategoriesPagination?.items ?? [])
@@ -62,9 +70,7 @@ const RepairRequestListTab = ({pagination, onPaginationChange, onGoToDetails}: P
                     filters={filters}
                     values={values}
                     searchPlaceholder="Пошук за моделлю або серійним номером"
-                    setValues={(key, value) =>
-                        setValues((prev) => ({ ...prev, [key]: value }))
-                    }
+                    setValues={onSetValue}
                 />
                 <RepairRequestsTable
                     repairRequests={repairRequestsPagination?.items ?? []}

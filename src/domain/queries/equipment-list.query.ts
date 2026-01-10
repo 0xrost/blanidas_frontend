@@ -1,7 +1,7 @@
 import type {ListQuery} from "@/domain/list-query.ts";
 import type {Status} from "@/domain/entities/equipment.ts";
 
-type EquipmentSortBy = "name" | "institution" | "manufacturer" | "category";
+type EquipmentSortBy = "name" | "institution" | "manufacturer";
 
 interface EquipmentFilters {
     nameOrSerialNumber?: string | null;

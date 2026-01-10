@@ -29,9 +29,9 @@ const DashboardFooter = () => {
     return (
         <footer className="mt-16 bg-white border-t border-slate-200">
             <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-slate-600">
+                <div className="flex flex-col sm:flex-row items-center justify-center text-slate-600">
                     <span>© 2025 Blanidas</span>
-                    <span>|</span>
+                    <span className="hidden sm:inline mx-6">|</span>
                     <a href="mailto:support@blanidas.com" className="hover:text-cyan-600 transition-colors">
                         Технічна підтримка
                     </a>

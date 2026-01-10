@@ -1,5 +1,4 @@
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
-import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Location, StockStatus} from "@/domain/entities/spare-part.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
@@ -15,7 +14,6 @@ interface SparePartDto {
 
     locations: Location[];
     supplier: Supplier | null;
-    manufacturer: Manufacturer | null;
     spare_part_category: SparePartCategory | null;
 }
 
@@ -32,7 +30,6 @@ interface SparePartUpdateDto {
 
     locations?: LocationCreateDto[] | null;
     supplier_id?: string | null;
-    manufacturer_Id?: string | null;
     spare_part_category_id?: string | null;
 }
 
@@ -41,7 +38,6 @@ interface SparePartCreateDto {
     min_quantity: number;
     compatible_models_ids: string[];
     supplier_id: string;
-    manufacturer_id: string;
     spare_part_category_id: string;
 }
 

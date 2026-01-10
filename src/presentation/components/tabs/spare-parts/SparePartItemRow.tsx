@@ -11,7 +11,7 @@ import {
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {clsx} from "clsx";
-import {pluralize} from "@/presentation/pages/utils.ts";
+import {pluralize} from "@/presentation/utils.ts";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 import {useMemo} from "react";
 
@@ -39,7 +39,7 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                 )}
             >
                 <td className="px-4 py-4">
-                    <div className="space-y-1">
+                    <div className="">
                         <p className="text-sm text-slate-900">{sparePart.name}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
                             {sparePart.compatibleModels?.slice(0, 1).map((model, index) => (

@@ -1,7 +1,7 @@
 import {Card} from "@/presentation/components/ui/card.tsx";
 import {Calendar, CheckCircle2, Clock, FileText, User} from "lucide-react";
 import type {RepairRequest} from "@/domain/entities/repair-request.ts";
-import {formatDuration} from "@/presentation/pages/utils.ts";
+import {formatDuration} from "@/presentation/utils.ts";
 
 type RepairHistoryProps = { repairHistory: RepairRequest[] }
 const RepairHistory = ({ repairHistory }: RepairHistoryProps) => {

@@ -59,6 +59,20 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
         });
     }, [save, setEditingEntity, setFailedSaveMessages]);
 
+    const onConfirm = useCallback(() => {
+        if (editingEntity && editingEntity.name.trim().length > 0) {
+            onSave(editingEntity);
+        }
+    }, [editingEntity, onSave]);
+
+    const onCancel = useCallback(() => {
+        if (editingEntity?.isNew) {
+            onDelete(editingEntity);
+        } else {
+            setEditingEntity(null);
+        }
+    }, [editingEntity, onDelete, setEditingEntity])
+
     const columns: Column<UIEntity>[] = useMemo(() => [
         {
             key: "name",
@@ -71,8 +85,8 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
                         <Input
                             autoFocus={true}
                             onKeyDown={(e) => {
-                                if (e.key === "Enter") onSave(editingEntity);
-                                if (e.key === "Escape") onDelete(editingEntity);
+                                if (e.key === "Enter") onConfirm();
+                                if (e.key === "Escape") onCancel();
                             }}
                             onChange={(e) => {
                                 setEditingEntity(prev => {
@@ -84,7 +98,7 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
                             className="text-base"
                         />
                     ) : (
-                        <span className="text-slate-900 block">{entity.name}</span>
+                        <span className="text-slate-900 text-nowrap block">{entity.name}</span>
                     )}
                 </div>
             ),
@@ -100,13 +114,7 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => {
-                                    if (editingEntity?.isNew) {
-                                        onDelete(editingEntity);
-                                    } else {
-                                        setEditingEntity(null);
-                                    }
-                                }}
+                                onClick={onCancel}
                                 className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0"
                             >
                                 <X className="w-4 h-4" />
@@ -115,7 +123,7 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
                                 size="sm"
                                 variant="outline"
                                 disabled={editingEntity.name.trim().length === 0}
-                                onClick={() => {onSave(editingEntity)}}
+                                onClick={onConfirm}
                                 className="border-blue-300 text-blue-700 hover:bg-blue-50 h-8 w-8 p-0"
                             >
                                 <Check className="w-4 h-4" />
@@ -132,7 +140,7 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
                 </div>
             ),
         },
-    ], [editingEntity, Icon, onSave, onDelete, setEditingEntity]);
+    ], [editingEntity, Icon, onConfirm, onCancel, onDelete, setEditingEntity]);
 
     return (
         <>

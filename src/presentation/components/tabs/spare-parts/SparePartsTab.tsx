@@ -16,7 +16,6 @@ import {useInstitutions} from "@/presentation/hooks/entities/institution.ts";
 import {useSparePartCategories} from "@/presentation/hooks/entities/spare-part-category.ts";
 import {useEquipmentModels} from "@/presentation/hooks/entities/equipment-model.ts";
 import {useSuppliers} from "@/presentation/hooks/entities/supplier.ts";
-import {useManufacturers} from "@/presentation/hooks/entities/manufacturer.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
@@ -57,7 +56,6 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
 
     const { data: sparePartCategoriesPagination } = useSparePartCategories({pagination: UnlimitedPagination, sorting: SortByNameAsc})
     const { data: equipmentModelsPagination } = useEquipmentModels({pagination: UnlimitedPagination, sorting: SortByNameAsc})
-    const { data: manufacturersPagination } = useManufacturers({pagination: UnlimitedPagination, sorting: SortByNameAsc})
     const { data: institutionsPagination } = useInstitutions({pagination: UnlimitedPagination, sorting: SortByNameAsc})
     const { data: suppliersPagination } = useSuppliers({pagination: UnlimitedPagination, sorting: SortByNameAsc})
 
@@ -93,10 +91,9 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
         () => modalFieldsFactory(
             sparePartCategoriesPagination?.items ?? [],
             suppliersPagination?.items ?? [],
-            manufacturersPagination?.items ?? [],
             equipmentModelsPagination?.items ?? [],
         ),
-    [sparePartCategoriesPagination, equipmentModelsPagination, suppliersPagination, manufacturersPagination])
+    [sparePartCategoriesPagination, equipmentModelsPagination, suppliersPagination])
 
     useEffect(() => {
         if (sparePartsPagination) { setLocalSpareParts(sparePartsPagination.items); }
@@ -135,7 +132,7 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
             <FiltersPanel
                 setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
                 actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати запчастину" />}
-                searchPlaceholder={"Пошук за назвою або кодом запчастини"}
+                searchPlaceholder={"Пошук за назвою запчастини"}
                 filters={filterFields}
                 values={values}
             />
@@ -148,13 +145,12 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
                 suppliers={suppliersPagination?.items ?? []}
                 models={equipmentModelsPagination?.items ?? []}
                 categories={sparePartCategoriesPagination?.items ?? []}
-                manufacturers={manufacturersPagination?.items ?? []}
             />
 
             <FormModal
                 title="Додати запчастину"
                 description="Внесіть інформацію про нову запчастину"
-                submitText="Додати"
+                submitText="Додати запчастину"
                 submit={onCreateSparePart}
                 isOpen={isModalOpen}
                 close={() => setIsModalOpen(false)}
@@ -165,7 +161,6 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
                     minQuantity: 1,
                     sparePartCategoryId: "",
                     supplierId: "",
-                    manufacturerId: "",
                     compatibleModelIds: [],
                 }}
             />

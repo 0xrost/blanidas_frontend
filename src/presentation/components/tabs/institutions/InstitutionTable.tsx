@@ -58,8 +58,8 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
                 <div className="flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-slate-400" />
                     <div>
-                        <span className="text-slate-900 block">{institution.name}</span>
-                        <span className="text-xs text-slate-500">{institution.address}</span>
+                        <span className="text-slate-900 text-nowrap block">{institution.name}</span>
+                        <span className="text-xs text-nowrap text-slate-500">{institution.address}</span>
                     </div>
                 </div>
             ),

@@ -1,7 +1,9 @@
 import {Button} from "@/presentation/components/ui/button.tsx";
-import {LogOut} from "lucide-react";
-import * as React from "react";
+import {LogOut, type LucideIcon} from "lucide-react";
 import type {Role} from "@/domain/auth/roles.ts";
+import NavigationTab from "@/presentation/components/layouts/header/NavigationTab.tsx";
+import {useEffect, useMemo, useRef} from "react";
+import {useLocation} from "@tanstack/react-router";
 
 const Header = () => {
     return (
@@ -23,15 +25,42 @@ const Header = () => {
     );
 };
 
-type DashboardHeaderProps = {
-    username: string,
-    role: Role,
-    onLogout: () => void,
-    children: React.ReactNode | null,
-    showFullLogo: boolean
+interface TabConfig {
+    to: string
+    title: string;
+    icon: LucideIcon;
 }
 
-const DashboardHeader = ({ username, role, onLogout, children, showFullLogo }: DashboardHeaderProps) => {
+interface Props {
+    username: string;
+    role: Role;
+    onLogout: () => void;
+    showFullLogo: boolean;
+    tabConfigs: TabConfig[];
+}
+
+const DashboardHeader = ({ username, role, tabConfigs, onLogout, showFullLogo }: Props) => {
+    const location = useLocation();
+
+    const targetRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (targetRef.current) {
+            targetRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+    }, []);
+
+    const tabs = useMemo(() => {
+        return tabConfigs.map(tab => {
+            const isActive = location.pathname == tab.to
+            return (
+                <span ref={isActive ? targetRef : null}>
+                    <NavigationTab key={tab.to} to={tab.to} icon={tab.icon} isActive={isActive} title={tab.title}/>
+                </span>
+            );
+        });
+    }, [tabConfigs, location]);
+
     return (
         <header className="bg-white shadow-sm border-b border-slate-200">
             <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
@@ -50,7 +79,7 @@ const DashboardHeader = ({ username, role, onLogout, children, showFullLogo }: D
                         </div>
                     </div>
                     <div className="hidden overflow-x-auto md:flex gap-2">
-                        {children}
+                        {tabs}
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="hidden sm:block text-right">
@@ -64,8 +93,8 @@ const DashboardHeader = ({ username, role, onLogout, children, showFullLogo }: D
                         </Button>
                     </div>
                 </div>
-                <div className="flex overflow-x-auto md:hidden gap-2 mt-4 border-t border-slate-200 pt-4">
-                    {children}
+                <div className={`flex flex-row ${tabs.length < 3 ? "justify-center" : ""} overflow-x-auto md:hidden gap-2 mt-4 border-t border-slate-200 pt-4`}>
+                    {tabs}
                 </div>
             </div>
         </header>
@@ -73,4 +102,4 @@ const DashboardHeader = ({ username, role, onLogout, children, showFullLogo }: D
 };
 
 export { Header, DashboardHeader  };
-export type { DashboardHeaderProps };
+export type { Props };

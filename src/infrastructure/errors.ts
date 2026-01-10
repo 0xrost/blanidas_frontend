@@ -1,4 +1,7 @@
-type ErrorCode = "value already exists";
+type ErrorCode =
+    "value already exists"
+    | "invalid phone format"
+    | "invalid email format";
 
 class RequestError extends Error {
     readonly status: number;

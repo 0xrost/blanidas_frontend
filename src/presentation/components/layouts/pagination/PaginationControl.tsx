@@ -30,9 +30,6 @@ const PaginationControl = ({ items, pagination, onChange }: PaginationControlPro
     const startPage = Math.max(1, page - VISIBLE_PAGES);
     const endPage = Math.min(totalPages, page + VISIBLE_PAGES);
 
-    const hasLeftEllipsis = startPage > 2;
-    const hasRightEllipsis = endPage < totalPages - 1;
-
     return (
         <Card className="mt-6 bg-white border-slate-200">
             <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -53,17 +50,6 @@ const PaginationControl = ({ items, pagination, onChange }: PaginationControlPro
                         <span className="hidden sm:inline ml-1">Попередня</span>
                     </PageButton>
 
-                    {hasLeftEllipsis && (
-                        <>
-                            <PageButton
-                                children={1}
-                                selected={false}
-                                onClick={() => onChange({ page: 1, limit: pagination.limit })}
-                            />
-                            <span className="px-2 text-slate-400">…</span>
-                        </>
-                    )}
-
                     {Array.from(
                         { length: endPage - startPage + 1 },
                         (_, i) => startPage + i
@@ -75,17 +61,6 @@ const PaginationControl = ({ items, pagination, onChange }: PaginationControlPro
                             selected={page === pagination.page}
                         />
                     ))}
-
-                    {hasRightEllipsis && (
-                        <>
-                            <span className="px-2 text-slate-400">…</span>
-                            <PageButton
-                                children={totalPages}
-                                disabled={page === totalPages}
-                                onClick={() => onChange({ page: totalPages, limit: pagination.limit })}
-                            />
-                        </>
-                    )}
 
                     <PageButton
                         disabled={page === totalPages}

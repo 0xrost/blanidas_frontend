@@ -91,7 +91,7 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
             status: repairRequestStatus ?? 'not_taken',
             assignedEngineerId: authSession?.currentUser.id ?? null,
         }
-        console.log(notes, !isManager ? notes : null, isManager)
+
         updateRepairRequest.mutate({
             id: repairRequestId,
             managerNote: isManager ? notes : null,
@@ -160,10 +160,12 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
                     <div className="lg:col-span-2 space-y-6">
                         <DeviceInfoCard repairRequest={repairRequest} />
                         <IssueCard issue={repairRequest?.issue} />
-                        <PhotosCard photos={repairRequest?.photos ?? []} />
+                        {repairRequest?.photos?.length > 0 && (
+                            <PhotosCard photos={repairRequest.photos} />
+                        )}
                         <FailureTypesCard
                             isReadonly={isReadonly}
-                            failureTypes={failureTypes?.items ?? []}
+                            failureTypes={isReadonly ? (repairRequest?.failureTypes ?? []) : (failureTypes?.items ?? [])}
                             selectedFailureTypeIds={selectedFailureTypeIds}
                             onSelectFailureType={(x) => setSelectedFailureTypeIds(prev => prev.includes(x) ? prev : [x, ...prev])}
                             onDeselectFailureType={(x) => setSelectedFailureTypeIds(prev => prev.filter(id => id != x))}

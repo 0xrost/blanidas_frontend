@@ -15,6 +15,7 @@ import NameOnlyTable from "@/presentation/components/layouts/name-only-tab/NameO
 import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {composeMutationOptions} from "@/presentation/utils.ts";
+import { v4 as uuidv4 } from "uuid";
 import type {RequestError} from "@/infrastructure/errors.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 
@@ -64,7 +65,7 @@ const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
             if (prev.some(x => x.isNew)) return prev;
 
             return [
-                { uiId: crypto.randomUUID(), name: "", isNew: true },
+                { uiId: uuidv4(), name: "", isNew: true },
                 ...prev,
             ];
         });

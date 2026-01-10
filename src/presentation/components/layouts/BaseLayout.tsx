@@ -1,4 +1,4 @@
-import {Header} from "@/presentation/components/layouts/Header.tsx";
+import {Header} from "@/presentation/components/layouts/header/Header.tsx";
 import {Footer} from "@/presentation/components/layouts/Footer.tsx";
 
 type BaseLayoutProps = { children: React.ReactNode; }

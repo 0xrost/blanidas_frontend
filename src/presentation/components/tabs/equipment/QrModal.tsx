@@ -65,7 +65,7 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
 
     return (
         <Dialog open={true} onOpenChange={open => !open && onClose()}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl max-h-screen overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>QR-код обладнання</DialogTitle>
                     <DialogDescription>
@@ -74,17 +74,19 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
                 </DialogHeader>
 
                 <div className="space-y-4 overflow-auto">
-                    <div className="flex max-w-full max-h-[60vh] items-center justify-center overflow-hidden">
-                        <QRCodeSVG
-                            ref={svgRef}
-                            className="border border-gray-400"
-                            value={dataToShow}
-                            size={size}
-                            fgColor={fgColor}
-                            bgColor={bgColor}
-                            level={level}
-                            marginSize={margin ? 4 : 0}
-                        />
+                    <div className="flex justify-center overflow-auto max-h-[60vh]">
+                        <div className="w-full max-w-90 aspect-square">
+                            <QRCodeSVG
+                                ref={svgRef}
+                                className="w-full h-full border border-gray-400"
+                                value={dataToShow}
+                                size={size}
+                                fgColor={fgColor}
+                                bgColor={bgColor}
+                                level={level}
+                                marginSize={margin ? 4 : 0}
+                            />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -102,7 +104,25 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-2 col-span-2 sm:col-span-1">
+                            <Label>Колір переднього плану</Label>
+                            <Input
+                                type="color"
+                                value={fgColor}
+                                className="w-full"
+                                onChange={(e) => setFgColor(e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2 col-span-2 sm:col-span-1">
+                            <Label>Колір заднього плану</Label>
+                            <Input
+                                type="color"
+                                value={bgColor}
+                                className="w-full"
+                                onChange={(e) => setBgColor(e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2 col-span-2 sm:col-span-1">
                             <Label>Рівень помилок</Label>
                             <Select value={level} onValueChange={(value: ErrorCorrectionLevel) => setLevel(value)}>
                                 <SelectTrigger className="h-12 w-full bg-white border-slate-300 hover:border-cyan-400 transition-colors">
@@ -116,16 +136,7 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="space-y-2">
-                            <Label>Колір переднього плану</Label>
-                            <Input
-                                type="color"
-                                value={fgColor}
-                                className="w-full"
-                                onChange={(e) => setFgColor(e.target.value)}
-                            />
-                        </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 col-span-2 sm:col-span-1">
                             <Label>Включити поле для маржі</Label>
                             <Select value={margin ? "true" : "false"} onValueChange={(value) => setMargin(value === "true")}>
                                 <SelectTrigger className="h-12 w-full bg-white border-slate-300 hover:border-cyan-400 transition-colors">
@@ -136,15 +147,6 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
                                     <SelectItem value="false">Ні</SelectItem>
                                 </SelectContent>
                             </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Колір заднього плану</Label>
-                            <Input
-                                type="color"
-                                value={bgColor}
-                                className="w-full"
-                                onChange={(e) => setBgColor(e.target.value)}
-                            />
                         </div>
                     </div>
                 </div>

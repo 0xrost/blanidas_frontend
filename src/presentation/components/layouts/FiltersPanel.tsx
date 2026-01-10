@@ -2,8 +2,8 @@ import { Card } from "@/presentation/components/ui/card.tsx";
 import { Search, SortAsc, SortDesc } from "lucide-react";
 import { Input } from "@/presentation/components/ui/input.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/components/ui/select.tsx";
-import type { SortOrder } from "@/domain/queries/queries.ts";
-import { type ReactNode, useLayoutEffect, useState, useRef } from "react";
+import { type ReactNode } from "react";
+import type {SortOrder} from "@/domain/sorting.ts";
 
 export type SelectOption = {
     label: string;
@@ -65,7 +65,7 @@ const FiltersPanel = ({
     return (
         <Card className="bg-white border border-slate-200 mb-6">
             <div className="p-6 space-y-4">
-                <div className="flex flex-row items-center gap-2">
+                <div className={`flex ${inlineFilter ? "flex-col" : ""} sm:flex-row gap-2`}>
                     <div className="flex-1 relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <Input
@@ -76,17 +76,19 @@ const FiltersPanel = ({
                         />
                     </div>
 
-                    {inlineFilter && renderSelect(inlineFilter, "h-12!")}
+                    <div className="flex gap-2">
+                        {inlineFilter && renderSelect(inlineFilter, "h-12! flex-1")}
 
-                    <button
-                        onClick={toggleSortOrder}
-                        className="h-12 px-4 py-2 bg-slate-100 rounded-md text-slate-700 hover:bg-slate-200"
-                        aria-label="Toggle sort order"
-                    >
-                        {values.sortOrder === "desc" ? <SortDesc /> : <SortAsc />}
-                    </button>
+                        <button
+                            onClick={toggleSortOrder}
+                            className="h-12 px-4 py-2 bg-slate-100 rounded-md text-slate-700 hover:bg-slate-200"
+                            aria-label="Toggle sort order"
+                        >
+                            {values.sortOrder === "desc" ? <SortDesc /> : <SortAsc />}
+                        </button>
 
-                    {actionButton}
+                        {actionButton}
+                    </div>
                 </div>
 
                 {filters && (

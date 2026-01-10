@@ -54,7 +54,6 @@ const filterFieldsFactory = (
         options: [
             { value: 'name', label: 'За назвою' },
             { value: 'institution', label: 'За закладом' },
-            { value: 'category', label: 'За категорією' },
             { value: 'manufacturer', label: 'За виробником' },
         ],
     },

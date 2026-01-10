@@ -7,11 +7,11 @@ const EquipmentPage = () => {
     const {page, limit} = Route.useSearch();
     const navigate = Route.useNavigate();
 
-    const onChangeSearch = (search: Pagination) => { navigate({ search: search }); }
+    const onSearchChange = (search: Pagination) => { navigate({ search: search }); }
 
     return (
         <ManagerDashboardLayout>
-            <EquipmentTab pagination={{page, limit}} onChangeSearch={onChangeSearch} />
+            <EquipmentTab pagination={{page, limit}} onSearchChange={onSearchChange} />
         </ManagerDashboardLayout>
     )
 };

@@ -11,7 +11,6 @@ interface SparePartUpdate {
 
     locations?: LocationCreate[] | null;
     supplierId?: string | null;
-    manufacturerId?: string | null;
     sparePartCategoryId?: string | null;
 }
 
@@ -20,7 +19,6 @@ interface SparePartCreate {
     minQuantity: number;
     compatibleModelIds: string[];
     supplierId: string;
-    manufacturerId: string;
     sparePartCategoryId: string;
 }
 

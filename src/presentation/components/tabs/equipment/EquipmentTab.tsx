@@ -169,7 +169,7 @@ const EquipmentTab = ({ pagination, onSearchChange }: Props) => {
                 description="Внесіть інформацію про нове обладнання"
                 fields={modalFields}
                 submit={onCreate}
-                submitText="Зберегти зміни"
+                submitText="Додати обладнання"
                 errors={creatingError ? [creatingError] : []}
                 initialValues={{
                     location: "",

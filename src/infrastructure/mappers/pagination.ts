@@ -1,5 +1,5 @@
-import type {PaginationResponse} from "@/domain/models/pagination.ts";
 import type {PaginationResponseDto} from "@/infrastructure/dto/pagination.ts";
+import type {PaginationResponse} from "@/domain/pagination.ts";
 
 function mapPaginationResponseDtoToDomain<TDomain, TDto>(dto: PaginationResponseDto<TDto>, itemMapper: (value: TDto) => TDomain): PaginationResponse<TDomain> {
     const { has_prev, has_next, ...rest } = dto;

@@ -20,7 +20,7 @@ const FailureTypesCard = ({ isReadonly, failureTypes, selectedFailureTypeIds, on
                         <p className="text-sm text-slate-600">Оберіть один або декілька типів поломок, які було виявлено при діагностиці</p>
                     }
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto">
                     {failureTypes.map(type => (
                         <div key={type.id} className={`flex items-start space-x-3 bg-slate-50 rounded-lg p-3 border ${!isReadonly && "border-slate-200 hover:border-cyan-300 hover:bg-cyan-50/50"} transition-colors`}>
                             {!isReadonly &&

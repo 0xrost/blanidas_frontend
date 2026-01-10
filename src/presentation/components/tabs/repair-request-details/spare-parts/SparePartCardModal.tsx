@@ -1,6 +1,6 @@
-import {Package, Plus, Search, X} from "lucide-react";
+import {Package, Plus, Search} from "lucide-react";
 import {Input} from "@/presentation/components/ui/input.tsx";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useSpareParts} from "@/presentation/hooks/entities/spare-part.ts";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import {Badge} from "@/presentation/components/ui/badge.tsx";
@@ -35,11 +35,13 @@ const SparePartCardModal = ({ isOpen, close, newUsedSpareParts, deletedSparePart
     const [currentSparePart, setCurrentSparePart] = useState<SparePart | null>(null);
     const [usedSparePartFormData, setUsedSparePartFormData] = useState<UsedSparePartFormData>(createEmptyFormData());
 
-    const { data: sparePartsPagination } = useSpareParts({
+    const { data: sparePartsPagination, refetch } = useSpareParts({
         pagination:{ page: 1, limit: 15 },
         filters: { name: search.trim().length > 2 ? search.trim() : "" },
         sorting: SortByNameAsc,
     });
+
+    useEffect(() => { if (isOpen) refetch(); }, [isOpen, refetch])
 
     const effectiveQuantities = useMemo(() => {
         const map = new Map<string, number>();
@@ -82,22 +84,11 @@ const SparePartCardModal = ({ isOpen, close, newUsedSpareParts, deletedSparePart
             open={isOpen}
             onOpenChange={(open) => !open && onClose()}
         >
-            <DialogContent className="max-w-fit w-full max-h-[90vh] overflow-y-auto p-0 rounded-2xl">
-                <DialogHeader className="sticky top-0 z-10 bg-white border-b border-slate-200 p-6 rounded-t-2xl">
-                    <div className="flex items-center justify-between">
-                        <DialogTitle className="text-slate-900">
-                            Додати запчастину
-                        </DialogTitle>
-
-                        <button
-                            onClick={onClose}
-                            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                        >
-                            <X className="w-5 h-5 text-slate-400" />
-                        </button>
-                    </div>
+            <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle className="text-slate-900">Додати запчастину</DialogTitle>
                 </DialogHeader>
-                <div className="overflow-y-auto p-6 pt-0 space-y-6">
+                <div className="overflow-y-auto space-y-6">
                     <div className="relative mt-2">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <Input
@@ -169,7 +160,7 @@ const SparePartCardModal = ({ isOpen, close, newUsedSpareParts, deletedSparePart
                             )}
                         </div>
                     )}
-                    <div className="flex gap-3 pt-4 border-t border-slate-200">
+                    <div className="flex gap-3 border-slate-200">
                         <Button
                             onClick={onSubmit}
                             disabled={currentSparePart == null || usedSparePartFormData.institution === null}

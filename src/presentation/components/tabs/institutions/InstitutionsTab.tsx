@@ -105,7 +105,7 @@ const InstitutionsTab = ({ pagination, onChange }: Props) => {
                 title="Додати заклад"
                 description="Внесіть інформацію про новий заклад"
                 submit={onCreate}
-                submitText="Додати"
+                submitText="Додати заклад"
                 fields={modalFields}
                 errors={creatingError ? [creatingError] : []}
                 initialValues={{

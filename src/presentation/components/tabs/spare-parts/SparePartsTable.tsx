@@ -7,7 +7,6 @@ import type {Institution} from "@/domain/entities/institution.ts";
 import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
-import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 
 interface Props {
@@ -21,11 +20,10 @@ interface Props {
     suppliers: Supplier[];
     models: EquipmentModel[];
     categories: SparePartCategory[];
-    manufacturers: Manufacturer[];
 }
 
 const SparePartsTable = ({
-    spareParts, updateLocations, institutions, suppliers, models, categories, manufacturers, updateSparePart, deleteSparePart
+    spareParts, updateLocations, institutions, suppliers, models, categories, updateSparePart, deleteSparePart
 }: Props) => {
     return (
         <Card className="bg-white border-slate-200 overflow-x-auto">
@@ -68,7 +66,6 @@ const SparePartsTable = ({
                             suppliers={suppliers}
                             models={models}
                             categories={categories}
-                            manufacturers={manufacturers}
                         />
                     )}
                     </tbody>

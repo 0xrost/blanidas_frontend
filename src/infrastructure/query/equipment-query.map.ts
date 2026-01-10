@@ -27,7 +27,6 @@ const equipmentFilterMap: Record<keyof EquipmentFilters, FilterDefinition> = {
 const equipmentSortMap: Record<EquipmentSortBy, string> = {
     name: "name",
     institution: "institution_name",
-    category: "equipment_category_name",
     manufacturer: "manufacturer_name",
 };
 

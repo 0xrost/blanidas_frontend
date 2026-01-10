@@ -2,6 +2,7 @@ import {Card} from "@/presentation/components/ui/card.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {AlertTriangle, Building2, Factory, Layers, type LucideIcon, Monitor, Tag, Truck, User2} from "lucide-react";
 import type {Tab} from "@/presentation/components/tabs/settings/SettingsTab.tsx";
+import {useEffect, useRef} from "react";
 
 const selectionCardConfig = {
     tabs: [
@@ -32,6 +33,13 @@ interface Props {
 }
 
 const SelectionCard = ({ currentTabId, setCurrentTabId, selectionConfig }: Props) => {
+    const targetRef = useRef<HTMLButtonElement>(null);
+    useEffect(() => {
+        if (targetRef.current) {
+            targetRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+    }, [currentTabId, selectionConfig]);
+
     if (selectionConfig.tabs.length === 0) return;
 
     return (
@@ -47,6 +55,7 @@ const SelectionCard = ({ currentTabId, setCurrentTabId, selectionConfig }: Props
                         return (
                             <Button
                                 key={id}
+                                ref={isActive ? targetRef : null}
                                 variant={isActive ? 'default' : 'outline'}
                                 onClick={() => setCurrentTabId(id)}
                                 className={`shrink-0 ${buttonClass}`}

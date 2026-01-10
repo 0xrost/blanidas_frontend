@@ -9,8 +9,8 @@ type StatusBarCardProps = {
 const StatusBarCard = ({ status, onStatusChange }: StatusBarCardProps) => {
     return (
         <Card className="py-0 bg-white border-slate-200">
-            <div className="flex flex-row items-center p-6">
-                <h3 className="text-nowrap text-slate-900 mr-4">Статус ремонту</h3>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center p-6">
+                <h3 className="text-nowrap text-slate-900 mb-4 sm:mb-0 sm:mr-4">Статус ремонту</h3>
                 <div className="w-full sm:flex-row gap-4">
                     <div className="flex-1">
                         <Select

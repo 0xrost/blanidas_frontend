@@ -1,9 +1,8 @@
-import {DashboardHeader} from "@/presentation/components/layouts/Header.tsx";
-import NavigationTab from "@/presentation/components/layouts/NavigationTab.tsx";
+import {DashboardHeader} from "@/presentation/components/layouts/header/Header.tsx";
 import {BarChart3, ClipboardList, type LucideIcon, Monitor, Package, Settings} from "lucide-react";
 import {DashboardFooter} from "@/presentation/components/layouts/Footer.tsx";
 import {useAuthSession, useLogout} from "@/presentation/hooks/auth.ts";
-import {useLocation, useNavigate} from "@tanstack/react-router";
+import {useNavigate} from "@tanstack/react-router";
 
 type DashboardLayoutTab = {
     title: string;
@@ -21,7 +20,6 @@ const DashboardLayout = ({ children, showFullLogo, tabs }: DashboardLayoutProps)
     const session = useAuthSession();
     const logout = useLogout()
 
-    const location = useLocation();
     const navigate = useNavigate();
 
     const onLogout = () => {
@@ -34,15 +32,13 @@ const DashboardLayout = ({ children, showFullLogo, tabs }: DashboardLayoutProps)
             <DashboardHeader
                 username={session?.currentUser.username ?? ""}
                 role={session?.currentUser.role ?? "engineer"}
+                tabConfigs={tabs.map(x => ({
+                    ...x,
+                    to: x.url,
+                }))}
                 showFullLogo={showFullLogo}
                 onLogout={onLogout}
-            >
-                {
-                    tabs.map(tab =>
-                        <NavigationTab key={tab.url} to={tab.url} icon={tab.icon} isActive={location.pathname === tab.url} title={tab.title}/>
-                    )
-                }
-            </DashboardHeader>
+            />
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
                 { children }
             </main>

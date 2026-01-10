@@ -15,6 +15,7 @@ import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 import {filterFields, type SearchParams} from "@/presentation/components/tabs/staff/filter.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
+import type {ErrorCode, RequestError} from "@/infrastructure/errors.ts";
 
 
 interface Props {
@@ -23,10 +24,18 @@ interface Props {
 }
 
 const errorMessages = {
-    email: "Цей Email вже використовується, оберіть інший.",
+    emailExists: "Цей Email вже використовується, оберіть інший.",
+    emailFormat: "Неправильний формат email.",
+    phoneFormat: "Неправильний формат номера телефону.",
     create: "Не вдалося створити співробітника. Спробуйте ще раз пізніше.",
     delete: "Не вдалося видалити співробітника. Спробуйте ще раз пізніше.",
     update: "Не вдалося оновити інформацію про співробтіника. Спробуйте ще раз пізніше."
+}
+
+const errorCodeMap: Record<ErrorCode, string> = {
+    "invalid email format": errorMessages.emailFormat,
+    "invalid phone format": errorMessages.phoneFormat,
+    "value already exists": errorMessages.emailExists,
 }
 
 const StaffTab = ({ pagination, onChange }: Props) => {
@@ -70,14 +79,21 @@ const StaffTab = ({ pagination, onChange }: Props) => {
                 setLocalStaff(prev => [data, ...prev]);
                 setError(null);
             },
-            onError: (error) => {
-                setError(error?.code === "value already exists" && error?.fields == "email"
-                    ? errorMessages.email
-                    : errorMessages.create
-                );
-            }
+            onError: onError,
         }, options));
     }
+
+    const onError = (error?: RequestError): void => {
+        if (!error) return;
+
+        if (error.code in errorCodeMap) {
+            setError(errorCodeMap[error.code]);
+            return;
+        }
+
+        setError(errorMessages.create);
+    }
+
 
     const onUpdate = useHandleMutation(updateMember,
         (data) => { setLocalStaff(prev => prev.map(x => { return x.id !== data.id ? x : data; }))
@@ -93,7 +109,7 @@ const StaffTab = ({ pagination, onChange }: Props) => {
                 values={values}
                 inlineFilter={filterFields}
                 searchPlaceholder={"Пошук за ім'ям та прізвищем працівника"}
-                actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати співробітника" />}
+                actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати працівника" />}
                 setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
             />
 
@@ -118,7 +134,7 @@ const StaffTab = ({ pagination, onChange }: Props) => {
                 submit={onCreate}
                 fields={modalFields}
                 errors={error ? [error] : []}
-                submitText="Додати"
+                submitText="Додати працівника"
                 initialValues={{
                     firstName: "",
                     lastName: "",
@@ -138,4 +154,4 @@ const StaffTab = ({ pagination, onChange }: Props) => {
 };
 
 export default StaffTab;
-export { errorMessages };
+export { errorMessages, errorCodeMap };
