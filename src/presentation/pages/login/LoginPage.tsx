@@ -19,7 +19,7 @@ const LoginPage = () => {
 
         navigate({
             to: session.currentUser.role === "manager"
-                ? "/manager/dashboard/repair-requests"
+                ? "/manager/dashboard/statistics"
                 : "/engineer/dashboard/repair-requests",
             search: { page: 1, limit: 15 },
         });

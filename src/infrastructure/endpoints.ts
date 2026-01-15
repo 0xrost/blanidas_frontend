@@ -1,12 +1,11 @@
 import type {RepairRequestListQuery} from "@/domain/queries/repair-request-list.query.ts";
-import {type BuildOptions, buildQueries} from "@/infrastructure/query/query-builder.ts";
+import {buildQueriesWrapper} from "@/infrastructure/query-builders/query-builder.ts";
 import {repairRequestsFilterMap, repairRequestsSortMap} from "@/infrastructure/query/repair-request-query.map.ts";
 import type {SparePartListQuery} from "@/domain/queries/spare-part-list.query.ts";
 import {sparePartsFilterMap, sparePartsSortMap} from "@/infrastructure/query/spare-part-query.map.ts";
 import type {SparePartCategoryListQuery} from "@/domain/queries/spare-part-category-list.query.ts";
 import type {SupplierListQuery} from "@/domain/queries/supplier-list.query.ts";
 import type {ManufacturerListQuery} from "@/domain/queries/manufacturer-list.query.ts";
-import type {ListQuery} from "@/domain/list-query.ts";
 import {
     sparePartCategoryFilterMap,
     sparePartCategorySortMap
@@ -31,14 +30,11 @@ import {userFilterMap, userSortMap} from "@/infrastructure/query/user-list-query
 import {institutionTypeFilterMap, institutionTypeSortMap} from "@/infrastructure/query/institution-type-query.map.ts";
 import type {InstitutionTypeListQuery} from "@/domain/queries/institution-type-list.query.ts";
 import {BaseServerURL} from "@/options.ts";
+import type {StatisticsQuery} from "@/domain/queries/statistics.query.ts";
+import {statisticsBuildQueries} from "@/infrastructure/query-builders/statistics.query-builder.ts";
 
-
-function buildURL<TFilter, TSortBy extends string>(
-    baseURL: string,
-    query: ListQuery<TFilter, TSortBy>,
-    options: BuildOptions<TFilter, TSortBy>
-): string {
-    const queries = buildQueries(query, options).toString()
+function buildURL<TQuery>(baseURL: string, query: TQuery, buildQueriesFn: (query: TQuery) => URLSearchParams): string {
+    const queries = buildQueriesFn(query).toString()
     return queries ? `${baseURL}?${queries}` : baseURL;
 }
 
@@ -50,7 +46,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/repair-requests/",
 
-        list: (query: RepairRequestListQuery) => buildURL(Endpoints.repairRequest.base, query, Endpoints.repairRequest.mappers),
+        list: (query: RepairRequestListQuery) => buildURL(Endpoints.repairRequest.base, query, buildQueriesWrapper(Endpoints.repairRequest.mappers)),
         get: (id: string) => `${Endpoints.repairRequest.base}${id}`,
         create: () => Endpoints.repairRequest.base,
         update: () => Endpoints.repairRequest.base,
@@ -63,7 +59,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/spare-parts/",
 
-        list: (query: SparePartListQuery) => buildURL(Endpoints.sparePart.base, query, Endpoints.sparePart.mappers),
+        list: (query: SparePartListQuery) => buildURL(Endpoints.sparePart.base, query, buildQueriesWrapper(Endpoints.sparePart.mappers)),
         update: () => Endpoints.sparePart.base,
         create: () => Endpoints.sparePart.base,
         delete: (id: string) => `${Endpoints.sparePart.base}${id}`,
@@ -75,7 +71,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/spare-part-categories/",
 
-        list: (query: SparePartCategoryListQuery) => buildURL(Endpoints.sparePartCategory.base, query, Endpoints.sparePartCategory.mappers),
+        list: (query: SparePartCategoryListQuery) => buildURL(Endpoints.sparePartCategory.base, query, buildQueriesWrapper(Endpoints.sparePartCategory.mappers)),
         update: () => Endpoints.sparePartCategory.base,
         create: () => Endpoints.sparePartCategory.base,
         delete: (id: string) => `${Endpoints.sparePartCategory.base}${id}`,
@@ -87,7 +83,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/suppliers/",
 
-        list: (query: SupplierListQuery) => buildURL(Endpoints.supplier.base, query, Endpoints.supplier.mappers),
+        list: (query: SupplierListQuery) => buildURL(Endpoints.supplier.base, query, buildQueriesWrapper(Endpoints.supplier.mappers)),
         update: () => Endpoints.supplier.base,
         create: () => Endpoints.supplier.base,
         delete: (id: string) => `${Endpoints.supplier.base}${id}`,
@@ -99,7 +95,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/manufacturers/",
 
-        list: (query: ManufacturerListQuery) => buildURL(Endpoints.manufacturer.base, query, Endpoints.manufacturer.mappers),
+        list: (query: ManufacturerListQuery) => buildURL(Endpoints.manufacturer.base, query, buildQueriesWrapper(Endpoints.manufacturer.mappers)),
         update: () => Endpoints.manufacturer.base,
         create: () => Endpoints.manufacturer.base,
         delete: (id: string) => `${Endpoints.manufacturer.base}${id}`,
@@ -111,7 +107,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/failure-types/",
 
-        list: (query: FailureTypeListQuery) => buildURL(Endpoints.failureType.base, query, Endpoints.failureType.mappers),
+        list: (query: FailureTypeListQuery) => buildURL(Endpoints.failureType.base, query, buildQueriesWrapper(Endpoints.failureType.mappers)),
         update: () => Endpoints.failureType.base,
         create: () => Endpoints.failureType.base,
         delete: (id: string) => `${Endpoints.failureType.base}${id}`,
@@ -123,8 +119,9 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/equipment/",
 
-        list: (query: EquipmentListQuery) => buildURL(Endpoints.equipment.base, query, Endpoints.equipment.mappers),
+        list: (query: EquipmentListQuery) => buildURL(Endpoints.equipment.base, query, buildQueriesWrapper(Endpoints.equipment.mappers)),
         get: (id: string) => `${Endpoints.equipment.base}${id}`,
+        getQrData: () => Endpoints.equipment.base + "qr-codes",
         create: () => Endpoints.equipment.base,
         update: () => Endpoints.equipment.base,
         delete: (id: string) => `${Endpoints.equipment.base}${id}`,
@@ -136,7 +133,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/equipment-models/",
 
-        list: (query: EquipmentModelListQuery) => buildURL(Endpoints.equipmentModel.base, query, Endpoints.equipmentModel.mappers),
+        list: (query: EquipmentModelListQuery) => buildURL(Endpoints.equipmentModel.base, query, buildQueriesWrapper(Endpoints.equipmentModel.mappers)),
         update: () => Endpoints.equipmentModel.base,
         create: () => Endpoints.equipmentModel.base,
         delete: (id: string) => `${Endpoints.equipmentModel.base}${id}`,
@@ -148,7 +145,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/institutions/",
 
-        list: (query: InstitutionListQuery) => buildURL(Endpoints.institution.base, query, Endpoints.institution.mappers),
+        list: (query: InstitutionListQuery) => buildURL(Endpoints.institution.base, query, buildQueriesWrapper(Endpoints.institution.mappers)),
         update: () => Endpoints.institution.base,
         create: () => Endpoints.institution.base,
         delete: (id: string) => `${Endpoints.institution.base}${id}`,
@@ -160,7 +157,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/institution-types/",
 
-        list: (query: InstitutionTypeListQuery) => buildURL(Endpoints.institutionType.base, query, Endpoints.institutionType.mappers),
+        list: (query: InstitutionTypeListQuery) => buildURL(Endpoints.institutionType.base, query, buildQueriesWrapper(Endpoints.institutionType.mappers)),
         update: () => Endpoints.institutionType.base,
         create: () => Endpoints.institutionType.base,
         delete: (id: string) => `${Endpoints.institutionType.base}${id}`,
@@ -186,7 +183,7 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/equipment-categories/",
 
-        list: (query: EquipmentCategoryListQuery) => buildURL(Endpoints.equipmentCategory.base, query, Endpoints.equipmentCategory.mappers),
+        list: (query: EquipmentCategoryListQuery) => buildURL(Endpoints.equipmentCategory.base, query, buildQueriesWrapper(Endpoints.equipmentCategory.mappers)),
         update: () => Endpoints.equipmentCategory.base,
         create: () => Endpoints.equipmentCategory.base,
         delete: (id: string) => `${Endpoints.equipmentCategory.base}${id}`,
@@ -198,10 +195,16 @@ const Endpoints = {
         },
         base: BaseServerURL + "/api/users/",
 
-        list: (query: UserListQuery) => buildURL(Endpoints.user.base, query, Endpoints.user.mappers),
+        list: (query: UserListQuery) => buildURL(Endpoints.user.base, query, buildQueriesWrapper(Endpoints.user.mappers)),
         update: () => Endpoints.user.base,
         create: () => Endpoints.user.base,
         delete: (id: string) => `${Endpoints.user.base}${id}`,
+    },
+    statistics: {
+        base: BaseServerURL + "/api/statistics/",
+
+        get: (query: StatisticsQuery) => buildURL(Endpoints.statistics.base, query, statisticsBuildQueries),
+        download: () => Endpoints.statistics.base + "export-excel",
     }
 }
 

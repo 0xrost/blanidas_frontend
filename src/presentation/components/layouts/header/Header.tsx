@@ -9,14 +9,13 @@ const Header = () => {
     return (
         <header className="bg-white shadow-sm border-b border-slate-200">
             <div className="max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-center">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-linear-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
                             <span className="text-white text-xl">B</span>
                         </div>
                         <div>
-                            <h1 className="text-slate-900">Blanidas</h1>
-                            <p className="text-slate-600 text-sm">Заявка на ремонт</p>
+                            <h1 className="text-slate-900 text-xl">Blanidas</h1>
                         </div>
                     </div>
                 </div>
@@ -54,8 +53,8 @@ const DashboardHeader = ({ username, role, tabConfigs, onLogout, showFullLogo }:
         return tabConfigs.map(tab => {
             const isActive = location.pathname == tab.to
             return (
-                <span ref={isActive ? targetRef : null}>
-                    <NavigationTab key={tab.to} to={tab.to} icon={tab.icon} isActive={isActive} title={tab.title}/>
+                <span key={tab.to} ref={isActive ? targetRef : null}>
+                    <NavigationTab to={tab.to} icon={tab.icon} isActive={isActive} title={tab.title}/>
                 </span>
             );
         });

@@ -5,15 +5,15 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/presentation/components/ui/dialog.tsx";
-import type {Equipment} from "@/domain/entities/equipment.ts";
 import {Label} from "@/presentation/components/ui/label.tsx";
 import {Download} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/presentation/components/ui/select.tsx";
 import {Input} from "@/presentation/components/ui/input.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
-import {QRCodeSVG} from "qrcode.react";
+import {QRCodeCanvas, QRCodeSVG} from "qrcode.react";
 import {Slider} from "@/presentation/components/ui/slider.tsx";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
+import JSZip from "jszip";
 
 type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H';
 
@@ -22,17 +22,31 @@ const initialError = "M";
 const initialBgColor = "#FFFFFF";
 const initialFgColor = "#000000";
 
+interface DataToShow {
+    institutionName: string;
+    serialNumber: string;
+    url: string;
+}
+
 interface Props {
-    equipment: Equipment | null;
-    dataToShow: string;
+    dataToShow: DataToShow[];
     close: () => void;
 }
-const QrModal = ({ equipment, close, dataToShow }: Props) => {
+const QrModal = ({ close, dataToShow }: Props) => {
     const [level, setLevel] = useState<ErrorCorrectionLevel>(initialError);
     const [size, setSize] = useState<number>(initialSize);
     const [bgColor, setBgColor] = useState<string>(initialBgColor);
     const [fgColor, setFgColor] = useState<string>(initialFgColor)
     const [margin, setMargin] = useState<boolean>(true);
+
+    const [currentData, setCurrentData] = useState<DataToShow | null>();
+
+    useEffect(() => {
+        if (!dataToShow) { return; }
+        setCurrentData(dataToShow[0]);
+    }, [dataToShow]);
+
+    const isMulti = dataToShow.length > 1;
 
     const onClose = () => {
         setLevel(initialError);
@@ -42,26 +56,55 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
         close();
     };
 
-    const svgRef = useRef<SVGSVGElement>(null);
-    const downloadSvg = () => {
-        const svg = svgRef.current;
-        if (!svg) return;
+    const waitNextFrame = () =>
+        new Promise<void>(resolve =>
+            requestAnimationFrame(() => resolve())
+        );
 
-        const serializer = new XMLSerializer();
-        const source = serializer.serializeToString(svg);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
-        const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
+    const getQrCodeFileName = (data: DataToShow): string => {
+        return `${data.serialNumber}-${data.institutionName}.png`;
+    }
+
+    const downloadSvg = async () => {
+        let url: string;
+
+        if (isMulti) {
+            const zip = new JSZip();
+            const startValue = currentData;
+            for (let i = 0; i < dataToShow.length; i++) {
+                const current = dataToShow[i];
+                setCurrentData(current);
+                await waitNextFrame();
+
+                const canvas = canvasRef.current;
+                if (!canvas) continue;
+
+                const dataUrl = canvas.toDataURL("image/png");
+                const base64 = dataUrl.split(",")[1];
+
+                zip.file(getQrCodeFileName(current), base64, { base64: true });
+            }
+
+            setCurrentData(startValue);
+            const blob = await zip.generateAsync({ type: "blob" });
+            url = URL.createObjectURL(blob);
+        } else {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            url = canvas.toDataURL("image/png");
+        }
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = "qrcode.svg";
+        a.download = isMulti ? "qrcodes.zip" : getQrCodeFileName(dataToShow[0]);
         a.click();
-
         URL.revokeObjectURL(url);
     };
 
-    if (equipment === null) return;
+
+    if (dataToShow.length === 0) return;
 
     return (
         <Dialog open={true} onOpenChange={open => !open && onClose()}>
@@ -69,7 +112,7 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
                 <DialogHeader>
                     <DialogTitle>QR-код обладнання</DialogTitle>
                     <DialogDescription>
-                        Ось QR-код обладнання <strong>{equipment.model.name}</strong>. Ви можете завантажити його або змінити параметри.
+                        Ви можете завантажити його або змінити параметри.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -77,9 +120,18 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
                     <div className="flex justify-center overflow-auto max-h-[60vh]">
                         <div className="w-full max-w-90 aspect-square">
                             <QRCodeSVG
-                                ref={svgRef}
                                 className="w-full h-full border border-gray-400"
-                                value={dataToShow}
+                                value={currentData?.url ?? ""}
+                                size={size}
+                                fgColor={fgColor}
+                                bgColor={bgColor}
+                                level={level}
+                                marginSize={margin ? 4 : 0}
+                            />
+                            <QRCodeCanvas
+                                ref={canvasRef}
+                                className="hidden w-full h-full border border-gray-400"
+                                value={currentData?.url ?? ""}
                                 size={size}
                                 fgColor={fgColor}
                                 bgColor={bgColor}
@@ -159,7 +211,7 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
                         className="flex-1 bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:text-white hover:to-blue-700 text-white"
                     >
                         <Download className="w-4 h-4 mr-1.5" />
-                        Завантажити QR-код
+                        Завантажити {isMulti && "усі"} QR-код{isMulti && "и"}
                     </Button>
                 </div>
             </DialogContent>
@@ -168,3 +220,4 @@ const QrModal = ({ equipment, close, dataToShow }: Props) => {
 };
 
 export default QrModal;
+export type { DataToShow };

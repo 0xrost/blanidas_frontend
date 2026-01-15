@@ -6,13 +6,16 @@ import {
     useUpdateEquipmentModel
 } from "@/presentation/hooks/entities/equipment-model.ts";
 import type {Pagination} from "@/domain/pagination.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 
 
 interface Props {
     pagination: Pagination;
-    onPaginationChange: (pagination: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: FiltersPanelValues;
 }
-const EquipmentModelsTab = ({ pagination, onPaginationChange }: Props) => {
+const EquipmentModelsTab = ({ pagination, onSearchChange, searchParams }: Props) => {
     const config = {
         list: useEquipmentModels,
         create: useCreateEquipmentModel,
@@ -22,7 +25,12 @@ const EquipmentModelsTab = ({ pagination, onPaginationChange }: Props) => {
     }
 
     return (
-        <NameOnlyTab pagination={pagination} onPaginationChange={onPaginationChange} config={config} />
+        <NameOnlyTab
+            pagination={pagination}
+            config={config}
+            onSearchChange={onSearchChange}
+            searchParams={searchParams}
+        />
     );
 };
 

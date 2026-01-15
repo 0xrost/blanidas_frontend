@@ -16,6 +16,13 @@ interface EquipmentDto {
     manufacturer: Manufacturer | null;
 }
 
+interface EquipmentQrDataDto {
+    id: string;
+    serial_number: string;
+    institution_name: string;
+}
+
+
 interface EquipmentCreateDto {
     location: string;
     serial_number: string;
@@ -41,4 +48,5 @@ export type {
     EquipmentDto,
     EquipmentCreateDto,
     EquipmentUpdateDto,
+    EquipmentQrDataDto,
 };

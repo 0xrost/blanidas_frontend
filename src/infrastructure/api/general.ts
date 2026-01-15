@@ -49,7 +49,7 @@ abstract class CRUDRepository<
         this.mappers = mappers;
     }
 
-    protected async request<TResponse>(url: string, init?: RequestInit): Promise<TResponse> {
+    static async request<TResponse>(url: string, init?: RequestInit): Promise<TResponse> {
         const response = await fetchWithAuth(url, init);
         const json = await response.json();
         if (!response.ok) throw new RequestError(response.status, json.code, json.message, json.fields);
@@ -58,14 +58,14 @@ abstract class CRUDRepository<
     }
 
     async list(query: ListQuery<TFilters, TSortBy>): Promise<PaginationResponse<TModel>> {
-        const json = await this.request<PaginationResponseDto<TModelDto>>(this.endpoints.list(query));
+        const json = await CRUDRepository.request<PaginationResponseDto<TModelDto>>(this.endpoints.list(query));
         return mapPaginationResponseDtoToDomain(json, this.mappers.model);
     }
 
     async create(data: TCreate): Promise<TModel> {
         const mapped = this.mappers.create(data);
         const mappedJson = JSON.stringify(mapped);
-        const json = await this.request<TModelDto>(this.endpoints.create(), {
+        const json = await CRUDRepository.request<TModelDto>(this.endpoints.create(), {
             ...jsonRequestHeaders,
             method: "POST",
             body: mappedJson,
@@ -77,7 +77,7 @@ abstract class CRUDRepository<
     async update(data: TUpdate): Promise<TModel> {
         const mapped = this.mappers.update(data);
         const mappedJson = JSON.stringify(mapped);
-        const json = await this.request<TModelDto>(this.endpoints.update(), {
+        const json = await CRUDRepository.request<TModelDto>(this.endpoints.update(), {
             ...jsonRequestHeaders,
             method: "PUT",
             body: mappedJson,
@@ -87,7 +87,7 @@ abstract class CRUDRepository<
     }
 
     async delete(id: string): Promise<string> {
-        return await this.request(this.endpoints.delete(id), { method: "DELETE" });
+        return await CRUDRepository.request(this.endpoints.delete(id), { method: "DELETE" });
     }
 }
 

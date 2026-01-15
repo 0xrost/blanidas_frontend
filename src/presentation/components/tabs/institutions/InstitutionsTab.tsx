@@ -17,10 +17,14 @@ import PaginationControl from "@/presentation/components/layouts/pagination/Pagi
 import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 import {filterFieldsFactory, type SearchParams} from "@/presentation/components/tabs/institutions/filter.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
+import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
+import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
 
 interface Props {
     pagination: Pagination;
-    onChange: (pagination: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: SearchParams;
 }
 
 const errorMessages = {
@@ -30,20 +34,23 @@ const errorMessages = {
     update: "Не вдалося оновити інформацію про заклад. Спробуйте ще раз пізніше."
 }
 
-const InstitutionsTab = ({ pagination, onChange }: Props) => {
-    const [values, setValues] = useState<SearchParams>({ search: "", typeId: "all", sortOrder: "asc" });
+const InstitutionsTab = ({ pagination, onSearchChange, searchParams }: Props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [localInstitutions, setLocalInstitutions] = useState<Institution[]>([]);
     const [creatingError, setCreatingError] = useState<string | null>(null);
+
+    const onSetValue = useOnSetValue(onSearchChange);
+    const onPaginationChange = useOnPaginationChange(onSearchChange);
+
 
     const { data: institutionTypesPagination } = useInstitutionTypes({ pagination: UnlimitedPagination, sorting: SortByNameAsc });
     const { data: institutionsPagination } = useInstitutions({
         pagination,
         filters: {
-            nameOrAddress: values.search.trim().length < 2 ? undefined : values.search.trim(),
-            typeId: values.typeId === "all" ? undefined : values.typeId,
+            nameOrAddress: searchParams.search.trim().length < 2 ? undefined : searchParams.search.trim(),
+            typeId: searchParams.typeId === "all" ? undefined : searchParams.typeId,
         },
-        sorting: { sortBy: "name", sortOrder: values.sortOrder }
+        sorting: { sortBy: "name", sortOrder: searchParams.sortOrder }
     });
 
     const createInstitution = useCreateInstitution();
@@ -85,11 +92,11 @@ const InstitutionsTab = ({ pagination, onChange }: Props) => {
     return (
         <div className="space-y-6">
             <FiltersPanel
-                values={values}
+                values={searchParams}
                 inlineFilter={inlineFilter}
                 actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати заклад" />}
                 searchPlaceholder="Пошук за назвою або адресою закладу"
-                setValues={(key, value) => setValues(prev => ({ ...prev, [key]: value }))}
+                setValues={onSetValue}
             />
 
             <InstitutionTable
@@ -118,7 +125,7 @@ const InstitutionsTab = ({ pagination, onChange }: Props) => {
             />
 
             <PaginationControl
-                onChange={onChange}
+                onChange={onPaginationChange}
                 items={institutionsPagination?.total ?? 0}
                 pagination={pagination}
             />

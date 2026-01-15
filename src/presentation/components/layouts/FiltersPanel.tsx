@@ -2,8 +2,9 @@ import { Card } from "@/presentation/components/ui/card.tsx";
 import { Search, SortAsc, SortDesc } from "lucide-react";
 import { Input } from "@/presentation/components/ui/input.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/presentation/components/ui/select.tsx";
-import { type ReactNode } from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import type {SortOrder} from "@/domain/sorting.ts";
+import {useMediaQuery} from "@/presentation/hooks/useMediaQuery.ts";
 
 export type SelectOption = {
     label: string;
@@ -38,6 +39,16 @@ const FiltersPanel = ({
     values,
     setValues,
 }: Props) => {
+    const [search, setSearch] = useState<string>(values.search);
+    const [searchFocused, setSearchFocused] = useState(false);
+
+    const isDisplaySmall = useMediaQuery("(max-width: 480px)");
+
+    useEffect(() => {
+        if (search == values.search) { return; }
+        const timeoutId = setTimeout(() => setValues("search", search), 200)
+        return () => clearTimeout(timeoutId);
+    }, [search, setSearch, setValues, values.search]);
 
     const toggleSortOrder = () => {
         setValues("sortOrder", values.sortOrder === "desc" ? "asc" : "desc");
@@ -65,18 +76,24 @@ const FiltersPanel = ({
     return (
         <Card className="bg-white border border-slate-200 mb-6">
             <div className="p-6 space-y-4">
-                <div className={`flex ${inlineFilter ? "flex-col" : ""} sm:flex-row gap-2`}>
-                    <div className="flex-1 relative">
+                <div className={`flex ${(inlineFilter) ? "flex-col" : ""} sm:flex-row gap-2`}>
+                    <div className="flex-1 relative transition-all duration-300 ease-in-out">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <Input
-                            value={values.search}
-                            onChange={(e) => setValues("search", e.target.value)}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
                             placeholder={searchPlaceholder}
                             className="pl-10 h-12 bg-slate-100"
+                            onFocus={() => setSearchFocused(true)}
+                            onBlur={() => setSearchFocused(false)}
                         />
                     </div>
 
-                    <div className="flex gap-2">
+                    <div
+                        className={`flex gap-2 transition-all duration-300 ease-in-out overflow-hidden ${
+                            isDisplaySmall && searchFocused ? "max-w-0 opacity-0" : "max-w-full opacity-100"
+                        }`}
+                    >
                         {inlineFilter && renderSelect(inlineFilter, "h-12! flex-1")}
 
                         <button

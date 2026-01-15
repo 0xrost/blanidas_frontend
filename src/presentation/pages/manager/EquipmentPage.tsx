@@ -1,17 +1,22 @@
-import {Route} from "@/presentation/routes/_authenticated/manager/dashboard/equipment.tsx";
-import type {Pagination} from "@/domain/pagination.ts";
+import {Route, type Search} from "@/presentation/routes/_authenticated/manager/dashboard/equipment.tsx";
 import {ManagerDashboardLayout} from "@/presentation/components/layouts/DashboardLayout.tsx";
 import EquipmentTab from "@/presentation/components/tabs/equipment/EquipmentTab.tsx";
 
 const EquipmentPage = () => {
-    const {page, limit} = Route.useSearch();
+    const {page, limit, ...searchParams} = Route.useSearch();
     const navigate = Route.useNavigate();
 
-    const onSearchChange = (search: Pagination) => { navigate({ search: search }); }
+    const onSearchChange = (fn: (prev: Search) => Search) => {
+        navigate({ search: fn });
+    }
 
     return (
         <ManagerDashboardLayout>
-            <EquipmentTab pagination={{page, limit}} onSearchChange={onSearchChange} />
+            <EquipmentTab
+                pagination={{page: +page, limit: +limit}}
+                onSearchChange={onSearchChange}
+                searchParams={searchParams}
+            />
         </ManagerDashboardLayout>
     )
 };

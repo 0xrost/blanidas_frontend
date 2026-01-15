@@ -1,5 +1,15 @@
 import type {MutationOptions} from "@/presentation/models.ts";
 
+function shuffleArray<T>(array: T[]): T[] {
+    return array.slice().sort(() => Math.random() - 0.5);
+}
+
+function capitalizeFirstLetter(string: string): string {
+    if (string.length === 0) {
+        return string;
+    }
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 function formatDuration(startDate: Date | string, endDate: Date | string): string {
     const start = new Date(startDate).getTime();
@@ -39,4 +49,10 @@ function composeMutationOptions<T>(...options: (MutationOptions<T> | undefined)[
     };
 }
 
-export { formatDuration, pluralize, composeMutationOptions };
+export {
+    formatDuration,
+    pluralize,
+    composeMutationOptions,
+    shuffleArray,
+    capitalizeFirstLetter
+};

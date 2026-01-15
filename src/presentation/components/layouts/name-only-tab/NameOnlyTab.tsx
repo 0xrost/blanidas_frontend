@@ -18,6 +18,9 @@ import {composeMutationOptions} from "@/presentation/utils.ts";
 import { v4 as uuidv4 } from "uuid";
 import type {RequestError} from "@/infrastructure/errors.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
+import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
 
 interface Config {
     list: (query: ListQuery<{ name?: string }, "name">) => UseQueryResult<PaginationResponse<Entity>>;
@@ -30,7 +33,8 @@ interface Config {
 
 interface Props {
     pagination: Pagination;
-    onPaginationChange: (pagination: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: FiltersPanelValues;
     config: Config
 }
 
@@ -41,15 +45,18 @@ const errorMessages = {
     update: "Не вдалося оновити інформацію про заклад. Спробуйте ще раз пізніше."
 }
 
-const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
-    const [values, setValues] = useState<FiltersPanelValues>({ search: "", sortOrder: "asc" });
+const NameOnlyTab = ({ config, pagination, onSearchChange, searchParams }: Props) => {
     const [localEntities, setLocalEntities] = useState<UIEntity[]>([]);
 
     const { data: entitiesPagination } = config.list({
         pagination,
-        filters: {name: values.search.trim().length < 2 ? undefined : values.search.trim(),},
-        sorting: { sortBy: "name", sortOrder: values.sortOrder }
+        filters: {name: searchParams.search.trim().length < 2 ? undefined : searchParams.search.trim(),},
+        sorting: { sortBy: "name", sortOrder: searchParams.sortOrder }
     });
+
+    const onPaginationChange = useOnPaginationChange(onSearchChange);
+    const onSetValue = useOnSetValue(onSearchChange);
+
 
     const createEntity = config.create();
     const updateEntity = config.update();
@@ -111,10 +118,10 @@ const NameOnlyTab = ({ config, pagination, onPaginationChange }: Props) => {
     return (
         <div className="space-y-6">
             <FiltersPanel
-                values={values}
+                values={searchParams}
                 actionButton={<AddButton onClick={onAdd} title="Додати" />}
                 searchPlaceholder="Пошук за назвою"
-                setValues={(key, value) => setValues(prev => ({ ...prev, [key]: value }))}
+                setValues={onSetValue}
             />
 
             <NameOnlyTable

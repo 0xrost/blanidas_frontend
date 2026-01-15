@@ -9,6 +9,10 @@ interface BuildOptions<TFilters, TSortBy extends string> {
     sortMap?: Record<TSortBy, string>
 }
 
+function buildQueriesWrapper<TFilters, TSortBy extends string>(options?: BuildOptions<TFilters, TSortBy>): (query: ListQuery<TFilters, TSortBy>) => URLSearchParams {
+    return (query: ListQuery<TFilters, TSortBy>) => buildQueries(query, options);
+}
+
 function buildQueries<TFilters, TSortBy extends string>(query: ListQuery<TFilters, TSortBy>, options?: BuildOptions<TFilters, TSortBy>): URLSearchParams {
     const queries = new URLSearchParams();
     if (query.pagination) {
@@ -65,5 +69,5 @@ function mapPaginationQuery(pagination: Pagination): URLSearchParams {
     return new URLSearchParams(params);
 }
 
-export { buildQueries };
+export { buildQueries, buildQueriesWrapper };
 export type { BuildOptions };

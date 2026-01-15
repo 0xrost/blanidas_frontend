@@ -6,12 +6,15 @@ import {
     useInstitutionTypes,
     useUpdateInstitutionType
 } from "@/presentation/hooks/entities/institution-type.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 
 interface Props {
     pagination: Pagination;
-    onPaginationChange: (pagination: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: FiltersPanelValues;
 }
-const InstitutionTypesTab = ({ pagination, onPaginationChange }: Props) => {
+const InstitutionTypesTab = ({ pagination, onSearchChange, searchParams }: Props) => {
     const config = {
         list: useInstitutionTypes,
         create: useCreateInstitutionType,
@@ -21,7 +24,12 @@ const InstitutionTypesTab = ({ pagination, onPaginationChange }: Props) => {
     }
 
     return (
-        <NameOnlyTab pagination={pagination} onPaginationChange={onPaginationChange} config={config} />
+        <NameOnlyTab
+            pagination={pagination}
+            config={config}
+            onSearchChange={onSearchChange}
+            searchParams={searchParams}
+        />
     );
 }
 

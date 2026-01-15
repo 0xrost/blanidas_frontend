@@ -14,6 +14,7 @@ import { Route as RepairRequestEquipmentIdRouteImport } from './presentation/rou
 import { Route as AccountsLoginRouteImport } from './presentation/routes/accounts/login'
 import { Route as AuthenticatedManagerRouteImport } from './presentation/routes/_authenticated/manager'
 import { Route as AuthenticatedEngineerRouteImport } from './presentation/routes/_authenticated/engineer'
+import { Route as AuthenticatedManagerDashboardStatisticsRouteImport } from './presentation/routes/_authenticated/manager/dashboard/statistics'
 import { Route as AuthenticatedManagerDashboardSparePartsRouteImport } from './presentation/routes/_authenticated/manager/dashboard/spare-parts'
 import { Route as AuthenticatedManagerDashboardSettingsRouteImport } from './presentation/routes/_authenticated/manager/dashboard/settings'
 import { Route as AuthenticatedManagerDashboardEquipmentRouteImport } from './presentation/routes/_authenticated/manager/dashboard/equipment'
@@ -48,6 +49,12 @@ const AuthenticatedEngineerRoute = AuthenticatedEngineerRouteImport.update({
   path: '/engineer',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedManagerDashboardStatisticsRoute =
+  AuthenticatedManagerDashboardStatisticsRouteImport.update({
+    id: '/dashboard/statistics',
+    path: '/dashboard/statistics',
+    getParentRoute: () => AuthenticatedManagerRoute,
+  } as any)
 const AuthenticatedManagerDashboardSparePartsRoute =
   AuthenticatedManagerDashboardSparePartsRouteImport.update({
     id: '/dashboard/spare-parts',
@@ -108,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/manager/dashboard/equipment': typeof AuthenticatedManagerDashboardEquipmentRoute
   '/manager/dashboard/settings': typeof AuthenticatedManagerDashboardSettingsRoute
   '/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
+  '/manager/dashboard/statistics': typeof AuthenticatedManagerDashboardStatisticsRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
   '/manager/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
   '/engineer/dashboard/repair-requests': typeof AuthenticatedEngineerDashboardRepairRequestsIndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesByTo {
   '/manager/dashboard/equipment': typeof AuthenticatedManagerDashboardEquipmentRoute
   '/manager/dashboard/settings': typeof AuthenticatedManagerDashboardSettingsRoute
   '/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
+  '/manager/dashboard/statistics': typeof AuthenticatedManagerDashboardStatisticsRoute
   '/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
   '/manager/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
   '/engineer/dashboard/repair-requests': typeof AuthenticatedEngineerDashboardRepairRequestsIndexRoute
@@ -138,6 +147,7 @@ export interface FileRoutesById {
   '/_authenticated/manager/dashboard/equipment': typeof AuthenticatedManagerDashboardEquipmentRoute
   '/_authenticated/manager/dashboard/settings': typeof AuthenticatedManagerDashboardSettingsRoute
   '/_authenticated/manager/dashboard/spare-parts': typeof AuthenticatedManagerDashboardSparePartsRoute
+  '/_authenticated/manager/dashboard/statistics': typeof AuthenticatedManagerDashboardStatisticsRoute
   '/_authenticated/engineer/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedEngineerDashboardRepairRequestsRepairRequestIdRoute
   '/_authenticated/manager/dashboard/repair-requests/$repairRequestId': typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
   '/_authenticated/engineer/dashboard/repair-requests/': typeof AuthenticatedEngineerDashboardRepairRequestsIndexRoute
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/manager/dashboard/equipment'
     | '/manager/dashboard/settings'
     | '/manager/dashboard/spare-parts'
+    | '/manager/dashboard/statistics'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
     | '/manager/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/manager/dashboard/equipment'
     | '/manager/dashboard/settings'
     | '/manager/dashboard/spare-parts'
+    | '/manager/dashboard/statistics'
     | '/engineer/dashboard/repair-requests/$repairRequestId'
     | '/manager/dashboard/repair-requests/$repairRequestId'
     | '/engineer/dashboard/repair-requests'
@@ -183,6 +195,7 @@ export interface FileRouteTypes {
     | '/_authenticated/manager/dashboard/equipment'
     | '/_authenticated/manager/dashboard/settings'
     | '/_authenticated/manager/dashboard/spare-parts'
+    | '/_authenticated/manager/dashboard/statistics'
     | '/_authenticated/engineer/dashboard/repair-requests/$repairRequestId'
     | '/_authenticated/manager/dashboard/repair-requests/$repairRequestId'
     | '/_authenticated/engineer/dashboard/repair-requests/'
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/engineer'
       preLoaderRoute: typeof AuthenticatedEngineerRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/manager/dashboard/statistics': {
+      id: '/_authenticated/manager/dashboard/statistics'
+      path: '/dashboard/statistics'
+      fullPath: '/manager/dashboard/statistics'
+      preLoaderRoute: typeof AuthenticatedManagerDashboardStatisticsRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
     }
     '/_authenticated/manager/dashboard/spare-parts': {
       id: '/_authenticated/manager/dashboard/spare-parts'
@@ -315,6 +335,7 @@ interface AuthenticatedManagerRouteChildren {
   AuthenticatedManagerDashboardEquipmentRoute: typeof AuthenticatedManagerDashboardEquipmentRoute
   AuthenticatedManagerDashboardSettingsRoute: typeof AuthenticatedManagerDashboardSettingsRoute
   AuthenticatedManagerDashboardSparePartsRoute: typeof AuthenticatedManagerDashboardSparePartsRoute
+  AuthenticatedManagerDashboardStatisticsRoute: typeof AuthenticatedManagerDashboardStatisticsRoute
   AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute: typeof AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute
   AuthenticatedManagerDashboardRepairRequestsIndexRoute: typeof AuthenticatedManagerDashboardRepairRequestsIndexRoute
 }
@@ -326,6 +347,8 @@ const AuthenticatedManagerRouteChildren: AuthenticatedManagerRouteChildren = {
     AuthenticatedManagerDashboardSettingsRoute,
   AuthenticatedManagerDashboardSparePartsRoute:
     AuthenticatedManagerDashboardSparePartsRoute,
+  AuthenticatedManagerDashboardStatisticsRoute:
+    AuthenticatedManagerDashboardStatisticsRoute,
   AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute:
     AuthenticatedManagerDashboardRepairRequestsRepairRequestIdRoute,
   AuthenticatedManagerDashboardRepairRequestsIndexRoute:

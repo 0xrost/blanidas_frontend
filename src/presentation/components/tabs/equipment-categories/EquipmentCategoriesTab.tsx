@@ -6,12 +6,15 @@ import {
     useEquipmentCategories,
     useUpdateEquipmentCategory
 } from "@/presentation/hooks/entities/equipment-category.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 
 interface Props {
     pagination: Pagination;
-    onPaginationChange: (pagination: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: FiltersPanelValues;
 }
-const EquipmentCategoriesTab = ({ pagination, onPaginationChange }: Props) => {
+const EquipmentCategoriesTab = ({ pagination, onSearchChange, searchParams }: Props) => {
     const config = {
         list: useEquipmentCategories,
         create: useCreateEquipmentCategory,
@@ -21,7 +24,12 @@ const EquipmentCategoriesTab = ({ pagination, onPaginationChange }: Props) => {
     }
 
     return (
-        <NameOnlyTab pagination={pagination} onPaginationChange={onPaginationChange} config={config} />
+        <NameOnlyTab
+            pagination={pagination}
+            config={config}
+            onSearchChange={onSearchChange}
+            searchParams={searchParams}
+        />
     );
 }
 

@@ -1,5 +1,10 @@
-import type {Equipment} from "@/domain/entities/equipment.ts";
-import type {EquipmentCreateDto, EquipmentDto, EquipmentUpdateDto} from "@/infrastructure/dto/equipment.ts";
+import type {Equipment, EquipmentQrData} from "@/domain/entities/equipment.ts";
+import type {
+    EquipmentCreateDto,
+    EquipmentDto,
+    EquipmentQrDataDto,
+    EquipmentUpdateDto
+} from "@/infrastructure/dto/equipment.ts";
 import type {EquipmentCreate, EquipmentUpdate} from "@/domain/models/equipment.ts";
 import {mapInstitutionDtoToDomain} from "@/infrastructure/mappers/institution.ts";
 
@@ -13,6 +18,14 @@ const mapEquipmentDtoToDomain = (dto: EquipmentDto): Equipment => {
         institution: mapInstitutionDtoToDomain(institution),
     }
 }
+
+const mapEquipmentQrDataDtoToDomain = (dto: EquipmentQrDataDto): EquipmentQrData => {
+    return {
+        id: dto.id,
+        serialNumber: dto.serial_number,
+        institutionName: dto.institution_name,
+    }
+};
 
 const mapEquipmentCreateDomainToDto = (domain: EquipmentCreate): EquipmentCreateDto => {
     return {
@@ -43,4 +56,5 @@ export {
     mapEquipmentDtoToDomain,
     mapEquipmentUpdateDomainToDto,
     mapEquipmentCreateDomainToDto,
+    mapEquipmentQrDataDtoToDomain,
 };

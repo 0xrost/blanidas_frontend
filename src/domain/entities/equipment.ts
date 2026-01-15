@@ -17,4 +17,10 @@ interface Equipment {
     manufacturer: Manufacturer | null;
 }
 
-export type { Equipment, Status };
+interface EquipmentQrData {
+    id: string;
+    serialNumber: string;
+    institutionName: string;
+}
+
+export type { Equipment, Status, EquipmentQrData };

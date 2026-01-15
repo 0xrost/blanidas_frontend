@@ -1,25 +1,28 @@
 import { createFileRoute } from '@tanstack/react-router'
 import SettingsPage from "@/presentation/pages/manager/SettingsPage.tsx";
-import type {Pagination} from "@/domain/pagination.ts";
 import type {Tab} from "@/presentation/components/tabs/settings/SettingsTab.tsx";
+import type {SearchParams as StaffSearchParams} from "@/presentation/components/tabs/staff/filter.ts";
+import type {SearchParams as InstitutionSearchParams} from "@/presentation/components/tabs/institutions/filter.ts";
+import type {PaginationSearch} from "@/presentation/models.ts";
 
-interface SearchParams extends Pagination {
-    tab: Tab;
-}
+type SearchParams = StaffSearchParams & InstitutionSearchParams;
+type Search = { tab: Tab } & PaginationSearch & SearchParams;
+
+const defaultSearch = {
+  page: "1",
+  limit: "15",
+  typeId: "all",
+  tab: "staff",
+  role: "all",
+  sortOrder: "asc",
+  search: ""
+} satisfies Search;
 
 export const Route = createFileRoute('/_authenticated/manager/dashboard/settings')({
   component: SettingsPage,
-  validateSearch: (search: {
-    tab?: Tab
-    page?: number
-    limit?: string
-  }): SearchParams => {
-    return {
-      tab: search.tab ?? "staff",
-      page: Number(search?.page ?? 1),
-      limit: Number(search?.limit ?? 15),
-    }
+  validateSearch: (search: Partial<Search>): Search => {
+    return { ...defaultSearch, ...search };
   },
 })
 
-export type { SearchParams };
+export type { Search, SearchParams };

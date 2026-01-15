@@ -8,6 +8,10 @@ const getEquipmentUseCase = (repo: EquipmentRepository) => {
     return async (id: string) => await repo.get(id);
 }
 
+const getEquipmentQrDataUseCase = (repo: EquipmentRepository) => {
+    return async () => await repo.getQrData();
+}
+
 const EquipmentUseCases = createCrudUseCases<
     Equipment,
     EquipmentCreate,
@@ -21,7 +25,10 @@ export const {
     list: listEquipmentUseCase,
     create: createEquipmentUseCase,
     update: updateEquipmentUseCase,
-    delete: deleteEquipmentUseCase
+    delete: deleteEquipmentUseCase,
 } = EquipmentUseCases;
 
-export { getEquipmentUseCase };
+export {
+    getEquipmentUseCase,
+    getEquipmentQrDataUseCase,
+};

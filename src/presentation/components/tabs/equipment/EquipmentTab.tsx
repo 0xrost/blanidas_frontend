@@ -1,7 +1,7 @@
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
 import {useEquipmentSummary} from "@/presentation/hooks/summary.ts";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
-import {Monitor} from "lucide-react";
+import {Monitor, QrCodeIcon} from "lucide-react";
 import FiltersPanel from "@/presentation/components/layouts/FiltersPanel.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {filterFieldsFactory, type SearchParams} from "@/presentation/components/tabs/equipment/filter.ts";
@@ -13,7 +13,7 @@ import PaginationControl from "@/presentation/components/layouts/pagination/Pagi
 import {
     useCreateEquipment,
     useDeleteEquipment,
-    useEquipment,
+    useEquipment, useEquipmentQrData,
     useUpdateEquipment
 } from "@/presentation/hooks/entities/equipment.ts";
 import EquipmentTable from "@/presentation/components/tabs/equipment/EquipmentTable.tsx";
@@ -23,13 +23,18 @@ import {useEquipmentModels} from "@/presentation/hooks/entities/equipment-model.
 import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import {modalFieldsFactory} from "@/presentation/components/tabs/equipment/modal.ts";
-import {useGetEquipmentIdQrCodeUrl} from "@/presentation/hooks/qrCode.ts";
+import {useEquipmentQrCodes} from "@/presentation/hooks/qrCode.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
+import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
+import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/equipment.tsx";
+import {Button} from "@/presentation/components/ui/button.tsx";
 
 
 interface Props {
     pagination: Pagination;
-    onSearchChange: (search: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: SearchParams;
 }
 
 const errorMessages = {
@@ -39,12 +44,16 @@ const errorMessages = {
     update: "Не вдалося оновити інформацію про обладнання. Спробуйте ще раз пізніше."
 }
 
-const EquipmentTab = ({ pagination, onSearchChange }: Props) => {
+const EquipmentTab = ({ pagination, searchParams, onSearchChange }: Props) => {
     const {data: institutionsPagination} = useInstitutions({pagination: UnlimitedPagination, sorting: SortByNameAsc});
     const {data: manufacturersPagination} = useManufacturers({pagination: UnlimitedPagination, sorting: SortByNameAsc});
     const {data: modelsPagination} = useEquipmentModels({pagination: UnlimitedPagination, sorting: SortByNameAsc});
     const {data: categoriesPagination} = useEquipmentCategories({pagination: UnlimitedPagination, sorting: SortByNameAsc});
+    const {data: equipmentQrData} = useEquipmentQrData();
     const {data: summary} = useEquipmentSummary();
+
+    const onSetValue = useOnSetValue(onSearchChange);
+    const onPaginationChange = useOnPaginationChange(onSearchChange);
 
     const createEquipment = useCreateEquipment();
     const updateEquipment = useUpdateEquipment();
@@ -52,33 +61,22 @@ const EquipmentTab = ({ pagination, onSearchChange }: Props) => {
 
     const [localEquipment, setLocalEquipment] = useState<Equipment[]>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [selectedEquipment, setSelectedEquipment] = useState<Equipment| null>(null);
     const [creatingError, setCreatingError] = useState<string | null>(null);
 
-    const qrCodeUrl = useGetEquipmentIdQrCodeUrl(selectedEquipment?.id ?? "")
-
-    const [values, setValues] = useState<SearchParams>({
-        institutionId: "all",
-        modelId: "all",
-        manufacturerId: "all",
-        status: "all",
-        sortOrder: "asc",
-        sortBy: "name",
-        search: ""
-    });
+    const [qrCodes, setData] = useEquipmentQrCodes([])
 
     const {data: equipmentPagination} = useEquipment({
         pagination,
         filters: {
-            nameOrSerialNumber: values.search.trim().length < 2 ? undefined : values.search.trim(),
-            manufacturerId: values.manufacturerId === "all" ? undefined : values.manufacturerId,
-            institutionId: values.institutionId === "all" ? undefined : values.institutionId,
-            modelId: values.modelId === "all" ? undefined : values.modelId,
-            status: values.status === "all" ? undefined : values.status,
+            nameOrSerialNumber: searchParams.search.trim().length < 2 ? undefined : searchParams.search.trim(),
+            manufacturerId: searchParams.manufacturerId === "all" ? undefined : searchParams.manufacturerId,
+            institutionId: searchParams.institutionId === "all" ? undefined : searchParams.institutionId,
+            modelId: searchParams.modelId === "all" ? undefined : searchParams.modelId,
+            status: searchParams.status === "all" ? undefined : searchParams.status,
         },
         sorting: {
-            sortBy: values.sortBy,
-            sortOrder: values.sortOrder,
+            sortBy: searchParams.sortBy,
+            sortOrder: searchParams.sortOrder,
         }
     });
 
@@ -127,6 +125,18 @@ const EquipmentTab = ({ pagination, onSearchChange }: Props) => {
         (id) => {setLocalEquipment(prev => { return prev.filter(x => x.id !== id); })}
     )
 
+    const actionButton = (
+        <>
+            <Button
+                disabled={!equipmentQrData}
+                onClick={() => setData(equipmentQrData ?? [])}
+                className="h-12 min-w-12 text-sm bg-slate-100 text-slate-700 hover:bg-slate-200">
+                <QrCodeIcon className="w-8 h-8" />
+            </Button>
+            <AddButton onClick={() => setIsModalOpen(true)} title="Додати обладнання" />
+        </>
+    );
+
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -136,11 +146,11 @@ const EquipmentTab = ({ pagination, onSearchChange }: Props) => {
                 <DashboardCard label="Не працює" value={summary?.notWorking ?? 0} color="red" icon={Monitor} />
             </div>
             <FiltersPanel
-                setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
-                actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати обладнання" />}
+                setValues={onSetValue}
+                actionButton={actionButton}
                 searchPlaceholder={"Пошук за назвою або серійним кодом"}
                 filters={filters}
-                values={values}
+                values={searchParams}
             />
 
             <EquipmentTable
@@ -149,17 +159,24 @@ const EquipmentTab = ({ pagination, onSearchChange }: Props) => {
                 categories={categoriesPagination?.items ?? []}
                 manufacturers={manufacturersPagination?.items ?? []}
                 models={modelsPagination?.items ?? []}
-                showQr={setSelectedEquipment}
+                showQr={(x) => setData([{
+                    id: x.id,
+                    serialNumber: x.serialNumber,
+                    institutionName: x.institution.name,
+                }])}
 
                 update={onUpdate}
                 delete_={onDelete}
             />
 
-            <PaginationControl items={equipmentPagination?.total ?? 0} pagination={pagination} onChange={onSearchChange} />
+            <PaginationControl
+                items={equipmentPagination?.total ?? 0}
+                pagination={pagination}
+                onChange={onPaginationChange}
+            />
             <QrModal
-                close={() => setSelectedEquipment(null)}
-                equipment={selectedEquipment}
-                dataToShow={qrCodeUrl}
+                close={() => setData([])}
+                dataToShow={qrCodes}
             />
 
             <FormModal

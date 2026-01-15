@@ -16,11 +16,15 @@ import {filterFields, type SearchParams} from "@/presentation/components/tabs/st
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 import type {ErrorCode, RequestError} from "@/infrastructure/errors.ts";
+import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
+import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
 
 
 interface Props {
     pagination: Pagination
-    onChange: (pagination: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: SearchParams;
 }
 
 const errorMessages = {
@@ -38,12 +42,15 @@ const errorCodeMap: Record<ErrorCode, string> = {
     "value already exists": errorMessages.emailExists,
 }
 
-const StaffTab = ({ pagination, onChange }: Props) => {
-    const [values, setValues] = useState<SearchParams>({search: "", role: "all", sortOrder: "asc"});
+const StaffTab = ({ pagination, onSearchChange, searchParams }: Props) => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [localStaff, setLocalStaff] = useState<User[]>([]);
 
     const [error, setError] = useTimedError<string | null>(null, 5000);
+
+    const onSetValue = useOnSetValue(onSearchChange);
+    const onPaginationChange = useOnPaginationChange(onSearchChange);
+
 
     const createMember = useCreateUser();
     const updateMember = useUpdateUser();
@@ -54,12 +61,12 @@ const StaffTab = ({ pagination, onChange }: Props) => {
     const {data: staffPagination} = useUsers({
         pagination: pagination,
         filters: {
-            username: values.search.trim().length < 2 ? undefined : values.search.trim(),
-            role: values.role === "all" ? undefined : values.role,
+            username: searchParams.search.trim().length < 2 ? undefined : searchParams.search.trim(),
+            role: searchParams.role === "all" ? undefined : searchParams.role,
         },
         sorting: {
             sortBy: "username",
-            sortOrder: values.sortOrder,
+            sortOrder: searchParams.sortOrder,
         }
     });
 
@@ -106,11 +113,11 @@ const StaffTab = ({ pagination, onChange }: Props) => {
     return (
         <div className="space-y-6">
             <FiltersPanel
-                values={values}
+                values={searchParams}
                 inlineFilter={filterFields}
                 searchPlaceholder={"Пошук за ім'ям та прізвищем працівника"}
                 actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати працівника" />}
-                setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
+                setValues={onSetValue}
             />
 
             <StaffTable
@@ -123,7 +130,7 @@ const StaffTab = ({ pagination, onChange }: Props) => {
             <PaginationControl
                 items={staffPagination?.total ?? 0}
                 pagination={pagination}
-                onChange={onChange}
+                onChange={onPaginationChange}
             />
 
             <FormModal

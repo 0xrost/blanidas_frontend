@@ -38,7 +38,7 @@ class RepairRequestRepository extends CRUDRepository<
     }
 
     async get(id: string): Promise<RepairRequest> {
-        const json = await this.request<RepairRequestDto>(Endpoints.repairRequest.get(id));
+        const json = await CRUDRepository.request<RepairRequestDto>(Endpoints.repairRequest.get(id));
         return this.mappers.model(json);
     }
 

@@ -1,7 +1,7 @@
 import {EquipmentRepository} from "@/dependencies.ts";
 import {
     createEquipmentUseCase,
-    deleteEquipmentUseCase,
+    deleteEquipmentUseCase, getEquipmentQrDataUseCase,
     getEquipmentUseCase,
     listEquipmentUseCase,
     updateEquipmentUseCase
@@ -15,6 +15,15 @@ const useEquipmentById = (id: string) => {
         queryFn: () => getEquipmentUseCase(EquipmentRepository)(id)
     })
 }
+
+const useEquipmentQrData = () => {
+    return useQuery({
+        queryKey: ['equipment-qr-codes'],
+        queryFn: () => getEquipmentQrDataUseCase(EquipmentRepository)(),
+        gcTime: 0,
+    })
+}
+
 
 const equipmentHooks = createCrudHooks(
     'equipment',
@@ -35,4 +44,5 @@ export {
     useCreateEquipment,
     useUpdateEquipment,
     useDeleteEquipment,
+    useEquipmentQrData,
 };

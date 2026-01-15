@@ -26,6 +26,9 @@ import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/spare-parts.tsx";
+import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
+import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
 
 
 const errorMessages = {
@@ -38,21 +41,16 @@ const errorMessages = {
 
 interface Props {
     pagination: Pagination,
-    onSearchChange: (search: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: SearchParams;
 }
-const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
+const SparePartsTab = ({ pagination, searchParams, onSearchChange }: Props) => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [localSpareParts, setLocalSpareParts] = useState<SparePart[]>([]);
     const [creatingError, setCreatingError] = useTimedError<string | null>(null, 5000);
-    const [values, setValues] = useState<SearchParams>({
-        institutionId: "all",
-        sparePartCategoryId: "all",
-        equipmentModelId: "all",
-        status: "all",
-        sortOrder: "asc",
-        sortBy: "name",
-        search: ""
-    });
+
+    const onSetValue = useOnSetValue(onSearchChange);
+    const onPaginationChange = useOnPaginationChange(onSearchChange);
 
     const { data: sparePartCategoriesPagination } = useSparePartCategories({pagination: UnlimitedPagination, sorting: SortByNameAsc})
     const { data: equipmentModelsPagination } = useEquipmentModels({pagination: UnlimitedPagination, sorting: SortByNameAsc})
@@ -67,15 +65,15 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
     const { data: sparePartsPagination } = useSpareParts({
         pagination: pagination,
         filters: {
-            status: values.status === "all" ? undefined : values.status,
-            name: values.search.trim().length === 0 ? undefined : values.search.trim(),
-            categoryId: values.sparePartCategoryId === "all" ? undefined : values.sparePartCategoryId,
-            modelId: values.equipmentModelId === "all" ? undefined : values.equipmentModelId,
-            institutionId: values.institutionId === "all" ? undefined : values.institutionId,
+            status: searchParams.status === "all" ? undefined : searchParams.status,
+            name: searchParams.search.trim().length === 0 ? undefined : searchParams.search.trim(),
+            categoryId: searchParams.sparePartCategoryId === "all" ? undefined : searchParams.sparePartCategoryId,
+            modelId: searchParams.equipmentModelId === "all" ? undefined : searchParams.equipmentModelId,
+            institutionId: searchParams.institutionId === "all" ? undefined : searchParams.institutionId,
         },
         sorting: {
-            sortBy: values.sortBy,
-            sortOrder: values.sortOrder,
+            sortBy: searchParams.sortBy,
+            sortOrder: searchParams.sortOrder,
         }
     })
 
@@ -130,11 +128,11 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
             </div>
 
             <FiltersPanel
-                setValues={(key, value) => setValues((prev) => ({ ...prev, [key]: value }))}
+                setValues={onSetValue}
                 actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати запчастину" />}
                 searchPlaceholder={"Пошук за назвою запчастини"}
                 filters={filterFields}
-                values={values}
+                values={searchParams}
             />
             <SparePartsTable
                 spareParts={localSpareParts}
@@ -168,7 +166,7 @@ const SparePartsTab = ({ pagination, onSearchChange }: Props) => {
             <PaginationControl
                 items={sparePartsPagination?.total ?? 0}
                 pagination={pagination}
-                onChange={onSearchChange}
+                onChange={onPaginationChange}
             />
         </div>
     );

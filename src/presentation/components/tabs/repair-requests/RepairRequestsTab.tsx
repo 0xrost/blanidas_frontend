@@ -1,7 +1,7 @@
 import {AlertCircle, CheckCircle2, Clock, Package} from "lucide-react";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
 import FiltersPanel, {type FilterConfig} from "@/presentation/components/layouts/FiltersPanel.tsx";
-import {useMemo, useState} from "react";
+import {useMemo} from "react";
 import {useRepairRequestsSummary} from "@/presentation/hooks/summary.ts";
 import {useEquipmentCategories} from "@/presentation/hooks/entities/equipment-category.ts";
 import {useInstitutions} from "@/presentation/hooks/entities/institution.ts";
@@ -11,31 +11,22 @@ import {SortByNameAsc} from "@/domain/sorting.ts";
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
 import RepairRequestsTable from "@/presentation/components/tabs/repair-requests/RepairRequestsTable.tsx";
 import {filtersFactory, type SearchParams} from "@/presentation/components/tabs/repair-requests/filters.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/repair-requests";
+import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
+import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
 
 
 interface Props {
     pagination: Pagination
-    onPaginationChange: (pagination: Pagination) => void;
     onGoToDetails: (id: string) => void;
+
+    searchParams: SearchParams;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
 }
 
-const RepairRequestListTab = ({pagination, onPaginationChange, onGoToDetails}: Props) => {
-    const [values, setValues] = useState<SearchParams>({
-        sortOrder: "desc",
-        search: "",
-        institutionId: 'all',
-        categoryId: 'all',
-        status: 'all',
-        sortBy: 'date',
-        urgency: 'all'
-    });
-
-    const onSetValue = (key: string, value: string) => {
-        setValues((prev) => ({ ...prev, [key]: value }))
-        if (key !== "sortBy" && key !== "sortOrder") {
-            onPaginationChange({ ...pagination, page: 1 })
-        }
-    }
+const RepairRequestListTab = ({pagination, onGoToDetails, searchParams, onSearchChange}: Props) => {
+    const onSetValue = useOnSetValue(onSearchChange);
+    const onPaginationChange = useOnPaginationChange(onSearchChange);
 
     const { data: summary } = useRepairRequestsSummary();
     const { data: equipmentCategoriesPagination } = useEquipmentCategories({pagination: UnlimitedPagination, sorting: SortByNameAsc});
@@ -43,13 +34,13 @@ const RepairRequestListTab = ({pagination, onPaginationChange, onGoToDetails}: P
     const { data: repairRequestsPagination } = useRepairRequests({
         pagination,
         filters: {
-            urgency: values.urgency === "all" ? undefined : values.urgency,
-            status: values.status === "all" ? undefined : values.status,
-            equipmentCategoryId: values.categoryId === "all" ? undefined : values.categoryId,
-            institutionId: values.institutionId === "all" ? undefined : values.institutionId,
-            serialNumberOrEquipmentName: values.search.trim().length < 2 ? undefined : values.search.trim(),
+            urgency: searchParams.urgency === "all" ? undefined : searchParams.urgency,
+            status: searchParams.status === "all" ? undefined : searchParams.status,
+            equipmentCategoryId: searchParams.categoryId === "all" ? undefined : searchParams.categoryId,
+            institutionId: searchParams.institutionId === "all" ? undefined : searchParams.institutionId,
+            serialNumberOrEquipmentName: searchParams.search.trim().length < 2 ? undefined : searchParams.search.trim(),
         },
-        sorting: { sortBy: values.sortBy, sortOrder: values.sortOrder }
+        sorting: { sortBy: searchParams.sortBy, sortOrder: searchParams.sortOrder }
     });
 
 
@@ -68,7 +59,7 @@ const RepairRequestListTab = ({pagination, onPaginationChange, onGoToDetails}: P
                 </div>
                 <FiltersPanel
                     filters={filters}
-                    values={values}
+                    values={searchParams}
                     searchPlaceholder="Пошук за моделлю або серійним номером"
                     setValues={onSetValue}
                 />
@@ -78,7 +69,11 @@ const RepairRequestListTab = ({pagination, onPaginationChange, onGoToDetails}: P
                 />
 
                 <PaginationControl
-                    onChange={onPaginationChange}
+                    onChange={(x) => {
+                        console.log(x);
+                        onPaginationChange(x)
+
+                    }}
                     pagination={pagination}
                     items={repairRequestsPagination?.total ?? 0}
                 />

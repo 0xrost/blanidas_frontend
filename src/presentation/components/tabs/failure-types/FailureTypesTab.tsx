@@ -6,12 +6,15 @@ import {
     useFailureTypes,
     useUpdateFailureType
 } from "@/presentation/hooks/entities/failure-type.ts";
+import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 
 interface Props {
     pagination: Pagination;
-    onPaginationChange: (pagination: Pagination) => void;
+    onSearchChange: (fn: (prev: Search) => Search) => void;
+    searchParams: FiltersPanelValues;
 }
-const FailureTypesTab = ({ pagination, onPaginationChange }: Props) => {
+const FailureTypesTab = ({ pagination, searchParams, onSearchChange }: Props) => {
     const config = {
         list: useFailureTypes,
         create: useCreateFailureType,
@@ -21,7 +24,12 @@ const FailureTypesTab = ({ pagination, onPaginationChange }: Props) => {
     }
 
     return (
-        <NameOnlyTab pagination={pagination} onPaginationChange={onPaginationChange} config={config} />
+        <NameOnlyTab
+            pagination={pagination}
+            config={config}
+            onSearchChange={onSearchChange}
+            searchParams={searchParams}
+        />
     );
 }
 

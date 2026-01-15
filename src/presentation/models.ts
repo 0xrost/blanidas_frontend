@@ -5,4 +5,9 @@ interface MutationOptions<T = unknown> {
     onError?: (error?: RequestError) => void;
 }
 
-export type { MutationOptions };
+interface PaginationSearch {
+    page: string;
+    limit: string;
+}
+
+export type { MutationOptions, PaginationSearch };
