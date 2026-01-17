@@ -18,7 +18,6 @@ const statisticsBuildQueries = (query: Partial<StatisticsQuery>): URLSearchParam
         const queryKey = key as keyof TimeFrame;
         const rowValue = query["timeFrame"][queryKey];
         let value = rowValue.toString();
-        console.log(rowValue)
         if ((queryKey == "toDate" || queryKey == "fromDate") && rowValue instanceof Date) {
             value = rowValue.toISOString();
         }
