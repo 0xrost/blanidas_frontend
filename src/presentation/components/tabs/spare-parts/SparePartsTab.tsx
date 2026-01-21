@@ -15,7 +15,6 @@ import type {LocationCreate} from "@/domain/models/spare-part.ts";
 import {useInstitutions} from "@/presentation/hooks/entities/institution.ts";
 import {useSparePartCategories} from "@/presentation/hooks/entities/spare-part-category.ts";
 import {useEquipmentModels} from "@/presentation/hooks/entities/equipment-model.ts";
-import {useSuppliers} from "@/presentation/hooks/entities/supplier.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
@@ -55,7 +54,6 @@ const SparePartsTab = ({ pagination, searchParams, onSearchChange }: Props) => {
     const { data: sparePartCategoriesPagination } = useSparePartCategories({pagination: UnlimitedPagination, sorting: SortByNameAsc})
     const { data: equipmentModelsPagination } = useEquipmentModels({pagination: UnlimitedPagination, sorting: SortByNameAsc})
     const { data: institutionsPagination } = useInstitutions({pagination: UnlimitedPagination, sorting: SortByNameAsc})
-    const { data: suppliersPagination } = useSuppliers({pagination: UnlimitedPagination, sorting: SortByNameAsc})
 
     const updateSparePart = useUpdateSparePart();
     const createSparePart = useCreateSparePart();
@@ -88,10 +86,9 @@ const SparePartsTab = ({ pagination, searchParams, onSearchChange }: Props) => {
     const modalFields = useMemo(
         () => modalFieldsFactory(
             sparePartCategoriesPagination?.items ?? [],
-            suppliersPagination?.items ?? [],
             equipmentModelsPagination?.items ?? [],
         ),
-    [sparePartCategoriesPagination, equipmentModelsPagination, suppliersPagination])
+    [sparePartCategoriesPagination, equipmentModelsPagination])
 
     useEffect(() => {
         if (sparePartsPagination) { setLocalSpareParts(sparePartsPagination.items); }
@@ -140,7 +137,6 @@ const SparePartsTab = ({ pagination, searchParams, onSearchChange }: Props) => {
                 updateLocations={onUpdateLocations}
                 updateSparePart={onUpdateSparePart}
                 institutions={institutionsPagination?.items ?? []}
-                suppliers={suppliersPagination?.items ?? []}
                 models={equipmentModelsPagination?.items ?? []}
                 categories={sparePartCategoriesPagination?.items ?? []}
             />
@@ -158,7 +154,6 @@ const SparePartsTab = ({ pagination, searchParams, onSearchChange }: Props) => {
                     name: "",
                     minQuantity: 1,
                     sparePartCategoryId: "",
-                    supplierId: "",
                     compatibleModelIds: [],
                 }}
             />

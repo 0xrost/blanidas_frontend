@@ -16,14 +16,8 @@ import type { SparePartCategoryRepository as SparePartCategoryRepositoryInterfac
 import { SummaryRepository as SummaryRepositoryImplementation } from "@/infrastructure/api/summary.ts";
 import type { SummaryRepository as SummaryRepositoryInterface } from "@/domain/repositories/summary.ts";
 
-import { SupplierRepository as SupplierRepositoryImplementation } from "@/infrastructure/api/suppliers.ts";
-import type { SupplierRepository as SupplierRepositoryInterface } from "@/domain/repositories/suppliers.ts";
-
 import { InstitutionRepository as InstitutionRepositoryImplementation } from "@/infrastructure/api/institution.ts";
 import type { InstitutionRepository as InstitutionRepositoryInterface } from "@/domain/repositories/institution.ts";
-
-import { InstitutionTypeRepository as InstitutionTypeRepositoryImplementation } from "@/infrastructure/api/institution-type.ts";
-import type { InstitutionTypeRepository as InstitutionTypeRepositoryInterface } from "@/domain/repositories/institution-type.ts";
 
 import { EquipmentCategoryRepository as EquipmentCategoryRepositoryImplementation } from "@/infrastructure/api/equipment-category.ts";
 import type { EquipmentCategoryRepository as EquipmentCategoryRepositoryInterface } from "@/domain/repositories/equipment-category.ts";
@@ -60,10 +54,8 @@ const FailureTypeRepository: FailureTypeRepositoryInterface = new FailureTypeRep
 const SparePartRepository: SparePartRepositoryInterface = new SparePartRepositoryImplementation();
 const SparePartCategoryRepository: SparePartCategoryRepositoryInterface = new SparePartCategoryRepositoryImplementation()
 const EquipmentModelRepository: EquipmentModelRepositoryInterface = new EquipmentModelRepositoryImplementation();
-const SupplierRepository: SupplierRepositoryInterface = new SupplierRepositoryImplementation();
 const ManufacturerRepository: ManufacturerRepositoryInterface = new ManufacturerRepositoryImplementation()
 const UserRepository: UserRepositoryInterface = new UserRepositoryImplementation();
-const InstitutionTypeRepository: InstitutionTypeRepositoryInterface = new InstitutionTypeRepositoryImplementation();
 const StatisticsRepository: StatisticsRepositoryInterface = new StatisticsRepositoryImplementation();
 
 const AuthService: AuthServiceImplementation = new AuthServiceImplementation(loginUseCase(AuthRepository), refreshUseCase(AuthRepository));
@@ -81,10 +73,8 @@ export {
     SparePartRepository,
     SparePartCategoryRepository,
     EquipmentModelRepository,
-    SupplierRepository,
     ManufacturerRepository,
     UserRepository,
     StatisticsRepository,
-    InstitutionTypeRepository,
     QrCodeService,
 };

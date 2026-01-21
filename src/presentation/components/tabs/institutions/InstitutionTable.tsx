@@ -2,7 +2,6 @@ import type {Institution} from "@/domain/entities/institution.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {useCallback, useMemo, useState} from "react";
 import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
-import {Badge} from "@/presentation/components/ui/badge.tsx";
 import {Building2, Mail, Phone} from "lucide-react";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
@@ -11,7 +10,6 @@ import {
     modalFieldsFactory,
     type ModalFormData
 } from "@/presentation/components/tabs/institutions/modal.ts";
-import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 import type {InstitutionUpdate} from "@/domain/models/institution.ts";
 import {errorMessages} from "@/presentation/components/tabs/institutions/InstitutionsTab.tsx";
 import {composeMutationOptions} from "@/presentation/utils.ts";
@@ -19,16 +17,15 @@ import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
 
 interface Props {
     institutions: Institution[];
-    institutionTypes: InstitutionType[];
     update: (member: InstitutionUpdate, options?: MutationOptions) => void;
     delete_: (id: string, options: MutationOptions) => void;
 }
-const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: Props) => {
+const InstitutionTable = ({ institutions, update, delete_ }: Props) => {
     const [editingInstitution, setEditingInstitution] = useState<Institution | null>(null);
     const [failedDeletingInstitutionIds, setFailedDeletingMemberIds] = useTimedError<string[]>([], 5000);
     const [updatingError, setUpdatingError] = useTimedError<string | null>(null, 5000);
 
-    const modalFields = useMemo(() => modalFieldsFactory(institutionTypes), [institutionTypes]);
+    const modalFields = useMemo(() => modalFieldsFactory(), []);
 
     const onUpdate = (data: ModalFormData, options?: MutationOptions) => {
         if (!editingInstitution) return;
@@ -62,20 +59,6 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
                         <span className="text-xs text-nowrap text-slate-500">{institution.address}</span>
                     </div>
                 </div>
-            ),
-        },
-        {
-            key: "type",
-            header: "Тип",
-            className: "py-3 px-4",
-            cell: institution => (
-                <>
-                    {institution.type && (
-                        <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                            {institution.type.name ?? ""}
-                        </Badge>
-                    )}
-                </>
             ),
         },
         {
@@ -133,7 +116,6 @@ const InstitutionTable = ({ institutions, institutionTypes, update, delete_ }: P
                     initialValues={{
                         name: editingInstitution.name,
                         address: editingInstitution.address,
-                        typeId: editingInstitution.type?.id ?? "",
                         contactPhone: editingInstitution.contactPhone,
                         contactEmail: editingInstitution.contactEmail,
                     }}

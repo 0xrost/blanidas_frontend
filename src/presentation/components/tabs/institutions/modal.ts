@@ -1,15 +1,13 @@
 import {bindField, type FieldConfig} from "@/presentation/components/layouts/FormModal.tsx";
-import type {InstitutionType} from "@/domain/entities/institution-type.ts";
 
 interface ModalFormData {
     name: string;
     address: string;
-    typeId: string;
     contactPhone: string;
     contactEmail: string;
 }
 
-const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData>[] => [
+const modalFieldsFactory = (): FieldConfig<ModalFormData>[] => [
     {
         id: "name",
         label: "Назва",
@@ -17,6 +15,7 @@ const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData
         placeholder: "Введіть назву",
         ...bindField("name"),
         required: true,
+        colSpan: 4,
     },
     {
         id: "address",
@@ -25,6 +24,7 @@ const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData
         placeholder: "Місто, вулиця, будинок",
         ...bindField("address"),
         required: true,
+        colSpan: 4
     },
     {
         id: "phone",
@@ -45,17 +45,6 @@ const modalFieldsFactory = (types: InstitutionType[]): FieldConfig<ModalFormData
         required: true,
         validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
         errorMessage: "Введіть правильний email",
-    },
-    {
-        id: "type",
-        label: "Тип закладу",
-        fullSizeOnMobile: true,
-        type: "select",
-        colSpan: 4,
-        placeholder: "Оберіть тип закладу",
-        options: types.map(type => ({ value: type.id, label: type.name })),
-        ...bindField("typeId"),
-        required: true,
     },
 ];
 

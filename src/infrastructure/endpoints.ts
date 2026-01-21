@@ -4,13 +4,11 @@ import {repairRequestsFilterMap, repairRequestsSortMap} from "@/infrastructure/q
 import type {SparePartListQuery} from "@/domain/queries/spare-part-list.query.ts";
 import {sparePartsFilterMap, sparePartsSortMap} from "@/infrastructure/query/spare-part-query.map.ts";
 import type {SparePartCategoryListQuery} from "@/domain/queries/spare-part-category-list.query.ts";
-import type {SupplierListQuery} from "@/domain/queries/supplier-list.query.ts";
 import type {ManufacturerListQuery} from "@/domain/queries/manufacturer-list.query.ts";
 import {
     sparePartCategoryFilterMap,
     sparePartCategorySortMap
 } from "@/infrastructure/query/spare-part-category-query.map.ts";
-import {supplierFilterMap, supplierSortMap} from "@/infrastructure/query/supplier-query.map.ts";
 import {manufacturerFilterMap, manufacturerSortMap} from "@/infrastructure/query/manufacturer-query.map.ts";
 import {failureTypeFilterMap, failureTypeSortMap} from "@/infrastructure/query/failure-type-query.map.ts";
 import {equipmentFilterMap, equipmentSortMap} from "@/infrastructure/query/equipment-query.map.ts";
@@ -27,8 +25,6 @@ import type {InstitutionListQuery} from "@/domain/queries/institution-list.query
 import type {EquipmentCategoryListQuery} from "@/domain/queries/equipment-category-list.query.ts";
 import type {UserListQuery} from "@/domain/queries/user-list.query.ts";
 import {userFilterMap, userSortMap} from "@/infrastructure/query/user-list-query.map.ts";
-import {institutionTypeFilterMap, institutionTypeSortMap} from "@/infrastructure/query/institution-type-query.map.ts";
-import type {InstitutionTypeListQuery} from "@/domain/queries/institution-type-list.query.ts";
 import {BaseServerURL} from "@/options.ts";
 import type {StatisticsQuery} from "@/domain/queries/statistics.query.ts";
 import {statisticsBuildQueries} from "@/infrastructure/query-builders/statistics.query-builder.ts";
@@ -75,18 +71,6 @@ const Endpoints = {
         update: () => Endpoints.sparePartCategory.base,
         create: () => Endpoints.sparePartCategory.base,
         delete: (id: string) => `${Endpoints.sparePartCategory.base}${id}`,
-    },
-    supplier: {
-        mappers: {
-            filterMap: supplierFilterMap,
-            sortMap: supplierSortMap,
-        },
-        base: BaseServerURL + "/api/suppliers/",
-
-        list: (query: SupplierListQuery) => buildURL(Endpoints.supplier.base, query, buildQueriesWrapper(Endpoints.supplier.mappers)),
-        update: () => Endpoints.supplier.base,
-        create: () => Endpoints.supplier.base,
-        delete: (id: string) => `${Endpoints.supplier.base}${id}`,
     },
     manufacturer: {
         mappers: {
@@ -149,18 +133,6 @@ const Endpoints = {
         update: () => Endpoints.institution.base,
         create: () => Endpoints.institution.base,
         delete: (id: string) => `${Endpoints.institution.base}${id}`,
-    },
-    institutionType: {
-        mappers: {
-            filterMap: institutionTypeFilterMap,
-            sortMap: institutionTypeSortMap,
-        },
-        base: BaseServerURL + "/api/institution-types/",
-
-        list: (query: InstitutionTypeListQuery) => buildURL(Endpoints.institutionType.base, query, buildQueriesWrapper(Endpoints.institutionType.mappers)),
-        update: () => Endpoints.institutionType.base,
-        create: () => Endpoints.institutionType.base,
-        delete: (id: string) => `${Endpoints.institutionType.base}${id}`,
     },
     auth: {
         base: BaseServerURL + "/api/users/",

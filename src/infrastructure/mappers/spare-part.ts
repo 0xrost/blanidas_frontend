@@ -12,7 +12,6 @@ const mapSparePartDtoToDomain = (dto: SparePartDto): SparePart => {
         id: dto.id,
         name: dto.name,
         note: dto.note,
-        supplier: dto.supplier,
         locations: dto.locations,
         minQuantity: dto.min_quantity,
         totalQuantity: dto.total_quantity,
@@ -38,7 +37,6 @@ const mapSparePartUpdateDomainToDto = (domain: SparePartUpdate): SparePartUpdate
         min_quantity: domain.minQuantity,
         spare_part_category_id: domain.sparePartCategoryId,
         compatible_models_ids: domain.compatibleModelIds,
-        supplier_id: domain.supplierId,
     };
 };
 
@@ -49,7 +47,6 @@ const mapSparePartCreateDomainToDto = (domain: SparePartCreate): SparePartCreate
         min_quantity: domain.minQuantity,
         spare_part_category_id: domain.sparePartCategoryId,
         compatible_models_ids: domain.compatibleModelIds,
-        supplier_id: domain.supplierId,
     };
 };
 

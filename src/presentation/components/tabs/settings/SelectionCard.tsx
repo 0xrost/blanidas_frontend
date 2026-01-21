@@ -1,6 +1,6 @@
 import {Card} from "@/presentation/components/ui/card.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
-import {AlertTriangle, Building2, Factory, Layers, type LucideIcon, Monitor, Tag, Truck, User2} from "lucide-react";
+import {AlertTriangle, Building2, Factory, Layers, type LucideIcon, Monitor, Tag, User2} from "lucide-react";
 import type {Tab} from "@/presentation/components/tabs/settings/SettingsTab.tsx";
 import {useEffect, useRef} from "react";
 
@@ -11,10 +11,8 @@ const selectionCardConfig = {
         { id: 'sparePartCategories', title: 'Категорії запчастин', icon: Tag },
         { id: 'equipmentModels', title: 'Моделі обладнання', icon: Monitor },
         { id: 'failureTypes', title: 'Типи поломок', icon: AlertTriangle },
-        { id: 'institutionTypes', title: 'Типи закладів', icon: Building2 },
         { id: 'equipmentCategories', title: 'Категорії обладнання', icon: Layers },
         { id: 'manufacturers', title: 'Виробники', icon: Factory },
-        { id: 'suppliers', title: 'Постачальники', icon: Truck },
     ] as TabConfig[]
 };
 

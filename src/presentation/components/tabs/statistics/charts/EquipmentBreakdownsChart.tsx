@@ -9,11 +9,11 @@ const EquipmentBreakdownsChart = ({ data }: Props) => {
                 <table className="w-full">
                     <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                        <th className="text-left py-3 px-4 text-sm text-slate-600">Серійний номер</th>
+                        <th className="text-left text-nowrap py-3 px-4 text-sm text-slate-600">Серійний номер</th>
                         <th className="text-left py-3 px-4 text-sm text-slate-600">Модель</th>
                         <th className="text-left py-3 px-4 text-sm text-slate-600">Центр</th>
-                        <th className="text-left py-3 px-4 text-sm text-slate-600">Кількість поломок</th>
-                        <th className="text-left py-3 px-4 text-sm text-slate-600">Середній час ремонту</th>
+                        <th className="text-left text-nowrap py-3 px-4 text-sm text-slate-600">Кількість поломок</th>
+                        <th className="text-right text-nowrap py-3 px-4 text-sm text-slate-600">Середній час ремонту</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -32,11 +32,11 @@ const EquipmentBreakdownsChart = ({ data }: Props) => {
                                     index % 2 === 0 ? 'bg-white' : 'bg-slate-50'
                                 }`}
                             >
-                                <td className="py-3 px-4 text-nowrap text-slate-900 font-mono text-sm">{row.serialNumber}</td>
-                                <td className="py-3 px-4 text-nowrap text-slate-900">{row.modelName}</td>
-                                <td className="py-3 px-4 text-nowrap text-slate-600">{row.institutionName}</td>
-                                <td className="py-3 px-4 text-nowrap">{row.breakdownCount}</td>
-                                <td className="py-3 px-4 text-nowrap text-slate-900">{formatted}</td>
+                                <td className="py-3 px-4 text-left text-nowrap text-slate-900 font-mono text-sm">{row.serialNumber}</td>
+                                <td className="py-3 px-4 text-left text-nowrap text-slate-900">{row.modelName}</td>
+                                <td className="py-3 px-4 text-left text-nowrap text-slate-600">{row.institutionName}</td>
+                                <td className="py-3 px-4 text-left text-nowrap">{row.breakdownCount}</td>
+                                <td className="py-3 px-4 text-right text-nowrap text-slate-900">{formatted}</td>
                             </tr>
                         );
                     })}

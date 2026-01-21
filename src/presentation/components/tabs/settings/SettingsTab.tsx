@@ -3,12 +3,10 @@ import StaffTab from "@/presentation/components/tabs/staff/StaffTab.tsx";
 import InstitutionsTab from "@/presentation/components/tabs/institutions/InstitutionsTab.tsx";
 import type {Search, SearchParams} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
 import type {Pagination} from "@/domain/pagination.ts";
-import SuppliersTab from "@/presentation/components/tabs/suppliers/SuppliersTab.tsx";
 import ManufacturersTab from "@/presentation/components/tabs/manufacturers/ManufacturersTab.tsx";
 import SparePartCategoryTab from "@/presentation/components/tabs/spare-part-categories/SparePartCategoryTab.tsx";
 import EquipmentModelsTab from "@/presentation/components/tabs/equipment-models/EquipmentModelsTab.tsx";
 import FailureTypesTab from "@/presentation/components/tabs/failure-types/FailureTypesTab.tsx";
-import InstitutionTypesTab from "@/presentation/components/tabs/institution-types/InstitutionTypesTab.tsx";
 import EquipmentCategoriesTab from "@/presentation/components/tabs/equipment-categories/EquipmentCategoriesTab.tsx";
 import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
 
@@ -18,10 +16,8 @@ type Tab =
     | "sparePartCategories"
     | "equipmentModels"
     | "failureTypes"
-    | "institutionTypes"
     | "equipmentCategories"
     | "manufacturers"
-    | "suppliers";
 
 
 interface Props {
@@ -40,9 +36,7 @@ const SettingsTab = ({ tab, onSearchChange, searchParams, pagination }: Props) =
         sparePartCategories: <SparePartCategoryTab pagination={pagination} searchParams={searchParams} onSearchChange={onSearchChange} />,
         equipmentModels: <EquipmentModelsTab pagination={pagination} searchParams={searchParams} onSearchChange={onSearchChange} />,
         failureTypes: <FailureTypesTab pagination={pagination} searchParams={searchParams} onSearchChange={onSearchChange} />,
-        institutionTypes: <InstitutionTypesTab pagination={pagination} searchParams={searchParams} onSearchChange={onSearchChange} />,
         equipmentCategories: <EquipmentCategoriesTab pagination={pagination} searchParams={searchParams} onSearchChange={onSearchChange} />,
-        suppliers: <SuppliersTab pagination={pagination} searchParams={searchParams} onSearchChange={onSearchChange} />,
     };
 
     const onChangeTab = (id: Tab) => {

@@ -22,9 +22,9 @@ import PhotosCard from "@/presentation/components/tabs/repair-request-details/Ph
 import {useAuthSession} from "@/presentation/hooks/auth.ts";
 import NotFoundTab from "@/presentation/components/tabs/not-found/NotFoundTab.tsx";
 import type {RepairRequestStatusRecordCreate} from "@/domain/models/repair-request.ts";
-import {Card} from "@/presentation/components/ui/card.tsx";
 import {UnlimitedPagination} from "@/domain/pagination.ts";
 import {SortByNameAsc} from "@/domain/sorting.ts";
+import DeleteModal from "@/presentation/components/tabs/repair-request-details/DeleteModal.tsx";
 
 
 interface RepairRequestUsedSparePartVM {
@@ -259,32 +259,11 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
                     </div>
                 </div>
             </div>
-            {showDeleteConfirmationModal &&
-                <div className="fixed inset-0 backdrop-blur-[2px] bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <Card className="bg-white max-w-md w-full">
-                        <div className="p-6">
-                            <h3 className="text-center text-slate-900 mb-4">Ви впевнені, що хочете видалити заявку?</h3>
-                            <div className="flex flex-row gap-3">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => {setShowDeleteConfirmationModal(false)}}
-                                    className="flex-1"
-                                >
-                                    Скасувати
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    onClick={onRepairRequestDelete}
-                                    className="flex-1 border-red-400 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                >
-                                    <Trash className="w-5 h-5" />
-                                    Видалити заявку
-                                </Button>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            }
+            <DeleteModal
+                delete_={onRepairRequestDelete}
+                close={() => setShowDeleteConfirmationModal(false)}
+                isOpen={showDeleteConfirmationModal}
+            />
         </>
     );
 };

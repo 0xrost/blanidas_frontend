@@ -29,7 +29,7 @@ function Table<T>({ data, columns, empty, rowKey, rowError }: TableProps<T>) {
                             {columns.map((col, index) => (
                                 <th
                                     key={col.key}
-                                    className={`px-6 py-3 text-xs text-slate-600 uppercase tracking-wider 
+                                    className={`px-6 py-3 text-xs text-slate-600 uppercase text-nowrap tracking-wider 
                                             ${index === columns.length - 1 ? "text-right" : "text-left"}
                                         `}
                                 >

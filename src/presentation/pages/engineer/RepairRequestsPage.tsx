@@ -8,7 +8,7 @@ const RepairRequestsPage = () => {
     const navigate = Route.useNavigate();
 
     const onGoToDetails = (id: string) => {
-        navigate({to: "/manager/dashboard/repair-requests/$repairRequestId", params: {repairRequestId: id} });
+        navigate({to: "/engineer/dashboard/repair-requests/$repairRequestId", params: {repairRequestId: id} });
     }
 
     const onSearchChange = (fn: (prev: Search) => Search) => {

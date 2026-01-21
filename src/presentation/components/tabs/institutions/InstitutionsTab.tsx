@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import FiltersPanel from "@/presentation/components/layouts/FiltersPanel.tsx";
-import { useInstitutionTypes } from "@/presentation/hooks/entities/institution-type.ts";
-import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
-import { SortByNameAsc } from "@/domain/sorting.ts";
+import FiltersPanel, {type FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
+import {type Pagination} from "@/domain/pagination.ts";
 import InstitutionTable from "@/presentation/components/tabs/institutions/InstitutionTable.tsx";
 import {
     useCreateInstitution,
@@ -15,7 +13,6 @@ import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import type { Institution } from "@/domain/entities/institution.ts";
 import PaginationControl from "@/presentation/components/layouts/pagination/PaginationControl.tsx";
 import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
-import {filterFieldsFactory, type SearchParams} from "@/presentation/components/tabs/institutions/filter.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
 import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
@@ -24,7 +21,7 @@ import type {Search} from "@/presentation/routes/_authenticated/manager/dashboar
 interface Props {
     pagination: Pagination;
     onSearchChange: (fn: (prev: Search) => Search) => void;
-    searchParams: SearchParams;
+    searchParams: FiltersPanelValues;
 }
 
 const errorMessages = {
@@ -42,14 +39,9 @@ const InstitutionsTab = ({ pagination, onSearchChange, searchParams }: Props) =>
     const onSetValue = useOnSetValue(onSearchChange);
     const onPaginationChange = useOnPaginationChange(onSearchChange);
 
-
-    const { data: institutionTypesPagination } = useInstitutionTypes({ pagination: UnlimitedPagination, sorting: SortByNameAsc });
     const { data: institutionsPagination } = useInstitutions({
         pagination,
-        filters: {
-            nameOrAddress: searchParams.search.trim().length < 2 ? undefined : searchParams.search.trim(),
-            typeId: searchParams.typeId === "all" ? undefined : searchParams.typeId,
-        },
+        filters: { nameOrAddress: searchParams.search.trim().length < 2 ? undefined : searchParams.search.trim(), },
         sorting: { sortBy: "name", sortOrder: searchParams.sortOrder }
     });
 
@@ -57,13 +49,7 @@ const InstitutionsTab = ({ pagination, onSearchChange, searchParams }: Props) =>
     const updateInstitution = useUpdateInstitution();
     const deleteInstitution = useDeleteInstitution();
 
-    const modalFields = useMemo(
-        () => modalFieldsFactory(institutionTypesPagination?.items ?? []),
-    [institutionTypesPagination]);
-
-    const inlineFilter = useMemo(
-        () => filterFieldsFactory(institutionTypesPagination?.items ?? []),
-    [institutionTypesPagination]);
+    const modalFields = useMemo(() => modalFieldsFactory(), []);
 
     useEffect(() => {
         if (institutionsPagination) setLocalInstitutions(institutionsPagination.items);
@@ -93,7 +79,6 @@ const InstitutionsTab = ({ pagination, onSearchChange, searchParams }: Props) =>
         <div className="space-y-6">
             <FiltersPanel
                 values={searchParams}
-                inlineFilter={inlineFilter}
                 actionButton={<AddButton onClick={() => setIsModalOpen(true)} title="Додати заклад" />}
                 searchPlaceholder="Пошук за назвою або адресою закладу"
                 setValues={onSetValue}
@@ -101,7 +86,6 @@ const InstitutionsTab = ({ pagination, onSearchChange, searchParams }: Props) =>
 
             <InstitutionTable
                 institutions={localInstitutions}
-                institutionTypes={institutionTypesPagination?.items ?? []}
                 update={onUpdate}
                 delete_={onDelete}
             />
@@ -118,7 +102,6 @@ const InstitutionsTab = ({ pagination, onSearchChange, searchParams }: Props) =>
                 initialValues={{
                     name: "",
                     address: "",
-                    typeId: "",
                     contactPhone: "",
                     contactEmail: "",
                 }}

@@ -1,5 +1,4 @@
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
-import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 
@@ -21,7 +20,6 @@ interface SparePart {
     note: string | null;
 
     locations: Location[];
-    supplier: Supplier | null;
     category: SparePartCategory | null;
 }
 

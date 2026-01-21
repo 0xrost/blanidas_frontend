@@ -10,7 +10,7 @@ const UsedSparePartsChart = ({ data }: Props) => {
                    <thead className="bg-slate-50 border-b border-slate-200">
                    <tr>
                        <th className="text-left py-3 px-4 text-sm text-slate-600">Модель</th>
-                       <th className="text-left py-3 px-4 text-sm text-slate-600">Використано</th>
+                       <th className="text-right py-3 px-4 text-sm text-slate-600">Використано</th>
                    </tr>
                    </thead>
                    <tbody>
@@ -23,7 +23,7 @@ const UsedSparePartsChart = ({ data }: Props) => {
                                }`}
                            >
                                <td className="py-3 px-4 text-slate-900 font-mono text-nowrap text-sm">{row.label}</td>
-                               <td className="py-3 px-4 text-slate-900">{row.value}</td>
+                               <td className="text-right py-3 px-4 text-slate-900">{row.value}</td>
                            </tr>
                        );
                    })}

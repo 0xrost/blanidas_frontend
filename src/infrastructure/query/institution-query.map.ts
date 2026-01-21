@@ -6,10 +6,6 @@ const institutionFilterMap: Record<keyof InstitutionFilters, FilterDefinition> =
         field: "name_or_address",
         operator: "ilike",
     },
-    typeId: {
-        field: "institution_type_id",
-        operator: "eq",
-    },
 };
 
 const institutionSortMap: Record<InstitutionSortBy, string> = { name: "name" };

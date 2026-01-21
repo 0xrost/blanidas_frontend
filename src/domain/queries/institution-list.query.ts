@@ -1,10 +1,7 @@
 import type {ListQuery} from "@/domain/list-query.ts";
 
 type InstitutionSortBy = "name";
-interface InstitutionFilters {
-    nameOrAddress?: string;
-    typeId?: string;
-}
+interface InstitutionFilters { nameOrAddress?: string; }
 
 type InstitutionListQuery = ListQuery<InstitutionFilters, InstitutionSortBy>
 

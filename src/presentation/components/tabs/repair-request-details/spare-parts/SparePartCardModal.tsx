@@ -84,7 +84,7 @@ const SparePartCardModal = ({ isOpen, close, newUsedSpareParts, deletedSparePart
             open={isOpen}
             onOpenChange={(open) => !open && onClose()}
         >
-            <DialogContent className="max-w-4xl max-h-screen overflow-y-auto">
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-slate-900">Додати запчастину</DialogTitle>
                 </DialogHeader>

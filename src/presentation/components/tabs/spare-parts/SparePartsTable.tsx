@@ -4,7 +4,6 @@ import {Card} from "@/presentation/components/ui/card.tsx";
 import SparePartItem from "@/presentation/components/tabs/spare-parts/SparePartItem.tsx";
 import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
-import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
@@ -17,13 +16,12 @@ interface Props {
     deleteSparePart: (id: string, options?: MutationOptions) => void;
 
     institutions: Institution[];
-    suppliers: Supplier[];
     models: EquipmentModel[];
     categories: SparePartCategory[];
 }
 
 const SparePartsTable = ({
-    spareParts, updateLocations, institutions, suppliers, models, categories, updateSparePart, deleteSparePart
+    spareParts, updateLocations, institutions, models, categories, updateSparePart, deleteSparePart
 }: Props) => {
     return (
         <Card className="bg-white border-slate-200 overflow-x-auto">
@@ -39,9 +37,6 @@ const SparePartsTable = ({
                         </th>
                         <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase">
                             Локація
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs text-slate-600 uppercase">
-                            Постачальник
                         </th>
                         <th className="px-4 py-3 text-center text-xs text-slate-600 uppercase">
                             Кількість
@@ -63,7 +58,6 @@ const SparePartsTable = ({
                             updateSparePart={updateSparePart}
                             updateLocations={updateLocations}
                             institutions={institutions}
-                            suppliers={suppliers}
                             models={models}
                             categories={categories}
                         />

@@ -7,7 +7,6 @@ import SparePartLocations from "@/presentation/components/tabs/spare-parts/Spare
 import SparePartItemRow from "@/presentation/components/tabs/spare-parts/SparePartItemRow.tsx";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
-import type {Supplier} from "@/domain/entities/supplier.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import {composeMutationOptions} from "@/presentation/utils.ts";
@@ -27,7 +26,6 @@ interface Props {
     deleteSparePart: (id: string, options?: MutationOptions) => void;
 
     institutions: Institution[];
-    suppliers: Supplier[];
     models: EquipmentModel[];
     categories: SparePartCategory[];
 }
@@ -36,7 +34,6 @@ const SparePartItem = ({
    sparePart,
    updateLocations,
    institutions,
-   suppliers,
    models,
    categories,
    updateSparePart,
@@ -51,9 +48,7 @@ const SparePartItem = ({
         setAreLocationsVisible(false);
     }, [sparePart]);
 
-    const modalFields = useMemo(
-        () => modalFieldsFactory(categories, suppliers, models),
-    [categories, suppliers, models])
+    const modalFields = useMemo(() => modalFieldsFactory(categories, models), [categories, models])
 
     const onUpdate = (data: ModalFormData, options?: MutationOptions) => {
         updateSparePart({
@@ -114,7 +109,6 @@ const SparePartItem = ({
                     name: sparePart.name,
                     minQuantity: sparePart.minQuantity,
                     sparePartCategoryId: sparePart.category?.id ?? "",
-                    supplierId: sparePart.supplier?.id ?? "",
                     compatibleModelIds: sparePart.compatibleModels.map(x => x.id),
                 }}
             />

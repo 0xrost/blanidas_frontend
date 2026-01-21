@@ -1,7 +1,6 @@
 import {Badge} from "@/presentation/components/ui/badge.tsx";
 import {
     AlertTriangle,
-    Building2,
     CheckCircle2,
     ChevronDown,
     ChevronUp,
@@ -74,14 +73,6 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                         </span>
                         {areLocationVisible ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                     </button>
-                </td>
-                <td className="px-4 py-4">
-                    {sparePart.supplier && (
-                        <div className="flex items-center gap-1 text-sm text-slate-600">
-                            <Building2 className="w-3 h-3 text-slate-400" />
-                            <span className="truncate max-w-45">{sparePart.supplier.name}</span>
-                        </div>
-                    )}
                 </td>
                 <td className="px-4 py-4">
                     <div className="text-center">
