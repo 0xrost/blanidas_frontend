@@ -13,6 +13,7 @@ import DatePicker from "@/presentation/components/ui/date-picker.tsx";
 import type {DateRange} from "react-day-picker";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {Spinner} from "@/presentation/components/ui/spinner.tsx";
+import {endOfDay} from "date-fns";
 
 interface FilterPanelValues {
     timeStep: TimeStep;
@@ -53,7 +54,7 @@ const FilterPanel = ({refresh, initial, isLoading, institutions, models, failure
             <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div className="flex flex-row gap-4">
-                        <DatePicker setRange={onSetRange} range={{to: values.toDate, from: values.fromDate}}  />
+                        <DatePicker setRange={onSetRange} range={{to: endOfDay(values.toDate), from: values.fromDate}}  />
                         <Select value={values.timeStep} onValueChange={(value: TimeStep) => setValues("timeStep", value)}>
                             <SelectTrigger className="bg-slate-100 flex-1 w-full">
                                 <SelectValue placeholder="Період" />
