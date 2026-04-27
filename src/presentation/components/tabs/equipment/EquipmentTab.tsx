@@ -27,9 +27,10 @@ import {useEquipmentQrCodes} from "@/presentation/hooks/qrCode.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
 import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
-import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/equipment.tsx";
+import type {PaginationSearch} from "@/presentation/models.ts";
 import {Button} from "@/presentation/components/ui/button.tsx";
 
+type Search = PaginationSearch & SearchParams;
 
 interface Props {
     pagination: Pagination;
@@ -140,10 +141,38 @@ const EquipmentTab = ({ pagination, searchParams, onSearchChange }: Props) => {
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <DashboardCard label="Всього обладнання" value={summary?.total ?? 0} color="slate" icon={Monitor} />
-                <DashboardCard label="Робоче" value={summary?.working ?? 0} color="green" icon={Monitor} />
-                <DashboardCard label="На обслуговуванні" value={summary?.underMaintenance ?? 0} color="yellow" icon={Monitor} />
-                <DashboardCard label="Не працює" value={summary?.notWorking ?? 0} color="red" icon={Monitor} />
+                <DashboardCard
+                    label="Всього обладнання"
+                    value={summary?.total ?? 0}
+                    color="slate"
+                    icon={Monitor}
+                    selected={searchParams.status === "all"}
+                    onClick={() => onSearchChange((prev) => ({...prev, status: "all", page: "1"}))}
+                />
+                <DashboardCard
+                    label="Робоче"
+                    value={summary?.working ?? 0}
+                    color="green"
+                    icon={Monitor}
+                    selected={searchParams.status === "working"}
+                    onClick={() => onSearchChange((prev) => ({...prev, status: "working", page: "1"}))}
+                />
+                <DashboardCard
+                    label="На обслуговуванні"
+                    value={summary?.underMaintenance ?? 0}
+                    color="yellow"
+                    icon={Monitor}
+                    selected={searchParams.status === "under_maintenance"}
+                    onClick={() => onSearchChange((prev) => ({...prev, status: "under_maintenance", page: "1"}))}
+                />
+                <DashboardCard
+                    label="Не працює"
+                    value={summary?.notWorking ?? 0}
+                    color="red"
+                    icon={Monitor}
+                    selected={searchParams.status === "not_working"}
+                    onClick={() => onSearchChange((prev) => ({...prev, status: "not_working", page: "1"}))}
+                />
             </div>
             <FiltersPanel
                 setValues={onSetValue}

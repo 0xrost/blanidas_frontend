@@ -1,3 +1,3 @@
-type Role = "manager" | "engineer";
+type Role = "manager" | "engineer" | "admin";
 
 export type { Role };

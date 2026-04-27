@@ -7,6 +7,7 @@ interface Column<T> {
     header: React.ReactNode;
     cell: (row: T) => React.ReactNode;
     className?: string;
+    headerClassName?: string;
 }
 
 type RowErrors = Record<string, string>;
@@ -29,9 +30,11 @@ function Table<T>({ data, columns, empty, rowKey, rowError }: TableProps<T>) {
                             {columns.map((col, index) => (
                                 <th
                                     key={col.key}
-                                    className={`px-6 py-3 text-xs text-slate-600 uppercase text-nowrap tracking-wider 
-                                            ${index === columns.length - 1 ? "text-right" : "text-left"}
-                                        `}
+                                    className={[
+                                        "px-6 py-3 text-xs text-slate-600 uppercase text-nowrap tracking-wider",
+                                        index === columns.length - 1 ? "text-right" : "text-left",
+                                        col.headerClassName ?? "",
+                                    ].join(" ")}
                                 >
                                     {col.header}
                                 </th>
@@ -48,7 +51,7 @@ function Table<T>({ data, columns, empty, rowKey, rowError }: TableProps<T>) {
                                         {columns.map(col => (
                                             <td
                                                 key={col.key}
-                                                className={col.className ?? "whitespace-nowrap"}
+                                                className={["whitespace-nowrap", col.className ?? ""].join(" ")}
                                             >
                                                 {col.cell(row)}
                                             </td>

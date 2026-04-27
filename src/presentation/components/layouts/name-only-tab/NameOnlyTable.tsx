@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
-import Table, {type Column, type RowErrors} from "@/presentation/components/layouts/Table.tsx";
 import {Check, type LucideIcon, X} from "lucide-react";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 import {Input} from "@/presentation/components/ui/input.tsx";
@@ -20,7 +19,7 @@ interface Props {
 
 const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
     const [editingEntity, setEditingEntity] = useState<UIEntity | null>(null);
-    const [failedSaveMessages, setFailedSaveMessages] = useTimedError<RowErrors | null>(null, 5000);
+    const [failedSaveMessages, setFailedSaveMessages] = useTimedError<Record<string, string> | null>(null, 5000);
     const [failedDeleteIds, setFailedDeleteIds] = useTimedError<string[]>([], 5000);
 
     useEffect(() => {
@@ -29,7 +28,7 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
     }, [entities, editingEntity]);
 
     const rowError = useMemo(() => {
-        const errors: RowErrors = failedSaveMessages ?? {};
+        const errors: Record<string, string> = failedSaveMessages ?? {};
         failedDeleteIds.forEach(id => { errors[id] = errorMessages.delete; });
 
         return errors;
@@ -73,84 +72,134 @@ const NameOnlyTable = ({ save, delete_, entities, icon: Icon }: Props) => {
         }
     }, [editingEntity, onDelete, setEditingEntity])
 
-    const columns: Column<UIEntity>[] = useMemo(() => [
-        {
-            key: "name",
-            header: "Назва",
-            className: "py-3 px-4",
-            cell: entity => (
-                <div className="flex items-center gap-2">
-                    <Icon className="w-4 h-4 text-slate-400" />
-                    {editingEntity?.uiId === entity.uiId ? (
-                        <Input
-                            autoFocus={true}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") onConfirm();
-                                if (e.key === "Escape") onCancel();
-                            }}
-                            onChange={(e) => {
-                                setEditingEntity(prev => {
-                                    if (prev === null) return prev;
-                                    return {...prev, name: e.target.value}
-                                });
-                            }}
-                            value={editingEntity.name}
-                            className="text-base"
-                        />
-                    ) : (
-                        <span className="text-slate-900 text-nowrap block">{entity.name}</span>
-                    )}
-                </div>
-            ),
-        },
-        {
-            key: "actions",
-            header: "Дії",
-            className: "py-3 px-4",
-            cell: entity => (
-                <div className="flex justify-end gap-2">
-                    {editingEntity && editingEntity.uiId === entity.uiId ? (
-                        <>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={onCancel}
-                                className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0"
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                disabled={editingEntity.name.trim().length === 0}
-                                onClick={onConfirm}
-                                className="border-blue-300 text-blue-700 hover:bg-blue-50 h-8 w-8 p-0"
-                            >
-                                <Check className="w-4 h-4" />
-                            </Button>
-                        </>
-                    ) : (
-                        <EditDeleteActions
-                            edit={() => setEditingEntity(entity)}
-                            delete_={() => onDelete(entity)}
-                        />
-                    )}
+    const renderActions = useCallback((entity: UIEntity) => {
+        if (editingEntity && editingEntity.uiId === entity.uiId) {
+            return (
+                <>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={onCancel}
+                        className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                    >
+                        <X className="w-4 h-4" />
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={editingEntity.name.trim().length === 0}
+                        onClick={onConfirm}
+                        className="border-blue-300 text-blue-700 hover:bg-blue-50 h-8 w-8 p-0"
+                    >
+                        <Check className="w-4 h-4" />
+                    </Button>
+                </>
+            );
+        }
 
-
-                </div>
-            ),
-        },
-    ], [editingEntity, Icon, onConfirm, onCancel, onDelete, setEditingEntity]);
+        return (
+            <EditDeleteActions
+                edit={() => setEditingEntity(entity)}
+                delete_={() => onDelete(entity)}
+            />
+        );
+    }, [editingEntity, onCancel, onConfirm, onDelete]);
 
     return (
         <>
-            <Table
-                data={entities}
-                columns={columns}
-                rowKey={i => i.uiId}
-                rowError={rowError}
-                empty={<EmptyTable title="Нічого не знайдено" />}
-            />
+            <div className="md:hidden">
+                {entities.length === 0 ? (
+                    <EmptyTable title="Нічого не знайдено" />
+                ) : (
+                    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100">
+                        {entities.map((entity) => (
+                            <div key={entity.uiId} className="p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                                        <Icon className="w-4 h-4 text-slate-400 shrink-0" />
+                                        {editingEntity?.uiId === entity.uiId ? (
+                                            <Input
+                                                autoFocus={true}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Enter") onConfirm();
+                                                    if (e.key === "Escape") onCancel();
+                                                }}
+                                                onChange={(e) => {
+                                                    setEditingEntity(prev => {
+                                                        if (prev === null) return prev;
+                                                        return {...prev, name: e.target.value};
+                                                    });
+                                                }}
+                                                value={editingEntity.name}
+                                                className="text-base"
+                                            />
+                                        ) : (
+                                            <p className="text-sm font-medium text-slate-900">{entity.name}</p>
+                                        )}
+                                    </div>
+                                    <div className="shrink-0 flex gap-2">
+                                        {renderActions(entity)}
+                                    </div>
+                                </div>
+                                {rowError[entity.uiId] && (
+                                    <p className="mt-3 text-xs text-red-700">{rowError[entity.uiId]}</p>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <div className="hidden md:block">
+                {entities.length === 0 ? (
+                    <EmptyTable title="Нічого не знайдено" />
+                ) : (
+                    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider">
+                            <div>Назва</div>
+                            <div className="text-right">Дії</div>
+                        </div>
+                        <div className="divide-y divide-slate-100">
+                            {entities.map((entity) => (
+                                <div key={entity.uiId}>
+                                    <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 px-4 py-3 items-center hover:bg-slate-50 transition-colors">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <Icon className="w-4 h-4 text-slate-400 shrink-0" />
+                                            {editingEntity?.uiId === entity.uiId ? (
+                                                <Input
+                                                    autoFocus={true}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") onConfirm();
+                                                        if (e.key === "Escape") onCancel();
+                                                    }}
+                                                    onChange={(e) => {
+                                                        setEditingEntity(prev => {
+                                                            if (prev === null) return prev;
+                                                            return {...prev, name: e.target.value};
+                                                        });
+                                                    }}
+                                                    value={editingEntity.name}
+                                                    className="text-base"
+                                                />
+                                            ) : (
+                                                <p className="text-sm font-medium text-slate-900 truncate">{entity.name}</p>
+                                            )}
+                                        </div>
+                                        <div className="flex justify-end gap-2">
+                                            {renderActions(entity)}
+                                        </div>
+                                    </div>
+                                    {rowError[entity.uiId] && (
+                                        <div className="px-4 pb-3">
+                                            <p className="text-xs text-red-700">{rowError[entity.uiId]}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
         </>
     );
 };

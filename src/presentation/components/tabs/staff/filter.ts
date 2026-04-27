@@ -7,6 +7,7 @@ const filterFields = {
     key: 'role',
     options: [
         { value: 'all', label: 'Усі ролі' },
+        { value: "admin", label: "Адмін" },
         { value: 'engineer', label: "Інженер" },
         { value: "manager", label: "Менеджер" },
     ],

@@ -38,6 +38,12 @@ interface Props {
     tabConfigs: TabConfig[];
 }
 
+const mapRoleToLabel: Record<Role, string> = {
+    "admin": "адміністратор",
+    "engineer": "інженер",
+    "manager": "менеджер"
+}
+
 const DashboardHeader = ({ username, role, tabConfigs, onLogout, showFullLogo }: Props) => {
     const location = useLocation();
 
@@ -84,7 +90,7 @@ const DashboardHeader = ({ username, role, tabConfigs, onLogout, showFullLogo }:
                         <div className="hidden sm:block text-right">
                             <p className="text-slate-900">{username}</p>
                             <p className="text-xs text-slate-500">
-                                {role == "manager" ? "менеджер" : "інженер"}
+                                {mapRoleToLabel[role]}
                             </p>
                         </div>
                         <Button onClick={onLogout} variant="ghost" size="sm" className="text-slate-600">

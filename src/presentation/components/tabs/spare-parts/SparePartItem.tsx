@@ -3,7 +3,6 @@ import {useEffect, useMemo, useState} from "react";
 import type {Institution} from "@/domain/entities/institution.ts";
 import type {LocationCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
-import SparePartLocations from "@/presentation/components/tabs/spare-parts/SparePartLocations.tsx";
 import SparePartItemRow from "@/presentation/components/tabs/spare-parts/SparePartItemRow.tsx";
 import Notification from "@/presentation/components/layouts/Notification.tsx";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
@@ -13,6 +12,7 @@ import {composeMutationOptions} from "@/presentation/utils.ts";
 import {modalFieldsFactory, type ModalFormData} from "@/presentation/components/tabs/spare-parts/modal.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import {errorMessages} from "@/presentation/components/tabs/spare-parts/SparePartsTab.tsx";
+import SparePartMobileLocations from "@/presentation/components/tabs/spare-parts/SparePartMobileLocations.tsx";
 
 interface Props {
     sparePart: SparePart;
@@ -81,20 +81,25 @@ const SparePartItem = ({
                 setLocationVisible={setAreLocationsVisible}
                 areLocationVisible={areLocationsVisible}
             />
-            {deletingError &&
-                <tr className="bg-slate-50">
-                    <td colSpan={7} className="px-4 py-2">
-                        <Notification type="error" message={errorMessages.delete} />
-                    </td>
-                </tr>
-            }
-            {areLocationsVisible &&
-                <SparePartLocations
-                    locations={sparePart.locations}
-                    institutions={institutions}
-                    save={(locations, options) => updateLocations(sparePart.id, locations, options)}
-                />
-            }
+            {deletingError && (
+                <div className="px-4 pb-3">
+                    <Notification type="error" message={errorMessages.delete} />
+                </div>
+            )}
+
+            {areLocationsVisible && (
+                <div className="px-4 pb-4">
+                    <SparePartMobileLocations
+                        locations={sparePart.locations.map((l) => ({
+                            institution: l.institution,
+                            quantity: l.quantity,
+                            restoredQuantity: l.restoredQuantity,
+                        }))}
+                        institutions={institutions}
+                        save={(locations, options) => updateLocations(sparePart.id, locations, options)}
+                    />
+                </div>
+            )}
 
             <FormModal
                 title="Додати запчастину"

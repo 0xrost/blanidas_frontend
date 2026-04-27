@@ -1,18 +1,20 @@
 import type {
     LocationCreateDto,
+    LocationDto,
     SparePartCreateDto,
     SparePartDto,
     SparePartUpdateDto
 } from "@/infrastructure/dto/spare-part.ts";
-import type {SparePart} from "@/domain/entities/spare-part.ts";
+import type {Location, SparePart} from "@/domain/entities/spare-part.ts";
 import type {LocationCreate, SparePartCreate, SparePartUpdate} from "@/domain/models/spare-part.ts";
+import { mapInstitutionDtoToDomain } from "./institution";
 
 const mapSparePartDtoToDomain = (dto: SparePartDto): SparePart => {
     return {
         id: dto.id,
         name: dto.name,
         note: dto.note,
-        locations: dto.locations,
+        locations: dto.locations.map(x => mapLocationDtoToDomain(x)),
         minQuantity: dto.min_quantity,
         totalQuantity: dto.total_quantity,
         stockStatus: dto.stock_status,
@@ -21,10 +23,20 @@ const mapSparePartDtoToDomain = (dto: SparePartDto): SparePart => {
     };
 }
 
+const mapLocationDtoToDomain = (dto: LocationDto): Location => {
+    return {
+        id: dto.id,
+        quantity: dto.quantity,
+        restoredQuantity: dto.restored_quantity,
+        institution: mapInstitutionDtoToDomain(dto.institution),
+    };
+}
+
 const mapLocationCreateDomainToDto = (domain: LocationCreate): LocationCreateDto => {
     return {
         institution_id: domain.institutionId,
         quantity: domain.quantity,
+        restored_quantity: domain.restoredQuantity,
     };
 };
 

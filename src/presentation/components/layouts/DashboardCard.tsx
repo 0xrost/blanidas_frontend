@@ -14,6 +14,8 @@ interface Props {
     value: number;
     color: Color;
     icon: LucideIcon;
+    onClick?: () => void;
+    selected?: boolean;
 }
 
 const colorSchemes: Record<Color, ColorScheme> = {
@@ -73,9 +75,25 @@ const colorSchemes: Record<Color, ColorScheme> = {
     },
 };
 
-const DashboardCard = ({ label, value, icon: Icon, color }: Props) => {
+const DashboardCard = ({ label, value, icon: Icon, color, onClick, selected }: Props) => {
+    const isClickable = typeof onClick === "function";
+
     return (
-        <Card className={colorSchemes[color].card}>
+        <Card
+            className={[
+                colorSchemes[color].card,
+                isClickable ? "cursor-pointer transition hover:brightness-[0.98] active:brightness-[0.96]" : "",
+                selected ? "ring-2 ring-slate-400 ring-offset-2 shadow-sm" : "",
+            ].join(" ")}
+            onClick={onClick}
+            role={isClickable ? "button" : undefined}
+            tabIndex={isClickable ? 0 : undefined}
+            aria-pressed={isClickable ? (selected ?? false) : undefined}
+            onKeyDown={(e) => {
+                if (!isClickable) return;
+                if (e.key === "Enter" || e.key === " ") onClick();
+            }}
+        >
             <div className="p-4">
                 <div className="flex items-center justify-between">
                     <div>

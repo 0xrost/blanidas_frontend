@@ -4,6 +4,7 @@ interface InstitutionDto {
     address: string;
     contact_phone: string;
     contact_email: string;
+    is_default: boolean;
 }
 
 interface InstitutionCreateDto {
@@ -11,6 +12,7 @@ interface InstitutionCreateDto {
     address: string;
     contact_phone: string;
     contact_email: string;
+    is_default: boolean;
 }
 
 interface InstitutionUpdateDto {
@@ -19,6 +21,7 @@ interface InstitutionUpdateDto {
     address?: string | null;
     contact_phone?: string | null;
     contact_email?: string | null;
+    is_default?: boolean | null;
 }
 
 export type {

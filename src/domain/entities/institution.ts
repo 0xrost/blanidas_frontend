@@ -4,6 +4,7 @@ interface Institution {
     address: string;
     contactPhone: string;
     contactEmail: string;
+    isDefault: boolean;
 }
 
 export type { Institution };

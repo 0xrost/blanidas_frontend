@@ -73,6 +73,7 @@ const modalFieldsFactory = (institutions: Institution[], passwordRequired: boole
         fullSizeOnMobile: true,
         placeholder: "Оберіть роль",
         options: [
+            { value: "admin", label: "Адмін" },
             { value: "engineer", label: "Інженер" },
             { value: "manager", label: "Менеджер" },
         ],

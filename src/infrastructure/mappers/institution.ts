@@ -9,6 +9,7 @@ const mapInstitutionDtoToDomain = (dto: InstitutionDto): Institution =>  {
         address: dto.address,
         contactEmail: dto.contact_email,
         contactPhone: dto.contact_phone,
+        isDefault: dto.is_default,
     };
 };
 
@@ -18,6 +19,7 @@ const mapInstitutionCreateDomainToDto = (domain: InstitutionCreate): Institution
         address: domain.address,
         contact_email: domain.contactEmail,
         contact_phone: domain.contactPhone,
+        is_default: domain.is_default,
     };
 };
 
@@ -28,6 +30,7 @@ const mapInstitutionUpdateDomainToDto = (domain: InstitutionUpdate): Institution
         address: domain.address,
         contact_email: domain.contactEmail,
         contact_phone: domain.contactPhone,
+        is_default: domain.is_default,
     };
 };
 

@@ -38,7 +38,8 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
             !locations.some(
                 orig =>
                     orig.institution.id === loc.institution.id &&
-                    orig.quantity === loc.quantity
+                    orig.quantity === loc.quantity &&
+                    orig.restoredQuantity === loc.restoredQuantity
             )
         );
     }, [localLocations, locations]);
@@ -49,6 +50,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
         if (!isDirty) return;
         save(localLocations.map(x => ({
             quantity: x.quantity,
+            restoredQuantity: x.restoredQuantity,
             institutionId: x.institution.id,
         })), {
             onSuccess: () => setError(false),
@@ -63,6 +65,15 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
                 return { ...location, quantity: newQuantity };
             }
         ));
+    };
+
+    const changeRestoredQuantity = (institutionId: string, newQuantity: number) => {
+        setLocalLocations((prev) =>
+            prev.map((location) => {
+                if (location.institution.id !== institutionId) return location;
+                return { ...location, restoredQuantity: newQuantity };
+            }),
+        );
     };
 
     const removeLocation = (institutionId: string) => {
@@ -99,6 +110,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
                     </div>
 
                     <div className="space-y-2">
+                        <p className="text-xs text-slate-500">Клікніть на число, щоб відредагувати</p>
                         {error && <Notification type="error" message={errorMessages.locations} />}
                         {localLocations.map((location) => {
                             return <LocationItem
@@ -106,6 +118,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
                                 location={location}
                                 remove={() => removeLocation(location.institution.id)}
                                 changeQuantity={(value) => changeQuantity(location.institution.id, value)}
+                                changeRestoredQuantity={(value) => changeRestoredQuantity(location.institution.id, value)}
                             />
                         })}
                         {localLocations.length === 0 &&

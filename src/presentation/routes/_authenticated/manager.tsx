@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_authenticated/manager')({
             });
         }
 
-        if (context.authSession.currentUser.role !== "manager") {
+        if (context.authSession.currentUser.role !== "manager" && context.authSession.currentUser.role !== "admin") {
             throw redirect({ to: "/engineer/dashboard/repair-requests", search: { ...defaultSearch, page: "1", limit: "15" }});
         }
     },

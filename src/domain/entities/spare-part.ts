@@ -7,6 +7,7 @@ type StockStatus = "in_stock" | "low_stock" | "out_of_stock";
 interface Location {
     id: string;
     quantity: number;
+    restoredQuantity: number;
     institution: Institution;
 }
 

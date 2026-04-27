@@ -2,14 +2,12 @@ import {useCallback, useMemo, useState} from "react";
 import {useTimedError} from "@/presentation/hooks/useTimedError.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
 import {composeMutationOptions} from "@/presentation/utils.ts";
-import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
-import {Monitor, QrCode} from "lucide-react";
+import {Building2, MapPin, Monitor, QrCode} from "lucide-react";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import type {Equipment} from "@/domain/entities/equipment.ts";
 import type {EquipmentUpdate} from "@/domain/models/equipment.ts";
-import StatusBadge from "@/presentation/components/tabs/equipment/StatusBadge.tsx";
 import type {Institution} from "@/domain/entities/institution.ts";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {Manufacturer} from "@/domain/entities/manufacturer.ts";
@@ -17,6 +15,7 @@ import {modalFieldsFactory, type ModalFormData} from "@/presentation/components/
 import type {EquipmentCategory} from "@/domain/entities/equipment-category.ts";
 import {errorMessages} from "@/presentation/components/tabs/equipment/EquipmentTab.tsx";
 import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
+import StatusIcon from "../../layouts/StatusIcon";
 
 
 interface Props {
@@ -60,77 +59,158 @@ const EquipmentTable = ({equipment, institutions, models, manufacturers, categor
         () => modalFieldsFactory(institutions, models, manufacturers, categories),
     [institutions, models, manufacturers, categories])
 
-    const columns: Column<Equipment>[] = useMemo(() => [
-        {
-            key: "equipment",
-            header: "Обладнання",
-            className: "py-3 px-4",
-            cell: item => (
-                <div className="flex items-center gap-2">
-                    <Monitor className="w-4 h-4 text-slate-400" />
-                    <div className="text-sm">
-                        <span className="text-slate-900 block text-nowrap">{item.model.name}</span>
-                        <span className="text-slate-500 text-nowrap">{item.manufacturer?.name}</span>
-                    </div>
-                </div>
-            )
-        },
-        {
-            key: "serialNumber",
-            header: "Серійник номер",
-            className: "py-3 px-4 text-slate-900 text-sm text-nowrap",
-            cell: item => item.serialNumber,
-        },
-        {
-            key: "institution",
-            header: "Заклад",
-            className: "py-3 px-4 text-slate-900 text-sm text-nowrap",
-            cell: item => item.institution.name,
-        },
-        {
-            key: "location",
-            header: "Розташування",
-            className: "py-3 px-4 text-sm text-nowrap",
-            cell: item => item.location,
-        },
-        {
-            key: "status",
-            header: "Статус",
-            className: "py-3 px-4 text-sm",
-            cell: item => <StatusBadge status={item.status} />
-        },
-        {
-            key: "actions",
-            header: "Дії ",
-            className: "py-3 px-4 text-sm",
-            cell: item => (
-                <div className="flex gap-2">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => showQr(item)}
-                        className="border-slate-300 text-slate-700 hover:bg-slate-50 h-8 w-8 p-0"
-                    >
-                        <QrCode />
-                    </Button>
-                    <EditDeleteActions
-                        edit={() => setEditingEquipment(item)}
-                        delete_={() => onDelete(item.id)}
-                    />
-                </div>
-            )
-        }
-    ], [onDelete, setEditingEquipment, showQr]);
-
     return (
         <>
-            <Table
-                data={equipment}
-                columns={columns}
-                rowKey={m => m.id}
-                rowError={Object.fromEntries(failedDeletingEquipmentIds.map(x => [x, errorMessages.delete]))}
-                empty={<EmptyTable title="Обладнання не знайдено" icon={Monitor}/>}
-            />
+            <div className="md:hidden">
+                {equipment.length === 0 ? (
+                    <EmptyTable title="Обладнання не знайдено" icon={Monitor} />
+                ) : (
+                    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100">
+                        {equipment.map((item) => (
+                            <div
+                                key={item.id}
+                                className="w-full p-4"
+                            >
+                                <div className="min-w-0">
+                                    <p
+                                     className="text-sm flex items-center font-medium text-slate-900 truncate"
+                                     title={item.model.name}
+                                     >
+                                        <StatusIcon 
+                                            status={item.status}
+                                            statusToStyleMap={{
+                                                working: "green",
+                                                not_working: "red",
+                                                under_maintenance: "yellow",
+                                            }}
+                                        />
+                                        <span className="truncate">{item.model.name}</span>
+                                    </p>
+                                    <p className="text-xs text-slate-800 font-medium truncate mt-0.5">
+                                        {item.serialNumber}
+                                    </p>
+                                    <div className="flex items-center gap-1 text-xs text-slate-700 mt-2">
+                                        <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
+                                        <span className="truncate">
+                                            {item.institution.name}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-xs text-slate-600 mt-2">
+                                        <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                                        <span className="truncate">
+                                            {item.location}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-between gap-2 mt-4">
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => showQr(item)}
+                                        className="border-slate-300 text-slate-700 justify-center hover:bg-slate-50 h-8 p-0"
+                                    >
+                                        <QrCode />
+                                        <span>Згенерувати QR-код</span>
+                                    </Button>
+                                    <EditDeleteActions
+                                        edit={() => setEditingEquipment(item)}
+                                        delete_={() => onDelete(item.id)}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <div className="hidden md:block">
+                {equipment.length === 0 ? (
+                    <EmptyTable title="Обладнання не знайдено" icon={Monitor} />
+                ) : (
+                    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+                        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,2fr)_auto]  lg:grid-cols-[minmax(0,2fr)_minmax(0,1.8fr)_minmax(0,1.4fr)_auto] gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider">
+                            <div>Обладнання</div>
+                            <div>Місцезнаходження</div>
+                            <div className="hidden lg:block">Виробник</div>
+                            <div className="text-right">Дії</div>
+                        </div>
+
+                        <div className="divide-y divide-slate-100">
+                            {equipment.map((item) => (
+                                <div key={item.id}>
+                                    <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1.8fr)_auto]  lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] gap-4 px-4 py-3 items-center hover:bg-slate-50 transition-colors">
+                                        <div className="min-w-0">
+                                            <div className="flex items-center min-w-0">
+                                                <StatusIcon 
+                                                    status={item.status}
+                                                    statusToStyleMap={{
+                                                        working: "green",
+                                                        not_working: "red",
+                                                        under_maintenance: "yellow",
+                                                    }}
+                                                />
+                                                <p className="text-sm font-medium text-slate-900 truncate" title={item.model.name}>
+                                                    {item.model.name}
+                                                </p>
+                                            </div>
+                                            <p className="text-xs font-medium text-slate-900 truncate mt-0.5" title={item.serialNumber}>
+                                                {item.serialNumber}
+                                            </p>
+                                        </div>
+
+                                        <div className="min-w-0">
+                                            <div className="flex items-center gap-2 min-w-0">
+                                                <Building2 className="w-4 h-4 text-slate-300 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <p className="text-sm font-medium text-slate-900 truncate" title={item.institution.name}>
+                                                        {item.institution.name}
+                                                    </p>
+                                                    <div className="flex items-center gap-1 text-xs text-slate-600 min-w-0">
+                                                        <span className="truncate" title={item.location}>
+                                                            {item.location}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="hidden lg:block min-w-0">
+                                            <p className="text-sm text-slate-700 truncate" title={item.manufacturer?.name ?? "—"}>
+                                                {item.manufacturer?.name ?? "—"}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center justify-end gap-2">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                title="Згенерувати QR-код"
+                                                onClick={() => showQr(item)}
+                                                className="border-slate-300 text-slate-600 hover:bg-slate-50 h-8 w-8 p-0"
+                                            >
+                                                <QrCode />
+                                            </Button>
+                                            <EditDeleteActions
+                                                edit={() => setEditingEquipment(item)}
+                                                delete_={() => onDelete(item.id)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {failedDeletingEquipmentIds.includes(item.id) && (
+                                        <div className="px-4 pb-3">
+                                            <p className="text-xs text-red-700">
+                                                {errorMessages.delete}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {editingEquipment && (
                 <FormModal

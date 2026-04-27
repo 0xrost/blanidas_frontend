@@ -1,70 +1,141 @@
-import {MapPin, Minus, Plus, Trash2} from "lucide-react";
+import {MapPin, Minus, Plus, Trash, Trash2, X} from "lucide-react";
 import {Input} from "@/presentation/components/ui/input.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import type {UILocation} from "@/presentation/components/tabs/spare-parts/models.ts";
+import {useState} from "react";
 
 interface Props {
     location: UILocation;
 
     remove(): void;
     changeQuantity(quantity: number): void
+    changeRestoredQuantity(quantity: number): void
 }
-const LocationItem = ({ location, remove, changeQuantity }: Props) => {
+const LocationItem = ({ location, remove, changeQuantity, changeRestoredQuantity }: Props) => {
+    const [editing, setEditing] = useState<"quantity" | "restored" | null>(null);
+    const [draft, setDraft] = useState<string>("");
+
+    const beginEdit = (field: "quantity" | "restored") => {
+        setEditing(field);
+        setDraft(String(field === "quantity" ? location.quantity : location.restoredQuantity));
+    };
+
+    const commit = () => {
+        if (!editing) return;
+        const raw = Number(draft);
+        if (!Number.isFinite(raw)) { setEditing(null); return; }
+
+        const value = Math.trunc(raw);
+        if (editing === "quantity") {
+            changeQuantity(Math.max(1, value));
+        } else {
+            changeRestoredQuantity(Math.max(0, Math.min(value, location.quantity)));
+        }
+        setEditing(null);
+    };
+
+    const updateQuantityByStep = (delta: number) => {
+        const nextQuantity = Math.max(1, location.quantity + delta);
+        changeQuantity(nextQuantity);
+        if (location.restoredQuantity > nextQuantity) {
+            changeRestoredQuantity(nextQuantity);
+        }
+    };
+
     return (
         <div
             key={location.institution.id}
-            className="flex items-center justify-between py-2 px-3 bg-white border border-slate-200 rounded"
+            className="flex sm:block flex-row items-center justify-between gap-2 py-2 px-4 rounded-xl border"
         >
-            <div className="flex items-center gap-3 flex-1">
-                <MapPin className="w-4 h-4 text-slate-400" />
-                <div className="flex-1">
-                    <p className="text-sm text-slate-900">{location.institution.name}</p>
-                </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-                <div className="text-right">
-                    <p className={`text-sm ${location.quantity > 0 ? 'text-slate-900' : 'text-red-600'}`}>
-                        <Input
-                            min={1}
-                            type="number"
-                            inputMode="numeric"
-                            value={location.quantity}
-                            onChange={(e) => changeQuantity(+e.target.value)}
-                            className="w-16 p-0 text-right hide-number-spinner focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 border-0 shadow-none h-8 border-slate-300 rounded-md focus:ring-blue-500"
-                        />
-                        <span className="ml-1">шт.</span>
+            <div className="flex flex-col sm:flex-row items-left sm:items-center justify-between">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <MapPin className="w-4 h-4 shrink-0" />
+                    <p className="text-sm font-medium text-slate-900">
+                        {location.institution.name}
                     </p>
                 </div>
 
-                <div className="flex gap-1">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={location.quantity === 1}
-                        className="h-7 w-7 p-0"
-                        onClick={() => changeQuantity(location.quantity - 1)}
-                    >
-                        <Minus className="w-3 h-3" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-7 w-7 p-0"
-                        onClick={() => changeQuantity(location.quantity + 1)}
-                    >
-                        <Plus className="w-3 h-3" />
-                    </Button>
+                <div className="flex items-center gap-3 shrink-0">
+                    <div className="text-right flex flex-row gap-2 sm:gap-0 sm:flex-col leading-tight min-w-[9rem]">
+                        <div className="flex items-end justify-end gap-1">
+                            {editing === "quantity" ? (
+                                <Input
+                                    autoFocus
+                                    min={1}
+                                    type="number"
+                                    inputMode="numeric"
+                                    value={draft}
+                                    onChange={(e) => setDraft(e.target.value)}
+                                    onBlur={commit}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") commit();
+                                        if (e.key === "Escape") setEditing(null);
+                                    }}
+                                    className="w-20 h-8 text-right hide-number-spinner"
+                                />
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => beginEdit("quantity")}
+                                    className="hover:underline decoration-dashed font-medium text-slate-900 text-sm tabular-nums"
+                                >
+                                    {location.quantity}
+                                    <span className="text-xs font-medium text-slate-900 truncate"> шт. всього</span>
+                                </button>
+                            )}
+                        </div>
+
+                        <div className=" flex items-center justify-end gap-2">
+                            {editing === "restored" ? (
+                                <Input
+                                    autoFocus
+                                    min={0}
+                                    type="number"
+                                    inputMode="numeric"
+                                    value={draft}
+                                    onChange={(e) => setDraft(e.target.value)}
+                                    onBlur={commit}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") commit();
+                                        if (e.key === "Escape") setEditing(null);
+                                    }}
+                                    className="w-20 h-8 text-right hide-number-spinner"
+                                />
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => beginEdit("restored")}
+                                    className="hover:underline decoration-dashed text-sm font-medium text-slate-900 tabular-nums"
+                                >
+                                    {location.restoredQuantity}
+                                    <span className="text-xs font-medium text-slate-900 truncate"> відновлено</span>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex hidden sm:block gap-2">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={remove}
+                            className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                    </div>
+                </div>
+            </div>
+            <div className="flex sm:hidden gap-2">
                     <Button
                         size="sm"
                         variant="outline"
                         onClick={remove}
-                        className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0"
                     >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash2 className="w-4 h-4" />
                     </Button>
                 </div>
-            </div>
         </div>
     );
 };

@@ -11,10 +11,11 @@ import {SortByNameAsc} from "@/domain/sorting.ts";
 import {type Pagination, UnlimitedPagination} from "@/domain/pagination.ts";
 import RepairRequestsTable from "@/presentation/components/tabs/repair-requests/RepairRequestsTable.tsx";
 import {filtersFactory, type SearchParams} from "@/presentation/components/tabs/repair-requests/filters.ts";
-import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/repair-requests";
+import type {PaginationSearch} from "@/presentation/models.ts";
 import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
 import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
 
+type Search = PaginationSearch & SearchParams;
 
 interface Props {
     pagination: Pagination
@@ -52,10 +53,38 @@ const RepairRequestListTab = ({pagination, onGoToDetails, searchParams, onSearch
         <div className="w-full">
             <div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <DashboardCard label={"Нові"} value={summary?.new ?? 0} color="red" icon={AlertCircle} />
-                    <DashboardCard label={"У роботі"} value={summary?.inProgress ?? 0} color="orange" icon={Clock} />
-                    <DashboardCard label={"Очікує запчастини"} value={summary?.waitingSpareParts ?? 0} color="yellow" icon={Package} />
-                    <DashboardCard label={"Виконано"} value={summary?.finished ?? 0} color="green" icon={CheckCircle2} />
+                    <DashboardCard
+                        label={"Нові"}
+                        value={summary?.new ?? 0}
+                        color="red"
+                        icon={AlertCircle}
+                        selected={searchParams.status === "not_taken"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "not_taken", page: "1"}))}
+                    />
+                    <DashboardCard
+                        label={"У роботі"}
+                        value={summary?.inProgress ?? 0}
+                        color="orange"
+                        icon={Clock}
+                        selected={searchParams.status === "in_progress"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "in_progress", page: "1"}))}
+                    />
+                    <DashboardCard
+                        label={"Очікує запчастини"}
+                        value={summary?.waitingSpareParts ?? 0}
+                        color="yellow"
+                        icon={Package}
+                        selected={searchParams.status === "waiting_spare_parts"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "waiting_spare_parts", page: "1"}))}
+                    />
+                    <DashboardCard
+                        label={"Виконано"}
+                        value={summary?.finished ?? 0}
+                        color="green"
+                        icon={CheckCircle2}
+                        selected={searchParams.status === "finished"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "finished", page: "1"}))}
+                    />
                 </div>
                 <FiltersPanel
                     filters={filters}

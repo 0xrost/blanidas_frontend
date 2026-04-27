@@ -23,7 +23,7 @@ const LocationForm = ({ institutions, submit }: Props) => {
         const institution = institutions.find(x => x.id === formData.institutionId);
         if (institution === undefined) return;
 
-        submit({ quantity: formData.quantity, institution: institution });
+        submit({ quantity: formData.quantity, restoredQuantity: 0, institution: institution });
         setFormData(emptyForm);
     }
 

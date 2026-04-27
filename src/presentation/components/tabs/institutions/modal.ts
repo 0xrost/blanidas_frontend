@@ -5,6 +5,7 @@ interface ModalFormData {
     address: string;
     contactPhone: string;
     contactEmail: string;
+    is_default: boolean;
 }
 
 const modalFieldsFactory = (): FieldConfig<ModalFormData>[] => [
@@ -45,6 +46,13 @@ const modalFieldsFactory = (): FieldConfig<ModalFormData>[] => [
         required: true,
         validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
         errorMessage: "Введіть правильний email",
+    },
+    {
+        id: "is_default",
+        label: "Використовувати як заклад за замовчуванням",
+        type: "checkbox",
+        colSpan: 4,
+        ...bindField("is_default"),
     },
 ];
 

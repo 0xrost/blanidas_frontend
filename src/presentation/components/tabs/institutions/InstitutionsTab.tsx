@@ -104,6 +104,7 @@ const InstitutionsTab = ({ pagination, onSearchChange, searchParams }: Props) =>
                     address: "",
                     contactPhone: "",
                     contactEmail: "",
+                    is_default: false,
                 }}
             />
 

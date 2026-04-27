@@ -1,18 +1,15 @@
 import {Badge} from "@/presentation/components/ui/badge.tsx";
 import {
-    AlertTriangle,
-    CheckCircle2,
     ChevronDown,
     ChevronUp,
     Warehouse,
-    XCircle
 } from "lucide-react";
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import type {MutationOptions} from "@/presentation/models.ts";
-import {clsx} from "clsx";
 import {pluralize} from "@/presentation/utils.ts";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 import {useMemo} from "react";
+import StatusIcon from "@/presentation/components/layouts/StatusIcon.tsx";
 
 interface Props {
     sparePart: SparePart;
@@ -25,90 +22,80 @@ interface Props {
 }
 const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, showModal, deleteSparePart }: Props) => {
     const modelsTitle = useMemo(() => sparePart.compatibleModels.map(x => x.name).join("\n"), [sparePart]);
+    const restoredQuantity = useMemo(() => 
+        sparePart.locations.reduce((acc, x) => acc + x.restoredQuantity, 0),
+      [sparePart])
 
+    console.log(sparePart.locations)
     return (
-        <>
-            <tr
-                className={clsx(
-                    "hover:bg-slate-50 transition-colors",
-                    {
-                        "bg-yellow-50/30": sparePart.stockStatus === "low_stock",
-                        "bg-red-50/30": sparePart.stockStatus === "out_of_stock",
-                    }
-                )}
-            >
-                <td className="px-4 py-4">
-                    <div className="">
-                        <p className="text-sm text-slate-900">{sparePart.name}</p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                            {sparePart.compatibleModels?.slice(0, 1).map((model, index) => (
-                                <Badge key={index} title={modelsTitle} variant="secondary" className="text-xs">
-                                    <span className="truncate max-w-50">{model.name}</span>
-                                </Badge>
-                            ))}
-                            {sparePart.compatibleModels.length > 1 && (
-                                <Badge variant="secondary" className="text-xs">
-                                    +{sparePart.compatibleModels.length - 1}
-                                </Badge>
-                            )}
-                        </div>
-                    </div>
-                </td>
-                <td className="px-4 py-4">
-                    {sparePart.category && (
-                        <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                            <span className="truncate max-w-40">{sparePart.category.name}</span>
-                        </Badge>
-                    )}
-                </td>
+        <div
+            className="
+                px-4 py-3 items-center hover:bg-slate-50 transition-colors grid
+                grid-cols-[minmax(0,5fr)_minmax(0,2fr)_minmax(0,2fr)_auto]
+                lg:grid-cols-[minmax(0,3fr)_minmax(0,1.5fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-4
+            "
+        >
+            <div className="min-w-0">
+                <div className="flex items-center min-w-0">
+                    <StatusIcon
+                        status={sparePart.stockStatus}
+                        statusToStyleMap={{
+                            in_stock: "green",
+                            low_stock: "yellow",
+                            out_of_stock: "red",
+                        }}
+                    />
+                    <p className="text-sm font-medium text-slate-900 truncate" title={sparePart.name}>
+                        {sparePart.name}
+                    </p>
+                </div>
 
-                <td className="px-4 py-4">
-                    <button
-                        onClick={() => setLocationVisible(!areLocationVisible)}
-                        className="flex items-center gap-1 text-sm text-cyan-600 hover:text-cyan-700 transition-colors"
-                    >
-                        <Warehouse className="w-3 h-3" />
-                        <span className="truncate max-w-30">
-                            {sparePart.locations.length} {pluralize(sparePart.locations.length, "склад", "склади", "складів")}
-                        </span>
-                        {areLocationVisible ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                    </button>
-                </td>
-                <td className="px-4 py-4">
-                    <div className="text-center">
-                        <div className="flex items-center justify-center gap-1">
-                            <p className="text-sm text-slate-900">{sparePart.totalQuantity}</p>
-                        </div>
-                        <p className="text-xs text-slate-500">мін: {sparePart.minQuantity}</p>
-                    </div>
-                </td>
+                <div className="flex flex-wrap gap-1 mt-1">
+                    {sparePart.compatibleModels?.slice(0, 1).map((model, index) => (
+                        <Badge key={index} title={modelsTitle} variant="secondary" className="text-xs">
+                            <span className="truncate max-w-50">{model.name}</span>
+                        </Badge>
+                    ))}
+                    {sparePart.compatibleModels.length > 1 && (
+                        <Badge variant="secondary" className="text-xs">
+                            +{sparePart.compatibleModels.length - 1}
+                        </Badge>
+                    )}
+                </div>
+            </div>
 
-                <td className="px-4 py-4 text-center">
-                    {sparePart.stockStatus == "in_stock" && (
-                        <Badge className="bg-green-100 text-green-700 border-green-200">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Є в наявності
-                        </Badge>
+            <div className="min-w-0">
+                <button
+                    onClick={() => setLocationVisible(!areLocationVisible)}
+                    className="flex items-center gap-1 text-sm text-cyan-600 hover:text-cyan-700 transition-colors min-w-0"
+                >
+                    <Warehouse className="w-4 h-4 text-slate-300 shrink-0" />
+                    <span className="truncate" title={`${sparePart.locations.length}`}>
+                        {sparePart.locations.length} {pluralize(sparePart.locations.length, "склад", "склади", "складів")}
+                    </span>
+                    {areLocationVisible ? (
+                        <ChevronUp className="w-4 h-4 shrink-0" />
+                    ) : (
+                        <ChevronDown className="w-4 h-4 shrink-0" />
                     )}
-                    {sparePart.stockStatus == "low_stock" && (
-                        <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
-                            <AlertTriangle className="w-3 h-3 mr-1" />
-                            Мало
-                        </Badge>
-                    )}
-                    {sparePart.stockStatus == "out_of_stock" && (
-                        <Badge className="bg-red-100 text-red-700 border-red-200">
-                            <XCircle className="w-3 h-3 mr-1" />
-                            Немає
-                        </Badge>
-                    )}
-                </td>
+                </button>
+            </div>
 
-                <td className="px-4 py-4 text-right">
-                    <EditDeleteActions edit={showModal} delete_={deleteSparePart} />
-                </td>
-            </tr>
-        </>
+            <div className="hidden lg:block min-w-0 text-center">
+                <span className="text-sm text-purple-700 text-wrap block" title={sparePart.category?.name ?? ""}>
+                    {sparePart.category?.name ?? "—"}
+                </span>
+            </div>
+
+            <div className="text-center">
+                <p className="text-sm font-medium text-slate-900">{sparePart.totalQuantity} (мін: {sparePart.minQuantity})</p>
+                <p className="text-xs text-slate-500">з них відновлені {restoredQuantity}</p>
+            </div>
+
+            <div className="flex items-center justify-end">
+                <EditDeleteActions edit={showModal} delete_={deleteSparePart} />
+            </div>
+        </div>
     );
 };
 

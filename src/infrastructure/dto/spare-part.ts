@@ -1,6 +1,7 @@
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
-import type {Location, StockStatus} from "@/domain/entities/spare-part.ts";
+import type {StockStatus} from "@/domain/entities/spare-part.ts";
+import type { InstitutionDto } from "./institution";
 
 interface SparePartDto {
     id: string;
@@ -11,12 +12,20 @@ interface SparePartDto {
     compatible_models: EquipmentModel[];
     note: string | null;
 
-    locations: Location[];
+    locations: LocationDto[];
     spare_part_category: SparePartCategory | null;
+}
+
+interface LocationDto {
+    id: string
+    quantity: number;
+    restored_quantity: number;
+    institution: InstitutionDto;
 }
 
 interface LocationCreateDto {
     quantity: number;
+    restored_quantity: number;
     institution_id: string;
 }
 
@@ -42,4 +51,5 @@ export type {
     LocationCreateDto,
     SparePartUpdateDto,
     SparePartCreateDto,
+    LocationDto,
 };

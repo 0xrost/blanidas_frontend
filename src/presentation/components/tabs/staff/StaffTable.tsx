@@ -1,22 +1,21 @@
-import {useCallback, useMemo, useState} from "react";
-import {Edit, Mail, MapPin, Phone, User2} from "lucide-react";
+import {useCallback, useState} from "react";
+import {Building2, CalendarDays, Edit, Mail, MapPin, Phone, Shield, ShieldCheck, User2, Wrench, type LucideIcon} from "lucide-react";
 
 import type { User } from "@/domain/entities/user";
 import type { UserUpdate } from "@/domain/models/user";
 import type { Institution } from "@/domain/entities/institution";
 import type { MutationOptions } from "@/presentation/models";
 
-import RoleBadge from "@/presentation/components/tabs/staff/RoleBadge";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions";
 import FormModal from "@/presentation/components/layouts/FormModal";
 import { modalFieldsFactory, type MemberFormData } from "@/presentation/components/tabs/staff/modal.ts";
 import { useTimedError } from "@/presentation/hooks/useTimedError";
 import { Button } from "@/presentation/components/ui/button";
-import Table, {type Column} from "@/presentation/components/layouts/Table.tsx";
 import {composeMutationOptions} from "@/presentation/utils.ts";
 import {errorCodeMap, errorMessages} from "@/presentation/components/tabs/staff/StaffTab.tsx";
 import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
 import type {RequestError} from "@/infrastructure/errors.ts";
+import type { Role } from "@/domain/auth/roles";
 
 interface Props {
     staff: User[];
@@ -24,6 +23,27 @@ interface Props {
     update: (member: UserUpdate, options?: MutationOptions) => void;
     delete_?: (id: string, options: MutationOptions) => void;
 }
+
+interface BadgeSchema {
+    icon: LucideIcon;
+    styles: string;
+}
+
+const schemes: Record<Role, BadgeSchema> = {
+    admin: {
+        icon: ShieldCheck,
+        styles: "text-cyan-700",
+    },
+    engineer: {
+        icon: Wrench,
+        styles: "text-blue-700",
+    },
+    manager: {
+        icon: Shield,
+        styles: "text-purple-700",
+    },
+};
+
 
 const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
     const [editingMember, setEditingMember] = useState<User | null>(null);
@@ -73,101 +93,169 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
         });
     }, [delete_, setFailedDeletingMemberIds]);
 
-    const columns: Column<User>[] = useMemo(() => [
-        {
-            key: "user",
-            header: "Працівник",
-            className: "px-6 py-4",
-            cell: member => (
-                <div>
-                    <p className="text-slate-900">{member.username}</p>
-                    {member.workplace && (
-                        <div className="flex items-center text-nowrap gap-1 text-xs text-slate-500 mt-0.5">
-                            <MapPin className="w-3 h-3" />
-                            <span>{member.workplace.name}</span>
-                        </div>
-                    )}
-                </div>
-            )
-        },
-        {
-            key: "role",
-            header: "Роль",
-            className: "px-6 py-4",
-            cell: member => <RoleBadge role={member.role} />
-        },
-        {
-            key: "department",
-            header: "Відділ",
-            className: "px-6 py-4",
-            cell: member => (
-                <p className="text-sm text-slate-600">{member.department}</p>
-            )
-        },
-        {
-            key: "contacts",
-            header: "Контакти",
-            className: "px-6 py-4",
-            cell: member => (
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <Mail className="w-3 h-3 text-slate-400" />
-                        <a
-                            href={`mailto:${member.email}`}
-                            className="hover:text-cyan-600"
-                        >
-                            {member.email}
-                        </a>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <Phone className="w-3 h-3 text-slate-400" />
-                        <span>{member.phoneNumber}</span>
-                    </div>
-                </div>
-            )
-        },
-        {
-            key: "hireAt",
-            header: "Дата найму",
-            className: "px-6 py-4",
-            cell: member => (
-                <p className="text-sm text-slate-600">
-                    {new Date(member.hireAt).toLocaleDateString("uk-UA")}
-                </p>
-            )
-        },
-        {
-            key: "actions",
-            header: "Дії ",
-            className: "px-6 py-4",
-            cell: member =>
-                delete_ ? (
-                    <EditDeleteActions
-                        edit={() => setEditingMember(member)}
-                        delete_={() => onDelete(member.id)}
-                    />
-                ) : (
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setEditingMember(member)}
-                        className="border-blue-300 text-blue-700 hover:bg-blue-50 h-8 w-8 p-0"
-                    >
-                        <Edit className="w-4 h-4" />
-                    </Button>
-                )
-        }
-    ], [delete_, onDelete, setEditingMember]);
+    const renderActions = useCallback((member: User) => {
+        return delete_ ? (
+            <EditDeleteActions
+                edit={() => setEditingMember(member)}
+                delete_={() => onDelete(member.id)}
+            />
+        ) : (
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setEditingMember(member)}
+                className="border-blue-300 text-blue-700 hover:bg-blue-50 h-8 w-8 p-0"
+            >
+                <Edit className="w-4 h-4" />
+            </Button>
+        );
+    }, [delete_, onDelete]);
 
     return (
         <>
-            <Table
-                data={staff}
-                columns={columns}
-                rowKey={m => m.id}
-                rowError={Object.fromEntries(failedDeletingMemberIds.map(x => [x, "Не вдалося видалити працівника"]))}
-                empty={<EmptyTable title="Співробітників не знайдено" icon={User2}/>}
-            />
+            <div className="md:hidden">
+                {staff.length === 0 ? (
+                    <EmptyTable title="Співробітників не знайдено" icon={User2}/>
+                ) : (
+                    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden divide-y divide-slate-100">
+                        {staff.map((member) => {
+                            const RoleIcon = schemes[member.role].icon;
+                            const roleStyles = schemes[member.role].styles;
+                            return (
+                                <div key={member.id} className="p-4">
+                                    <div className="flex items-center justify-between gap-1">
+                                        <div className="min-w-0">
+                                            <div className="flex flex-col items-start min-w-0">
+                                                <div className="flex gap-1">
+                                                    <RoleIcon className={`${roleStyles} w-4 h-4 shrink-0`} />
+                                                    <p className="text-sm font-medium text-slate-900 truncate" title={member.username}>
+                                                        {member.username?.trim() || "—"}
+                                                    </p>
+                                                </div>
+                                                <span className="text-xs font-medium text-slate-900 truncate">{member.workplace?.name ?? "—"}</span>
+                                            </div>
+                                        </div>
+                                        <div className="shrink-0">
+                                            {renderActions(member)}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-3 space-y-2">
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <Mail className="w-3 h-3 text-slate-400" />
+                                            <a href={`mailto:${member.email}`} className="truncate hover:text-cyan-600">
+                                                {member.email}
+                                            </a>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <Phone className="w-3 h-3 text-slate-400" />
+                                            <span>{member.phoneNumber}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-between mt-3 space-y-1">
+                                        <div className="flex items-center gap-2 text-sm text-slate-700">
+                                            <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                            <span className="truncate">{member.department || "—"}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                                            <CalendarDays className="w-3 h-3 text-slate-400" />
+                                            <span>{new Date(member.hireAt).toLocaleDateString("uk-UA")}</span>
+                                        </div>
+                                    </div>
+
+                                    {failedDeletingMemberIds.includes(member.id) && (
+                                        <p className="mt-3 text-xs text-red-700">
+                                            {errorMessages.delete}
+                                        </p>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            <div className="hidden md:block">
+                {staff.length === 0 ? (
+                    <EmptyTable title="Співробітників не знайдено" icon={User2}/>
+                ) : (
+                    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+                        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1.4fr)_auto] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1.4fr)_auto] gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider">
+                            <div>Працівник</div>
+                            <div className="hidden lg:block">Місце роботи / Відділ</div>
+                            <div>Контакти</div>
+                            <div>Дата найму</div>
+                            <div className="text-right">Дії</div>
+                        </div>
+
+                        <div className="divide-y divide-slate-100">
+                            {staff.map((member) => {
+                                const RoleIcon = schemes[member.role].icon;
+                                const roleStyles = schemes[member.role].styles;
+                                return (
+                                    <div key={member.id}>
+                                        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] gap-4 px-4 py-3 items-center hover:bg-slate-50 transition-colors">
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-2 min-w-0">
+                                                    <RoleIcon className={`${roleStyles} w-4 h-4 shrink-0`} />
+                                                    <p className="text-sm font-medium text-slate-900 truncate" title={member.username}>
+                                                        {member.username?.trim() || "—"}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="hidden lg:block min-w-0 space-y-1">
+                                                <div className="flex items-center gap-2 text-sm text-slate-700">
+                                                    <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                    <span className="truncate" title={member.workplace?.name ?? ""}>
+                                                        {member.workplace?.name ?? "—"}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-sm text-slate-600">
+                                                    <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                    <span className="truncate" title={member.department}>
+                                                        {member.department || "—"}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-1 min-w-0">
+                                                <div className="flex items-center gap-2 text-sm text-slate-600">
+                                                    <Mail className="w-3 h-3 text-slate-400 shrink-0" />
+                                                    <a href={`mailto:${member.email}`} className="truncate hover:text-cyan-600">
+                                                        {member.email}
+                                                    </a>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-sm text-slate-600">
+                                                    <Phone className="w-3 h-3 text-slate-400 shrink-0" />
+                                                    <span className="truncate">{member.phoneNumber}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="text-sm text-slate-600">
+                                                {new Date(member.hireAt).toLocaleDateString("uk-UA")}
+                                            </div>
+
+                                            <div className="flex items-center justify-end">
+                                                {renderActions(member)}
+                                            </div>
+                                        </div>
+
+                                        {failedDeletingMemberIds.includes(member.id) && (
+                                            <div className="px-4 pb-3">
+                                                <p className="text-xs text-red-700">
+                                                    {errorMessages.delete}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {editingMember && (
                 <FormModal
