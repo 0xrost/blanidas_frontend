@@ -26,13 +26,12 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
         sparePart.locations.reduce((acc, x) => acc + x.restoredQuantity, 0),
       [sparePart])
 
-    console.log(sparePart.locations)
     return (
         <div
             className="
                 px-4 py-3 items-center hover:bg-slate-50 transition-colors grid
-                grid-cols-[minmax(0,5fr)_minmax(0,2fr)_minmax(0,2fr)_auto]
-                lg:grid-cols-[minmax(0,3fr)_minmax(0,1.5fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-4
+                grid-cols-[minmax(0,5fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]
+                lg:grid-cols-[minmax(0,3fr)_minmax(0,1.5fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,0.4fr)] gap-4
             "
         >
             <div className="min-w-0">
@@ -81,8 +80,8 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                 </button>
             </div>
 
-            <div className="hidden lg:block min-w-0 text-center">
-                <span className="text-sm text-purple-700 text-wrap block" title={sparePart.category?.name ?? ""}>
+            <div className="hidden lg:block min-w-0 text-left">
+                <span className="text-sm text-purple-800 font-medium text-wrap block" title={sparePart.category?.name ?? ""}>
                     {sparePart.category?.name ?? "—"}
                 </span>
             </div>

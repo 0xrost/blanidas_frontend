@@ -77,7 +77,7 @@ const SparePartMobileItem = ({sparePart, models, categories, institutions, updat
                                 out_of_stock: "red",
                             }}
                         />
-                        <p className="text-base font-medium text-slate-900 truncate">
+                        <p className="text-base font-medium text-slate-900">
                             {sparePart.name}
                         </p>
                     </div>

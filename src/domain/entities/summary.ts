@@ -10,6 +10,8 @@ interface SparePartsSummary {
     inStock: number;
     lowStock: number;
     outOfStock: number;
+    new: number;
+    restored: number;
 }
 
 interface StaffSummary {

@@ -90,54 +90,54 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
     }
 
     return (
-        <tr className="bg-slate-50">
-            <td colSpan={7} className="px-4 py-4">
-                <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                        <p className="text-xs uppercase tracking-wider text-slate-600">Наявність на складах</p>
-                        <div className="flex gap-2">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={onSave}
-                                disabled={!isDirty}
-                            >
-                                <Save className="w-3 h-3 mr-1" />
-                                Зберегти зміни
-                            </Button>
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <p className="text-xs text-slate-500">Клікніть на число, щоб відредагувати</p>
-                        {error && <Notification type="error" message={errorMessages.locations} />}
-                        {localLocations.map((location) => {
-                            return <LocationItem
-                                key={location.institution.id}
-                                location={location}
-                                remove={() => removeLocation(location.institution.id)}
-                                changeQuantity={(value) => changeQuantity(location.institution.id, value)}
-                                changeRestoredQuantity={(value) => changeRestoredQuantity(location.institution.id, value)}
-                            />
-                        })}
-                        {localLocations.length === 0 &&
-                            <div className="flex flex-col items-center justify-center py-6 text-center bg-white border border-dashed border-slate-300 rounded">
-                                <Warehouse className="w-8 h-8 text-slate-400 mb-2" />
-                                <p className="text-sm text-slate-700">
-                                    Запчастина не має складів
-                                </p>
-                                <p className="text-xs text-slate-500 mb-3">
-                                    Додайте склад, щоб керувати залишками
-                                </p>
-                            </div>
-                        }
-                        <LocationForm institutions={availableInstitutions} submit={addLocation} />
-                    </div>
+        <div className="space-y-3">
+            <div className="flex items-center pt-2 justify-between">
+                <p className="text-xs uppercase tracking-wider text-slate-600">Наявність на складах</p>
+                <div className="flex gap-2">
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 text-xs"
+                        onClick={onSave}
+                        disabled={!isDirty}
+                    >
+                        <Save className="w-3 h-3 mr-1" />
+                        Зберегти зміни
+                    </Button>
                 </div>
-            </td>
-        </tr>
+            </div>
 
+            <div className="space-y-2">
+                <div className="grid grid-cols-[minmax(0,1fr)_84px_84px_40px] gap-2 px-3 text-[11px] uppercase tracking-wider text-slate-500">
+                    <span>Склади</span>
+                    <span className="text-center">Всього</span>
+                    <span className="text-center">Відновлені</span>
+                    <span />
+                </div>
+                {error && <Notification type="error" message={errorMessages.locations} />}
+                {localLocations.map((location) => {
+                    return <LocationItem
+                        key={location.institution.id}
+                        location={location}
+                        remove={() => removeLocation(location.institution.id)}
+                        changeQuantity={(value) => changeQuantity(location.institution.id, value)}
+                        changeRestoredQuantity={(value) => changeRestoredQuantity(location.institution.id, value)}
+                    />
+                })}
+                {localLocations.length === 0 &&
+                    <div className="flex flex-col items-center justify-center py-6 text-center bg-white border border-dashed border-slate-300 rounded">
+                        <Warehouse className="w-8 h-8 text-slate-400 mb-2" />
+                        <p className="text-sm text-slate-700">
+                            Запчастина не має складів
+                        </p>
+                        <p className="text-xs text-slate-500 mb-3">
+                            Додайте склад, щоб керувати залишками
+                        </p>
+                    </div>
+                }
+                <LocationForm institutions={availableInstitutions} submit={addLocation} />
+            </div>
+        </div>
     );
 };
 

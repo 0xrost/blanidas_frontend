@@ -16,6 +16,8 @@ const mapSparePartsSummaryDtoToDomain = (dto: SparePartsSummaryDto): SparePartsS
         inStock: dto.in_stock,
         lowStock: dto.low_stock,
         outOfStock: dto.out_of_stock,
+        new: dto.new,
+        restored: dto.restored,
     };
 };
 

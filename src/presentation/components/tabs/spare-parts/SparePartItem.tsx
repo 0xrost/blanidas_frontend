@@ -12,7 +12,7 @@ import {composeMutationOptions} from "@/presentation/utils.ts";
 import {modalFieldsFactory, type ModalFormData} from "@/presentation/components/tabs/spare-parts/modal.ts";
 import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import {errorMessages} from "@/presentation/components/tabs/spare-parts/SparePartsTab.tsx";
-import SparePartMobileLocations from "@/presentation/components/tabs/spare-parts/SparePartMobileLocations.tsx";
+import SparePartLocations from "@/presentation/components/tabs/spare-parts/SparePartLocations.tsx";
 
 interface Props {
     sparePart: SparePart;
@@ -89,7 +89,7 @@ const SparePartItem = ({
 
             {areLocationsVisible && (
                 <div className="px-4 pb-4">
-                    <SparePartMobileLocations
+                    <SparePartLocations
                         locations={sparePart.locations.map((l) => ({
                             institution: l.institution,
                             quantity: l.quantity,

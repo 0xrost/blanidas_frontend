@@ -10,6 +10,8 @@ interface SparePartsSummaryDto {
     in_stock: number;
     low_stock: number;
     out_of_stock: number;
+    new: number;
+    restored: number;
 }
 
 interface EquipmentSummaryDto {

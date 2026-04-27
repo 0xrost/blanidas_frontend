@@ -57,15 +57,15 @@ const SparePartsTable = ({
                     <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
                         <div className="
                             grid
-                            grid-cols-[minmax(0,5fr)_minmax(0,2fr)_minmax(0,2fr)_auto]
-                            lg:grid-cols-[minmax(0,3fr)_minmax(0,2.4fr)_minmax(0,2fr)_minmax(0,2.4fr)_auto]
+                            grid-cols-[minmax(0,5fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]
+                            lg:grid-cols-[minmax(0,3fr)_minmax(0,1.5fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,0.4fr)] 
                             gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200
                             text-xs text-slate-600 uppercase tracking-wider text-left
                         ">
                             <div className="text-left">Запчастина</div>
-                            <div className="text-center">Локації</div>
+                            <div className="text-left">Локації</div>
                             <div className="hidden lg:block text-left">Категорія</div>
-                            <div className="text-left">Кількість</div>
+                            <div className="text-center">Кількість</div>
                             <div className="text-right">Дії</div>
                         </div>
 

@@ -16,6 +16,7 @@ import {errorCodeMap, errorMessages} from "@/presentation/components/tabs/staff/
 import EmptyTable from "@/presentation/components/layouts/EmptyTable.tsx";
 import type {RequestError} from "@/infrastructure/errors.ts";
 import type { Role } from "@/domain/auth/roles";
+import {useAuthSession} from "@/presentation/hooks/auth.ts";
 
 interface Props {
     staff: User[];
@@ -46,6 +47,8 @@ const schemes: Record<Role, BadgeSchema> = {
 
 
 const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
+    const authSession = useAuthSession();
+    const isAdmin = authSession?.currentUser.role === "admin";
     const [editingMember, setEditingMember] = useState<User | null>(null);
     const [failedDeletingMemberIds, setFailedDeletingMemberIds] = useTimedError<string[]>([], 5000);
     const [updateError, setUpdateError] = useTimedError<string | null>(null, 5000);
@@ -135,9 +138,11 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                                                 <span className="text-xs font-medium text-slate-900 truncate">{member.workplace?.name ?? "—"}</span>
                                             </div>
                                         </div>
-                                        <div className="shrink-0">
-                                            {renderActions(member)}
-                                        </div>
+                                        {isAdmin && (
+                                            <div className="shrink-0">
+                                                {renderActions(member)}
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-3 space-y-2">
@@ -181,12 +186,16 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                     <EmptyTable title="Співробітників не знайдено" icon={User2}/>
                 ) : (
                     <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1.4fr)_auto] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1.4fr)_auto] gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider">
+                        <div className={`grid ${
+                            isAdmin
+                                ? "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto]"
+                                : "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]"
+                        } gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider`}>
                             <div>Працівник</div>
                             <div className="hidden lg:block">Місце роботи / Відділ</div>
-                            <div>Контакти</div>
-                            <div>Дата найму</div>
-                            <div className="text-right">Дії</div>
+                            <div className="text-left">Контакти</div>
+                            <div className={`${!isAdmin && "text-right"}`}>Дата найму</div>
+                            {isAdmin && <div className="text-right">Дії</div>}
                         </div>
 
                         <div className="divide-y divide-slate-100">
@@ -195,7 +204,11 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                                 const roleStyles = schemes[member.role].styles;
                                 return (
                                     <div key={member.id}>
-                                        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] gap-4 px-4 py-3 items-center hover:bg-slate-50 transition-colors">
+                                        <div className={`grid ${
+                                            isAdmin
+                                                ? "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto]"
+                                                : "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]"
+                                        } gap-4 px-4 py-3 items-center hover:bg-slate-50 transition-colors`}>
                                             <div className="min-w-0">
                                                 <div className="flex items-center gap-2 min-w-0">
                                                     <RoleIcon className={`${roleStyles} w-4 h-4 shrink-0`} />
@@ -233,13 +246,15 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                                                 </div>
                                             </div>
 
-                                            <div className="text-sm text-slate-600">
+                                            <div className={`${!isAdmin && "text-right"} text-sm text-slate-600`}>
                                                 {new Date(member.hireAt).toLocaleDateString("uk-UA")}
                                             </div>
 
-                                            <div className="flex items-center justify-end">
-                                                {renderActions(member)}
-                                            </div>
+                                            {isAdmin && (
+                                                <div className="flex items-center justify-end">
+                                                    {renderActions(member)}
+                                                </div>
+                                            )}
                                         </div>
 
                                         {failedDeletingMemberIds.includes(member.id) && (

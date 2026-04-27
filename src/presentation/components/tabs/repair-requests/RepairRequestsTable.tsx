@@ -70,7 +70,11 @@ const RepairRequestsTable = ({ repairRequests, onGoToDetails }: RepairRequestsLi
                     <EmptyTable title="Заявки не знайдено" icon={ClipboardList} />
                 ) : (
                     <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,0.5fr)_auto] lg:grid-cols-[minmax(0,1.8fr)_minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,0.4fr)_auto] gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider">
+                        <div className="grid 
+                            grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,0.5fr)_minmax(0,0.1fr)] 
+                            lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1.5fr)_minmax(0,0.5fr)_minmax(0,0.1fr)] 
+                            gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider
+                        ">
                             <div>Обладнання</div>
                             <div>Локація / Центр</div>
                             <div className="hidden lg:block">Категорія</div>
@@ -87,8 +91,8 @@ const RepairRequestsTable = ({ repairRequests, onGoToDetails }: RepairRequestsLi
                                     className={`
                                         ${rr.urgency == "critical" ? "border-l-red-400 border-l-2" : ""}
                                         w-full text-left grid 
-                                        grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,0.5fr)_auto] 
-                                        lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,0.5fr)_auto] 
+                                        grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,0.5fr)_minmax(0,0.1fr)] 
+                                        lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1.5fr)_minmax(0,0.5fr)_minmax(0,0.1fr)] 
                                         gap-4 px-4 py-3 items-center hover:bg-slate-50 transition-colors
                                     `}
                                 >

@@ -1,4 +1,4 @@
-import {AlertTriangle, CheckCircle, Package, XCircle} from "lucide-react";
+import {AlertTriangle, CheckCircle, Lock, Package, RefreshCcw, XCircle} from "lucide-react";
 import {useSparePartsSummary} from "@/presentation/hooks/summary.ts";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
 import FiltersPanel, {type FilterConfig} from "@/presentation/components/layouts/FiltersPanel.tsx";
@@ -118,39 +118,57 @@ const SparePartsTab = ({ pagination, searchParams, onSearchChange }: Props) => {
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <DashboardCard
-                    label="Всього"
-                    value={summary?.total ?? 0}
-                    color="slate"
-                    icon={Package}
-                    selected={searchParams.status === "all"}
-                    onClick={() => onSearchChange((prev) => ({...prev, status: "all", page: "1"}))}
-                />
-                <DashboardCard
-                    label="У наявності"
-                    value={summary?.inStock ?? 0}
-                    color="green"
-                    icon={CheckCircle}
-                    selected={searchParams.status === "in_stock"}
-                    onClick={() => onSearchChange((prev) => ({...prev, status: "in_stock", page: "1"}))}
-                />
-                <DashboardCard
-                    label="Низький залишок"
-                    value={summary?.lowStock ?? 0}
-                    color="yellow"
-                    icon={AlertTriangle}
-                    selected={searchParams.status === "low_stock"}
-                    onClick={() => onSearchChange((prev) => ({...prev, status: "low_stock", page: "1"}))}
-                />
-                <DashboardCard
-                    label="Відсутні"
-                    value={summary?.outOfStock ?? 0}
-                    color="red"
-                    icon={XCircle}
-                    selected={searchParams.status === "out_of_stock"}
-                    onClick={() => onSearchChange((prev) => ({...prev, status: "out_of_stock", page: "1"}))}
-                />
+            <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+                    <DashboardCard
+                        label="Нові запчастини"
+                        value={summary?.new ?? 0}
+                        color="blue"
+                        icon={Lock}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "all", page: "1"}))}
+                    />
+                    <DashboardCard
+                        label="Відновлені запчастини"
+                        value={summary?.restored ?? 0}
+                        color="purple"
+                        icon={RefreshCcw}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "all", page: "1"}))}
+                    />
+                </div>
+                <div className="grid grid-cols-2 lg:grid-cols-4  gap-4">
+                    <DashboardCard
+                        label="Всього"
+                        value={summary?.total ?? 0}
+                        color="slate"
+                        icon={Package}
+                        selected={searchParams.status === "all"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "all", page: "1"}))}
+                    />
+                    <DashboardCard
+                        label="У наявності"
+                        value={summary?.inStock ?? 0}
+                        color="green"
+                        icon={CheckCircle}
+                        selected={searchParams.status === "in_stock"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "in_stock", page: "1"}))}
+                    />
+                    <DashboardCard
+                        label="Низький залишок"
+                        value={summary?.lowStock ?? 0}
+                        color="yellow"
+                        icon={AlertTriangle}
+                        selected={searchParams.status === "low_stock"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "low_stock", page: "1"}))}
+                    />
+                    <DashboardCard
+                        label="Відсутні"
+                        value={summary?.outOfStock ?? 0}
+                        color="red"
+                        icon={XCircle}
+                        selected={searchParams.status === "out_of_stock"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "out_of_stock", page: "1"}))}
+                    />
+                </div>
             </div>
 
             <FiltersPanel
