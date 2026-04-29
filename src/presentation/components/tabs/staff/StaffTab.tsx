@@ -18,7 +18,7 @@ import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 import type {ErrorCode, RequestError} from "@/infrastructure/errors.ts";
 import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
 import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
-import type {Search} from "@/presentation/routes/_authenticated/manager/settings";
+import type {Search} from "@/presentation/routes/_authenticated/dashboard/manager/settings";
 
 
 interface Props {

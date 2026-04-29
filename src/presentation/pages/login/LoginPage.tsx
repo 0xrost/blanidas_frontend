@@ -3,7 +3,7 @@ import BaseLayout from "@/presentation/components/layouts/BaseLayout.tsx";
 import {useAuthSession, useLogin} from "@/presentation/hooks/auth.ts";
 import {Route} from "@/presentation/routes/accounts/login.tsx";
 import {useEffect} from "react";
-import { defaultSearch } from "@/presentation/routes/_authenticated/repair-requests";
+import { defaultSearch } from "@/presentation/routes/_authenticated/dashboard/repair-requests";
 
 interface LoginFormData {
     email: string;
@@ -18,7 +18,7 @@ const LoginPage = () => {
     useEffect(() => {
         if (!session) return;
 
-        navigate({to: "/repair-requests", search: { ...defaultSearch, page: "1", limit: "15" },});
+        navigate({to: "/dashboard/repair-requests", search: { ...defaultSearch, page: "1", limit: "15" },});
     }, [session, navigate]);
 
     return (

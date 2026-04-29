@@ -6,7 +6,7 @@ import {
     useUpdateSparePartCategory
 } from "@/presentation/hooks/entities/spare-part-category.ts";
 import type {Pagination} from "@/domain/pagination.ts";
-import type {Search} from "@/presentation/routes/_authenticated/manager/settings";
+import type {Search} from "@/presentation/routes/_authenticated/dashboard/manager/settings";
 import type {FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 
 interface Props {

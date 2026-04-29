@@ -1,8 +1,8 @@
 import {EngineerDashboardLayout, ManagerDashboardLayout} from "@/presentation/components/layouts/DashboardLayout.tsx";
 import SparePartsTab from "@/presentation/components/tabs/spare-parts/SparePartsTab.tsx";
 import { useAuthSession } from "@/presentation/hooks/auth";
-import {Route} from "@/presentation/routes/_authenticated/spare-parts";
-import type {Search} from "@/presentation/routes/_authenticated/spare-parts";
+import {Route} from "@/presentation/routes/_authenticated/dashboard/spare-parts";
+import type {Search} from "@/presentation/routes/_authenticated/dashboard/spare-parts";
 
 const SparePartsPage = () => {
     const {page, limit, ...searchParams} = Route.useSearch();

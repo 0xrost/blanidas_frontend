@@ -1,6 +1,6 @@
 import {createFileRoute, Outlet, redirect} from '@tanstack/react-router'
 import NotFoundPage from "@/presentation/pages/not-found/NotFoundPage.tsx";
-import {defaultSearch} from "@/presentation/routes/_authenticated/repair-requests";
+import {defaultSearch} from "@/presentation/routes/_authenticated/dashboard/repair-requests";
 
 export const Route = createFileRoute('/_authenticated/manager')({
     component: () => <Outlet />,

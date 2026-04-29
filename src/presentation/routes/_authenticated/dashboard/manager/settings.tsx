@@ -17,7 +17,7 @@ const defaultSearch = {
   search: ""
 } satisfies Search;
 
-export const Route = createFileRoute('/_authenticated/manager/settings')({
+export const Route = createFileRoute('/_authenticated/dashboard/manager/settings')({
   component: SettingsPage,
   validateSearch: (search: Partial<Search>): Search => {
     return { ...defaultSearch, ...search };

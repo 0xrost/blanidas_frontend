@@ -1,8 +1,8 @@
 import {EngineerDashboardLayout, ManagerDashboardLayout} from "@/presentation/components/layouts/DashboardLayout.tsx";
 import RepairRequestsTab from "@/presentation/components/tabs/repair-requests/RepairRequestsTab.tsx";
 import { useAuthSession } from "@/presentation/hooks/auth";
-import {Route} from "@/presentation/routes/_authenticated/repair-requests";
-import type {Search} from "@/presentation/routes/_authenticated/repair-requests";
+import {Route} from "@/presentation/routes/_authenticated/dashboard/repair-requests";
+import type {Search} from "@/presentation/routes/_authenticated/dashboard/repair-requests";
 
 const RepairRequestsPage = () => {
     const {page, limit, ...searchParams} = Route.useSearch();
@@ -10,7 +10,7 @@ const RepairRequestsPage = () => {
     const session = useAuthSession();
 
     const onGoToDetails = (id: string) => {
-        navigate({to: "/repair-requests/$repairRequestId", params: {repairRequestId: id} });
+        navigate({to: "/dashboard/repair-requests/$repairRequestId", params: {repairRequestId: id} });
     }
 
     const onSearchChange = (fn: (prev: Search) => Search) => {

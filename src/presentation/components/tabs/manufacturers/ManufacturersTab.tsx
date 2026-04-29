@@ -6,7 +6,7 @@ import {
 } from "@/presentation/hooks/entities/manufacturer.ts";
 import {Factory} from "lucide-react";
 import type {Pagination} from "@/domain/pagination.ts";
-import type {Search} from "@/presentation/routes/_authenticated/manager/settings";
+import type {Search} from "@/presentation/routes/_authenticated/dashboard/manager/settings";
 import type {FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 
 

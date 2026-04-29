@@ -17,7 +17,7 @@ const defaultSearch = {
   search: ""
 } satisfies Search;
 
-export const Route = createFileRoute('/_authenticated/manager/equipment')({
+export const Route = createFileRoute('/_authenticated/dashboard/manager/equipment')({
   component: EquipmentPage,
   validateSearch: (search: Partial<Search>): Search => {
     return { ...defaultSearch, ...search };

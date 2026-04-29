@@ -1,8 +1,8 @@
-import {Route, type Search} from "@/presentation/routes/_authenticated/dashboard/manager/equipment";
 import {ManagerDashboardLayout} from "@/presentation/components/layouts/DashboardLayout.tsx";
-import EquipmentTab from "@/presentation/components/tabs/equipment/EquipmentTab.tsx";
+import SparePartsTab from "@/presentation/components/tabs/spare-parts/SparePartsTab.tsx";
+import {Route, type Search} from "@/presentation/routes/_authenticated/dashboard/manager/spare-parts";
 
-const EquipmentPage = () => {
+const SparePartsPage = () => {
     const {page, limit, ...searchParams} = Route.useSearch();
     const navigate = Route.useNavigate();
 
@@ -12,13 +12,13 @@ const EquipmentPage = () => {
 
     return (
         <ManagerDashboardLayout>
-            <EquipmentTab
+            <SparePartsTab
                 pagination={{page: +page, limit: +limit}}
                 onSearchChange={onSearchChange}
                 searchParams={searchParams}
             />
         </ManagerDashboardLayout>
     )
-};
+}
 
-export default EquipmentPage;
+export default SparePartsPage;

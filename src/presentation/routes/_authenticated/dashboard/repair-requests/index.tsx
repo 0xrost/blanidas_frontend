@@ -18,7 +18,7 @@ const defaultSearch = {
 } satisfies Search;
 
 
-export const Route = createFileRoute('/_authenticated/repair-requests/')({
+export const Route = createFileRoute('/_authenticated/dashboard/repair-requests/')({
   component: RepairRequestsPage,
   validateSearch: (search: Partial<Search>): Search => {
     return { ...defaultSearch, ...search };
