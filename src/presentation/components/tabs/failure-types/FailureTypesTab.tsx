@@ -6,7 +6,7 @@ import {
     useFailureTypes,
     useUpdateFailureType
 } from "@/presentation/hooks/entities/failure-type.ts";
-import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {Search} from "@/presentation/routes/_authenticated/manager/settings";
 import type {FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 
 interface Props {

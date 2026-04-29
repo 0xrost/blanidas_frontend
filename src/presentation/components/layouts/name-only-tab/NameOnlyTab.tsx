@@ -18,7 +18,7 @@ import {composeMutationOptions} from "@/presentation/utils.ts";
 import { v4 as uuidv4 } from "uuid";
 import type {RequestError} from "@/infrastructure/errors.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
-import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {Search} from "@/presentation/routes/_authenticated/manager/settings";
 import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
 import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
 

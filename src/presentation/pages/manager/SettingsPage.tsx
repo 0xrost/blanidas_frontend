@@ -1,6 +1,6 @@
 import {ManagerDashboardLayout} from "@/presentation/components/layouts/DashboardLayout.tsx";
 import SettingsTab from "@/presentation/components/tabs/settings/SettingsTab.tsx";
-import {Route, type Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import {Route, type Search} from "@/presentation/routes/_authenticated/manager/settings";
 
 const SettingsPage = () => {
     const {page, limit, tab, ...searchParams} = Route.useSearch();

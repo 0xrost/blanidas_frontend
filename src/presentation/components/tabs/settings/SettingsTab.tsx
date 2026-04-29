@@ -1,7 +1,7 @@
 import SelectionCard, {selectionCardConfig} from "@/presentation/components/tabs/settings/SelectionCard.tsx";
 import StaffTab from "@/presentation/components/tabs/staff/StaffTab.tsx";
 import InstitutionsTab from "@/presentation/components/tabs/institutions/InstitutionsTab.tsx";
-import type {Search, SearchParams} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {Search, SearchParams} from "@/presentation/routes/_authenticated/manager/settings";
 import type {Pagination} from "@/domain/pagination.ts";
 import ManufacturersTab from "@/presentation/components/tabs/manufacturers/ManufacturersTab.tsx";
 import SparePartCategoryTab from "@/presentation/components/tabs/spare-part-categories/SparePartCategoryTab.tsx";

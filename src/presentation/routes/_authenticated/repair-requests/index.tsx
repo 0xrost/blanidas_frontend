@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import RepairRequestsPage from "@/presentation/pages/manager/RepairRequestsPage.tsx";
+import RepairRequestsPage from "@/presentation/pages/repair-request/RepairRequestsPage.tsx";
 import type {SearchParams} from "@/presentation/components/tabs/repair-requests/filters.ts";
 import type {PaginationSearch} from "@/presentation/models.ts";
 
@@ -18,7 +18,7 @@ const defaultSearch = {
 } satisfies Search;
 
 
-export const Route = createFileRoute('/_authenticated/manager/dashboard/repair-requests/')({
+export const Route = createFileRoute('/_authenticated/repair-requests/')({
   component: RepairRequestsPage,
   validateSearch: (search: Partial<Search>): Search => {
     return { ...defaultSearch, ...search };

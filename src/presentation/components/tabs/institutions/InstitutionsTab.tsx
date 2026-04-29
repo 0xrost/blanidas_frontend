@@ -16,7 +16,7 @@ import {useHandleMutation} from "@/presentation/hooks/useHandleMutation.ts";
 import AddButton from "@/presentation/components/layouts/AddButton.tsx";
 import {useOnSetValue} from "@/presentation/hooks/useOnSetValue.ts";
 import {useOnPaginationChange} from "@/presentation/hooks/useOnPaginationChange.ts";
-import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {Search} from "@/presentation/routes/_authenticated/manager/settings";
 
 interface Props {
     pagination: Pagination;

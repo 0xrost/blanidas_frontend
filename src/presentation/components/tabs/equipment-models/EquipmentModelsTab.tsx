@@ -6,7 +6,7 @@ import {
     useUpdateEquipmentModel
 } from "@/presentation/hooks/entities/equipment-model.ts";
 import type {Pagination} from "@/domain/pagination.ts";
-import type {Search} from "@/presentation/routes/_authenticated/manager/dashboard/settings.tsx";
+import type {Search} from "@/presentation/routes/_authenticated/manager/settings";
 import type {FiltersPanelValues} from "@/presentation/components/layouts/FiltersPanel.tsx";
 
 

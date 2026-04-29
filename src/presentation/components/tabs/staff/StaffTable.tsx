@@ -188,7 +188,7 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                     <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
                         <div className={`grid ${
                             isAdmin
-                                ? "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto]"
+                                ? "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]"
                                 : "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]"
                         } gap-4 px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider`}>
                             <div>Працівник</div>
@@ -206,7 +206,7 @@ const StaffTable = ({ staff, institutions, update, delete_ }: Props) => {
                                     <div key={member.id}>
                                         <div className={`grid ${
                                             isAdmin
-                                                ? "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_auto]"
+                                                ? "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]"
                                                 : "grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]"
                                         } gap-4 px-4 py-3 items-center hover:bg-slate-50 transition-colors`}>
                                             <div className="min-w-0">

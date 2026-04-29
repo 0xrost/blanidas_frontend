@@ -1,4 +1,4 @@
-import {Route, type Search} from "@/presentation/routes/_authenticated/manager/dashboard/equipment.tsx";
+import {Route, type Search} from "@/presentation/routes/_authenticated/manager/equipment";
 import {ManagerDashboardLayout} from "@/presentation/components/layouts/DashboardLayout.tsx";
 import EquipmentTab from "@/presentation/components/tabs/equipment/EquipmentTab.tsx";
 

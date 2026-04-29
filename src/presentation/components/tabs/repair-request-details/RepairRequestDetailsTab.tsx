@@ -36,10 +36,9 @@ interface RepairRequestUsedSparePartVM {
 
 interface Props {
     repairRequestId: string
-    goToEngineerDashboard: () => void
-    goToManagerDashboard: () => void
+    goToDashboard: () => void
 }
-const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEngineerDashboard }: Props) => {
+const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
     const { data: failureTypes } = useFailureTypes({pagination: UnlimitedPagination, sorting: SortByNameAsc});
     const { data: repairRequest, isSuccess, refetch } = useRepairRequestById(repairRequestId);
     const { data: repairHistoryPagination } = useRepairRequests({
@@ -74,14 +73,7 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToManagerDashboard, goToEn
     const onRepairRequestDelete = () => {
         setShowDeleteConfirmationModal(false)
         deleteRepairRequest.mutate(repairRequestId, {
-            onSuccess: () => {
-                if (isManager) {
-                    goToManagerDashboard()
-                    return
-                }
-
-                goToEngineerDashboard()
-            },
+            onSuccess: goToDashboard,
             onError: () => {setShowDeleteFailMessage(true)},
         });
     }

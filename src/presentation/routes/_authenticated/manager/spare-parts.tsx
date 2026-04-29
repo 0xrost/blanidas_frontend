@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import SparePartsPage from "@/presentation/pages/engineer/SparePartsPage.tsx";
+import SparePartsPage from "@/presentation/pages/manager/SparePartsPage.tsx";
 import type {SearchParams} from "@/presentation/components/tabs/spare-parts/filter.ts";
 import type {PaginationSearch} from "@/presentation/models.ts";
 
@@ -17,7 +17,7 @@ const defaultSearch = {
     search: ""
 } satisfies Search;
 
-export const Route = createFileRoute('/_authenticated/engineer/dashboard/spare-parts')({
+export const Route = createFileRoute('/_authenticated/manager/spare-parts')({
     component: SparePartsPage,
     validateSearch: (search: Partial<Search>): Search => {
         return { ...defaultSearch, ...search };

@@ -52,12 +52,12 @@ const EngineerDashboardLayoutTabs: DashboardLayoutTab[] = [
     {
         title: "Заявки",
         icon: ClipboardList,
-        url: "/engineer/dashboard/repair-requests",
+        url: "/repair-requests",
     },
     {
         title: "Запчастини",
         icon: Package,
-        url: "/engineer/dashboard/spare-parts",
+        url: "/spare-parts",
     },
 ]
 
@@ -74,27 +74,27 @@ const ManagerDashboardLayoutTabs: DashboardLayoutTab[] = [
     {
         title: "Статистика",
         icon: BarChart3,
-        url: "/manager/dashboard/statistics",
+        url: "/manager/statistics",
     },
     {
         title: "Заявки",
         icon: ClipboardList,
-        url: "/manager/dashboard/repair-requests",
+        url: "/repair-requests",
     },
     {
         title: "Запчастини",
         icon: Package,
-        url: "/manager/dashboard/spare-parts",
+        url: "/spare-parts",
     },
     {
         title: "Обладнання",
         icon: Monitor,
-        url: "/manager/dashboard/equipment",
+        url: "/manager/equipment",
     },
     {
         title: "Інше",
         icon: Settings,
-        url: "/manager/dashboard/settings",
+        url: "/manager/settings",
     },
 ]
 
