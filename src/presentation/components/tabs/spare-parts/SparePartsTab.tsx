@@ -142,7 +142,7 @@ const SparePartsTab = ({ pagination, searchParams, onSearchChange }: Props) => {
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4  gap-4">
                     <DashboardCard
-                        label="Всього вид"
+                        label="Всього видів"
                         value={summary?.total ?? 0}
                         color="slate"
                         icon={Package}
