@@ -1,4 +1,4 @@
-import {AlertTriangle, CheckCircle, Lock, Package, RefreshCcw, XCircle} from "lucide-react";
+import {AlertTriangle, Box, CheckCircle, Lock, Package, RefreshCcw, XCircle} from "lucide-react";
 import {useSparePartsSummary} from "@/presentation/hooks/summary.ts";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
 import FiltersPanel, {type FilterConfig} from "@/presentation/components/layouts/FiltersPanel.tsx";
@@ -119,25 +119,30 @@ const SparePartsTab = ({ pagination, searchParams, onSearchChange }: Props) => {
     return (
         <div className="space-y-6">
             <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-2 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                    <DashboardCard
+                        className="col-span-2 lg:col-span-1"
+                        label="Всього запчастин"
+                        value={(summary?.new ?? 0) + (summary?.restored ?? 0)}
+                        color="slate"
+                        icon={Box}
+                    />
                     <DashboardCard
                         label="Нові запчастини"
                         value={summary?.new ?? 0}
                         color="blue"
                         icon={Lock}
-                        onClick={() => onSearchChange((prev) => ({...prev, status: "all", page: "1"}))}
                     />
                     <DashboardCard
                         label="Відновлені запчастини"
                         value={summary?.restored ?? 0}
                         color="purple"
                         icon={RefreshCcw}
-                        onClick={() => onSearchChange((prev) => ({...prev, status: "all", page: "1"}))}
                     />
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4  gap-4">
                     <DashboardCard
-                        label="Всього"
+                        label="Всього вид"
                         value={summary?.total ?? 0}
                         color="slate"
                         icon={Package}

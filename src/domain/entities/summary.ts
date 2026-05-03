@@ -1,5 +1,7 @@
 interface RepairRequestsSummary {
+    all: number;
     new: number;
+    waitingEngineer: number;
     inProgress: number;
     waitingSpareParts: number;
     finished: number;

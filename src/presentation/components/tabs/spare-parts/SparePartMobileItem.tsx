@@ -8,7 +8,7 @@ import FormModal from "@/presentation/components/layouts/FormModal.tsx";
 import {modalFieldsFactory, type ModalFormData} from "@/presentation/components/tabs/spare-parts/modal.ts";
 import EditDeleteActions from "@/presentation/components/layouts/EditDeleteActions.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
-import {AlertTriangle, Briefcase, ChevronDown, ChevronUp, Warehouse} from "lucide-react";
+import {Briefcase, ChevronDown, ChevronUp, Warehouse} from "lucide-react";
 import type {EquipmentModel} from "@/domain/entities/equipment-model.ts";
 import type {SparePartCategory} from "@/domain/entities/spare-part-category.ts";
 import {errorMessages} from "@/presentation/components/tabs/spare-parts/SparePartsTab.tsx";
@@ -36,7 +36,6 @@ const SparePartMobileItem = ({sparePart, models, categories, institutions, updat
     const [deletingError, setDeletingError] = useTimedError<boolean>(false, 5000);
 
     const modalFields = useMemo(() => modalFieldsFactory(categories, models), [categories, models]);
-    const isBelowMinQuantity = sparePart.totalQuantity < sparePart.minQuantity;
     const restoredQuantity = useMemo(
         () => sparePart.locations.reduce((acc, x) => acc + x.restoredQuantity, 0),
         [sparePart.locations]

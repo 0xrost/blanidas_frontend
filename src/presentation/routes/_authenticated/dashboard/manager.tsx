@@ -2,7 +2,7 @@ import {createFileRoute, Outlet, redirect} from '@tanstack/react-router'
 import NotFoundPage from "@/presentation/pages/not-found/NotFoundPage.tsx";
 import {defaultSearch} from "@/presentation/routes/_authenticated/dashboard/repair-requests";
 
-export const Route = createFileRoute('/_authenticated/engineer')({
+export const Route = createFileRoute('/_authenticated/dashboard/manager')({
     component: () => <Outlet />,
     notFoundComponent: () => <NotFoundPage scope="dashboard" />,
     beforeLoad: ({ context, location }) => {
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_authenticated/engineer')({
             });
         }
 
-        if (context.authSession.currentUser.role !== "engineer") {
+        if (context.authSession.currentUser.role !== "manager" && context.authSession.currentUser.role !== "admin") {
             throw redirect({ to: "/dashboard/repair-requests", search: { ...defaultSearch, page: "1", limit: "15" }});
         }
     },

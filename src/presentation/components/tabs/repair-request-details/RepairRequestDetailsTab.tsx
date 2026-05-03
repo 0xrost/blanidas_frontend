@@ -162,12 +162,6 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
                             onSelectFailureType={(x) => setSelectedFailureTypeIds(prev => prev.includes(x) ? prev : [x, ...prev])}
                             onDeselectFailureType={(x) => setSelectedFailureTypeIds(prev => prev.filter(id => id != x))}
                         />
-                        {!isReadonly &&
-                            <StatusBarCard
-                                status={repairRequestStatus ?? repairRequest?.lastStatus}
-                                onStatusChange={setRepairRequestStatus}
-                            />
-                        }
                         <SparePartCard
                             isReadonly={isReadonly}
                             setIdDirty={setAreUsedSparePartsDirty}
@@ -180,6 +174,12 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
                                 notes={notes ?? ""}
                                 setNotes={setNotes}
                                 title={"Коментар " + (isManager ? "менеджера" : "інженера")}
+                            />
+                        }
+                        {!isReadonly &&
+                            <StatusBarCard
+                                status={repairRequestStatus ?? repairRequest?.lastStatus}
+                                onStatusChange={setRepairRequestStatus}
                             />
                         }
                     </div>

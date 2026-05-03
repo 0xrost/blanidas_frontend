@@ -2,8 +2,9 @@ import {AlertCircle, CheckCircle2, Clock, type LucideIcon, Package} from "lucide
 import type {Status} from "@/domain/entities/repair-request.ts";
 import {Badge} from "@/presentation/components/ui/badge.tsx";
 
-type Color = "green" | "red" | "orange" | "yellow";
+type Color = "green" | "red" | "orange" | "yellow" | "blue";
 const colors: Record<Color, string> = {
+    blue: "bg-blue-100 text-blue-700 border-blue-200",
     green: "bg-green-100 text-green-700 border-green-200",
     yellow: "bg-yellow-100 text-yellow-700 border-yellow-200",
     orange: "bg-orange-100 text-orange-700 border-orange-200",
@@ -31,6 +32,11 @@ const repairRequestScheme: Record<Status, Scheme> = {
         color: "green",
         title: "Виконано",
         icon: CheckCircle2,
+    },
+    "waiting_engineer": {
+        color: "blue",
+        title: "Очікує інженера",
+        icon: Package,
     },
     "waiting_spare_parts": {
         color: "yellow",

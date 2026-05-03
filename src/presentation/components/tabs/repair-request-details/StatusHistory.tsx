@@ -4,6 +4,7 @@ import type {RepairRequestStatusRecord, Status} from "@/domain/entities/repair-r
 function mapStatus(status: Status): string {
     switch (status) {
         case "finished": return "Завершена";
+        case "waiting_engineer": return "Очікує інженера";
         case "in_progress": return "У роботі";
         case "not_taken": return "Нова";
         case "waiting_spare_parts": return "Очікує запчастини";

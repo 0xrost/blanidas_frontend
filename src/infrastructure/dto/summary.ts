@@ -1,5 +1,7 @@
 interface RepairRequestSummaryDto {
+    all: number;
     new: number;
+    waiting_engineer: number;
     in_progress: number;
     waiting_spare_parts: number;
     finished: number;

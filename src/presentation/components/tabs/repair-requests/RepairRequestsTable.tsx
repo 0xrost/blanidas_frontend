@@ -33,6 +33,7 @@ const RepairRequestsTable = ({ repairRequests, onGoToDetails }: RepairRequestsLi
                                                 statusToStyleMap={{
                                                     finished: "green",
                                                     not_taken: "red",
+                                                    waiting_engineer: "blue",
                                                     in_progress: "orange",
                                                     waiting_spare_parts: "yellow",
                                                 }}
@@ -102,6 +103,7 @@ const RepairRequestsTable = ({ repairRequests, onGoToDetails }: RepairRequestsLi
                                                 status={rr.lastStatus}
                                                 statusToStyleMap={{
                                                     finished: "green",
+                                                    waiting_engineer: "blue",
                                                     not_taken: "red",
                                                     in_progress: "orange",
                                                     waiting_spare_parts: "yellow",

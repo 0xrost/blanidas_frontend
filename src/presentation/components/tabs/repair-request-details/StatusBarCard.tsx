@@ -27,6 +27,12 @@ const StatusBarCard = ({ status, onStatusChange }: StatusBarCardProps) => {
                                         Новий
                                     </div>
                                 </SelectItem>
+                                <SelectItem value="waiting_engineer">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                        Очікує інженера
+                                    </div>
+                                </SelectItem>
                                 <SelectItem value="in_progress">
                                     <div className="flex items-center gap-2">
                                         <div className="w-3 h-3 bg-orange-500 rounded-full"></div>

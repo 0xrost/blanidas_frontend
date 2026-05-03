@@ -16,6 +16,7 @@ interface Props {
     icon: LucideIcon;
     onClick?: () => void;
     selected?: boolean;
+    className?: string;
 }
 
 const colorSchemes: Record<Color, ColorScheme> = {
@@ -75,12 +76,13 @@ const colorSchemes: Record<Color, ColorScheme> = {
     },
 };
 
-const DashboardCard = ({ label, value, icon: Icon, color, onClick, selected }: Props) => {
+const DashboardCard = ({ label, value, icon: Icon, color, onClick, selected, className }: Props) => {
     const isClickable = typeof onClick === "function";
 
     return (
         <Card
             className={[
+                className,
                 colorSchemes[color].card,
                 isClickable ? "cursor-pointer transition hover:brightness-[0.98] active:brightness-[0.96]" : "",
                 selected ? "ring-2 ring-slate-400 ring-offset-2 shadow-sm" : "",

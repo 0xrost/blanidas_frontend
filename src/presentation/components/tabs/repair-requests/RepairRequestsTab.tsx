@@ -1,4 +1,4 @@
-import {AlertCircle, CheckCircle2, Clock, Package} from "lucide-react";
+import {AlertCircle, Box, CheckCircle2, Clock, Package, User2} from "lucide-react";
 import DashboardCard from "@/presentation/components/layouts/DashboardCard.tsx";
 import FiltersPanel, {type FilterConfig} from "@/presentation/components/layouts/FiltersPanel.tsx";
 import {useMemo} from "react";
@@ -52,7 +52,15 @@ const RepairRequestListTab = ({pagination, onGoToDetails, searchParams, onSearch
     return (
         <div className="w-full">
             <div>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
+                    <DashboardCard
+                        label={"Всього"}
+                        value={summary?.all ?? 0}
+                        color="slate"
+                        icon={Box}
+                        selected={searchParams.status === "all"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "all", page: "1"}))}
+                    />
                     <DashboardCard
                         label={"Нові"}
                         value={summary?.new ?? 0}
@@ -60,6 +68,14 @@ const RepairRequestListTab = ({pagination, onGoToDetails, searchParams, onSearch
                         icon={AlertCircle}
                         selected={searchParams.status === "not_taken"}
                         onClick={() => onSearchChange((prev) => ({...prev, status: "not_taken", page: "1"}))}
+                    />
+                    <DashboardCard
+                        label={"Очікує інженера"}
+                        value={summary?.waitingEngineer ?? 0}
+                        color="blue"
+                        icon={User2}
+                        selected={searchParams.status === "waiting_engineer"}
+                        onClick={() => onSearchChange((prev) => ({...prev, status: "waiting_engineer", page: "1"}))}
                     />
                     <DashboardCard
                         label={"У роботі"}

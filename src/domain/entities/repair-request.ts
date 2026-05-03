@@ -5,7 +5,7 @@ import type {SparePart} from "@/domain/entities/spare-part.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 
 
-type Status = "in_progress" | "not_taken" | "waiting_spare_parts" | "finished";
+type Status = "in_progress" | "not_taken" | "waiting_engineer" | "waiting_spare_parts" | "finished";
 type Urgency = "critical" | "non_critical";
 
 interface RepairRequestStatusRecord {

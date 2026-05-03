@@ -24,6 +24,7 @@ const filtersFactory = (institutions: Institution[], categories: EquipmentCatego
         options: [
             { value: 'all', label: 'Всі статуси' },
             { value: 'not_taken', label: 'Новий' },
+            { value: 'waiting_engineer', label: 'Очікує інженера' },
             { value: 'in_progress', label: 'У роботі' },
             { value: 'waiting_spare_parts', label: 'Очікує запчастини' },
             { value: 'finished', label: 'Виконано' },

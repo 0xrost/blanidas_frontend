@@ -3,7 +3,9 @@ import type {EquipmentSummary, RepairRequestsSummary, SparePartsSummary} from "@
 
 const mapRepairRequestSummaryDtoToDomain = (dto: RepairRequestSummaryDto): RepairRequestsSummary => {
     return {
+        all: dto.all,
         inProgress: dto.in_progress,
+        waitingEngineer: dto.waiting_engineer,
         finished: dto.finished,
         waitingSpareParts: dto.waiting_spare_parts,
         new: dto.new,
