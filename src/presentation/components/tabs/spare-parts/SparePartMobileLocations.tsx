@@ -59,22 +59,13 @@ const SparePartMobileLocations = ({locations, institutions, save}: Props) => {
         });
     };
 
-    const changeQuantity = (institutionId: string, newQuantity: number) => {
+    const changeLocation = (institutionId: string, quantity: number, restoredQuantity: number) => {
         setLocalLocations((prev) =>
             prev.map((location) => {
                 if (location.institution.id !== institutionId) return location;
-                return {...location, quantity: newQuantity};
-            })
-        );
-    };
-
-    const changeRestoredQuantity = (institutionId: string, newQuantity: number) => {
-        setLocalLocations((prev) =>
-            prev.map((location) => {
-                if (location.institution.id !== institutionId) return location;
-                return {...location, restoredQuantity: newQuantity};
-            }),
-        );
+                return { ...location, quantity: quantity, restoredQuantity: restoredQuantity };
+            }
+        ));
     };
 
     const removeLocation = (institutionId: string) => {
@@ -113,8 +104,7 @@ const SparePartMobileLocations = ({locations, institutions, save}: Props) => {
                                 location={location}
                                 mobileView
                                 remove={() => removeLocation(location.institution.id)}
-                                changeQuantity={(value) => changeQuantity(location.institution.id, value)}
-                                changeRestoredQuantity={(value) => changeRestoredQuantity(location.institution.id, value)}
+                                changeLocation={(quantity, restoredQuantity) => changeLocation(location.institution.id, quantity, restoredQuantity)}
                             />
                         ))}
                     </div>

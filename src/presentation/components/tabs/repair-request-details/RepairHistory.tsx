@@ -17,9 +17,9 @@ const RepairHistory = ({ repairHistory }: RepairHistoryProps) => {
                                 className="pb-4 border-b border-slate-100 last:border-0 last:pb-0"
                             >
                                 <div className="flex items-start justify-between mb-2">
-                                    <div className="flex-1">
+                                    <div className="flex-1 min-w-0">
                                         <p
-                                            className="text-sm text-slate-900 truncate max-w-65"
+                                            className="text-sm text-slate-900 truncate"
                                             title={repair.issue}
                                         >{repair.issue}</p>
                                         <div className="flex items-center gap-2 mt-1">

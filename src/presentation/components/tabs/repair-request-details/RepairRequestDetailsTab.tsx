@@ -51,7 +51,7 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
     })
 
     const authSession = useAuthSession();
-    const isManager = authSession?.currentUser.role === "manager";
+    const isManager = authSession?.currentUser.role === "manager" || authSession?.currentUser.role === "admin";
     const isReadonly = repairRequest?.lastStatus === "finished";
 
     const updateRepairRequest = useUpdateRepairRequest();
@@ -149,7 +149,7 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
         <>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 space-y-6">
+                    <div className="flex flex-col lg:col-span-2 gap-6">
                         <DeviceInfoCard repairRequest={repairRequest} />
                         <IssueCard issue={repairRequest?.issue} />
                         {repairRequest?.photos?.length > 0 && (
@@ -177,16 +177,26 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
                             />
                         }
                         {!isReadonly &&
-                            <StatusBarCard
-                                status={repairRequestStatus ?? repairRequest?.lastStatus}
-                                onStatusChange={setRepairRequestStatus}
-                            />
+                            <div className="hidden lg:block">
+                                <StatusBarCard
+                                    status={repairRequestStatus ?? repairRequest?.lastStatus}
+                                    onStatusChange={setRepairRequestStatus}
+                                />
+                            </div>
                         }
                     </div>
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 space-y-6 sm:space-x-6 lg:space-x-0">
+                    <div className="flex flex-col gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
                             <StatusHistory statusHistory={repairRequest?.statusHistory} />
                             <RepairHistory repairHistory={repairHistoryPagination?.items ?? []} />
+                            {!isReadonly &&
+                                <div className="col-span-1 sm:col-span-2 block lg:hidden">
+                                    <StatusBarCard
+                                        status={repairRequestStatus ?? repairRequest?.lastStatus}
+                                        onStatusChange={setRepairRequestStatus}
+                                    />
+                                </div>
+                            }
                         </div>
                         {isReadonly &&
                             <>

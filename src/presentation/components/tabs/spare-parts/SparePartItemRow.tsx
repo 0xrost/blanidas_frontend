@@ -30,8 +30,8 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
         <div
             className="
                 px-4 py-3 items-center hover:bg-slate-50 transition-colors grid
-                grid-cols-[minmax(0,5fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]
-                lg:grid-cols-[minmax(0,3fr)_minmax(0,1.5fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,0.4fr)] gap-4
+                grid-cols-[minmax(0,4fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]
+                lg:grid-cols-[minmax(0,3fr)_minmax(0,1.5fr)_minmax(0,2fr)_minmax(0,1.6fr)_minmax(0,0.4fr)] gap-4
             "
         >
             <div className="min-w-0">
@@ -86,9 +86,21 @@ const SparePartItemRow = ({ sparePart, areLocationVisible, setLocationVisible, s
                 </span>
             </div>
 
-            <div className="text-center">
-                <p className="text-sm font-medium text-slate-900">{sparePart.totalQuantity} (мін: {sparePart.minQuantity})</p>
-                <p className="text-xs text-slate-500">з них відновлені {restoredQuantity}</p>
+           <div className="flex items-center gap-2 text-center">
+                <div>
+                    <p className="text-xs text-blue-500">Нові</p>
+                    <p className="text-sm font-semibold text-blue-600">{sparePart.totalQuantity - restoredQuantity}</p>
+                </div>
+                <div className="w-px h-6 bg-slate-200" />
+                <div>
+                    <p className="text-xs text-purple-500">Відновл.</p>
+                    <p className="text-sm font-semibold text-purple-600">{restoredQuantity}</p>
+                </div>
+                <div className="w-px h-6 bg-slate-200" />
+                <div>
+                    <p className="text-xs text-slate-500">Мін.</p>
+                    <p className="text-sm font-semibold text-slate-600">{sparePart.minQuantity}</p>
+                </div>
             </div>
 
             <div className="flex items-center justify-end">

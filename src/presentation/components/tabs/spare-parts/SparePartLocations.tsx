@@ -58,22 +58,13 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
         });
     }
 
-    const changeQuantity = (institutionId: string, newQuantity: number) => {
+    const changeLocation = (institutionId: string, quantity: number, restoredQuantity: number) => {
         setLocalLocations((prev) =>
             prev.map((location) => {
                 if (location.institution.id !== institutionId) return location;
-                return { ...location, quantity: newQuantity };
+                return { ...location, quantity: quantity, restoredQuantity: restoredQuantity };
             }
         ));
-    };
-
-    const changeRestoredQuantity = (institutionId: string, newQuantity: number) => {
-        setLocalLocations((prev) =>
-            prev.map((location) => {
-                if (location.institution.id !== institutionId) return location;
-                return { ...location, restoredQuantity: newQuantity };
-            }),
-        );
     };
 
     const removeLocation = (institutionId: string) => {
@@ -110,7 +101,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
             <div className="space-y-2">
                 <div className="grid grid-cols-[minmax(0,1fr)_84px_84px_40px] gap-2 px-3 text-[11px] uppercase tracking-wider text-slate-500">
                     <span>Склади</span>
-                    <span className="text-center">Всього</span>
+                    <span className="text-center">Нові</span>
                     <span className="text-center">Відновлені</span>
                     <span />
                 </div>
@@ -120,8 +111,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
                         key={location.institution.id}
                         location={location}
                         remove={() => removeLocation(location.institution.id)}
-                        changeQuantity={(value) => changeQuantity(location.institution.id, value)}
-                        changeRestoredQuantity={(value) => changeRestoredQuantity(location.institution.id, value)}
+                        changeLocation={(quantity, restoredQuantity) => changeLocation(location.institution.id, quantity, restoredQuantity)}
                     />
                 })}
                 {localLocations.length === 0 &&

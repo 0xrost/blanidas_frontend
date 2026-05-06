@@ -13,18 +13,14 @@ interface Props {
     onSubmitted?: () => void;
 }
 const LocationForm = ({ institutions, submit, mobilePanel = false, onSubmitted }: Props) => {
-    const emptyForm = { institutionId: null, quantity: 1, restoredQuantity: 0 };
+    const emptyForm = { institutionId: null, newQuantity: 0, restoredQuantity: 0 };
     const [formData, setFormData] = useState<{
         institutionId: string | null;
-        quantity: number;
+        newQuantity: number;
         restoredQuantity: number;
     }>(emptyForm);
 
-    const isValid =
-        formData.institutionId !== null &&
-        formData.quantity > 0 &&
-        formData.restoredQuantity >= 0 &&
-        formData.restoredQuantity <= formData.quantity;
+    const isValid = formData.institutionId !== null && formData.newQuantity >= 0 && formData.restoredQuantity >= 0;
 
     const onSubmit = () => {
         if (!isValid || formData.institutionId === null) return;
@@ -32,7 +28,7 @@ const LocationForm = ({ institutions, submit, mobilePanel = false, onSubmitted }
         if (institution === undefined) return;
 
         submit({
-            quantity: formData.quantity,
+            quantity: formData.newQuantity + formData.restoredQuantity,
             restoredQuantity: formData.restoredQuantity,
             institution: institution,
         });
@@ -64,20 +60,13 @@ const LocationForm = ({ institutions, submit, mobilePanel = false, onSubmitted }
 
                 <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                        <p className="text-xs text-slate-600">Всього, шт.</p>
+                        <p className="text-xs text-slate-600">Нові, шт.</p>
                         <Input
-                            min={1}
+                            min={0}
                             type="number"
                             inputMode="numeric"
-                            value={formData.quantity}
-                            onChange={(e) => setFormData((prev) => {
-                                const quantity = Math.max(1, Math.trunc(Number(e.target.value) || 0));
-                                return {
-                                    ...prev,
-                                    quantity,
-                                    restoredQuantity: Math.min(prev.restoredQuantity, quantity),
-                                };
-                            })}
+                            value={formData.newQuantity}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, newQuantity: Math.max(0, +e.target.value), }))}
                             className="h-10 bg-white text-center"
                         />
                     </div>
@@ -88,10 +77,7 @@ const LocationForm = ({ institutions, submit, mobilePanel = false, onSubmitted }
                             type="number"
                             inputMode="numeric"
                             value={formData.restoredQuantity}
-                            onChange={(e) => setFormData((prev) => ({
-                                ...prev,
-                                restoredQuantity: Math.max(0, Math.min(Math.trunc(Number(e.target.value) || 0), prev.quantity)),
-                            }))}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, restoredQuantity: Math.max(0, +e.target.value), }))}
                             className="h-10 bg-white text-center"
                         />
                     </div>
@@ -135,18 +121,11 @@ const LocationForm = ({ institutions, submit, mobilePanel = false, onSubmitted }
                 </SelectContent>
             </Select>
             <Input
-                min={1}
+                min={0}
                 type="number"
                 inputMode="numeric"
-                value={formData.quantity}
-                onChange={(e) => setFormData((prev) => {
-                    const quantity = Math.max(1, Math.trunc(Number(e.target.value) || 0));
-                    return {
-                        ...prev,
-                        quantity,
-                        restoredQuantity: Math.min(prev.restoredQuantity, quantity),
-                    };
-                })}
+                value={formData.newQuantity}
+                onChange={(e) => setFormData((prev) => ({ ...prev, newQuantity: Math.max(0, +e.target.value), }))}
                 className="h-9 bg-white text-center"
             />
             <Input
@@ -154,10 +133,7 @@ const LocationForm = ({ institutions, submit, mobilePanel = false, onSubmitted }
                 type="number"
                 inputMode="numeric"
                 value={formData.restoredQuantity}
-                onChange={(e) => setFormData((prev) => ({
-                    ...prev,
-                    restoredQuantity: Math.max(0, Math.min(Math.trunc(Number(e.target.value) || 0), prev.quantity)),
-                }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, restoredQuantity: Math.max(0, +e.target.value), }))}
                 className="h-9 bg-white text-center"
             />
             <Button

@@ -82,22 +82,35 @@ const SparePartMobileItem = ({sparePart, models, categories, institutions, updat
                     </div>
                 </div>
 
-                <div className="text-xs flex sm:hidden items-center mt-1 gap-2">
+                <div className="flex sm:hidden items-center gap-1.5 mt-1">
+                    <span className="px-2 py-0.5 rounded bg-blue-100 text-xs text-blue-700">
+                        <b>{sparePart.totalQuantity - restoredQuantity}</b> нові
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-purple-50 text-xs text-purple-700">
+                        <b>{restoredQuantity}</b> відновл.
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500">
+                        мін: {sparePart.minQuantity}
+                    </span>
+                </div>
+                                
+                <div className="hidden sm:flex text-right mr-2 items-center gap-2 text-center">
                     <div>
-                        <p className="text-sm leading-none font-medium text-slate-900">{sparePart.totalQuantity} шт.</p>
+                        <p className="text-xs text-blue-500">Нові</p>
+                        <p className="text-sm font-semibold text-center text-blue-600">{sparePart.totalQuantity - restoredQuantity}</p>
                     </div>
+                    <div className="w-px h-6 bg-slate-200" />
                     <div>
-                        <p className="leading-none font-medium text-yellow-600">мін: {sparePart.minQuantity}</p>
+                        <p className="text-xs text-purple-500">Відновл.</p>
+                        <p className="text-sm font-semibold text-center text-purple-600">{restoredQuantity}</p>
                     </div>
-                    <div className="text-right">
-                        <p className="leading-none font-medium text-green-700">відновлено: {restoredQuantity}</p>
+                    <div className="w-px h-6 bg-slate-200" />
+                    <div>
+                        <p className="text-xs text-slate-500">Мін.</p>
+                        <p className="text-sm font-semibold text-center text-slate-900">{sparePart.minQuantity}</p>
                     </div>
                 </div>
 
-                <div className="hidden sm:block text-right mr-2">
-                    <p className="text-sm font-medium text-slate-900">{sparePart.totalQuantity} (мін: {sparePart.minQuantity})</p>
-                    <p className="text-xs text-slate-500">з них відновлені {restoredQuantity}</p>
-                </div>
             </div>
 
 
