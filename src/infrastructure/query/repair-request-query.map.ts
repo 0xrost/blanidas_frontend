@@ -35,7 +35,7 @@ const repairRequestsFilterMap: Record<keyof RepairRequestFilters, FilterDefiniti
 
 
 const repairRequestsSortMap: Record<RepairRequestSortBy, string> = {
-    date: "created_at",
+    date: "date",
     status: "status",
     model: "equipment_model_name",
     urgency: "urgency",

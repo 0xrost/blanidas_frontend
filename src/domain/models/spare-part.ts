@@ -1,5 +1,5 @@
 interface LocationCreate {
-    quantity: number;
+    newQuantity: number;
     restoredQuantity: number;
     institutionId: string;
 }

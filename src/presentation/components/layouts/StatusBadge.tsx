@@ -1,4 +1,3 @@
-import {AlertCircle, CheckCircle2, Clock, type LucideIcon, Package} from "lucide-react";
 import type {Status} from "@/domain/entities/repair-request.ts";
 import {Badge} from "@/presentation/components/ui/badge.tsx";
 
@@ -13,7 +12,6 @@ const colors: Record<Color, string> = {
 
 interface Scheme {
     color: Color;
-    icon: LucideIcon;
     title: string;
 }
 
@@ -21,7 +19,7 @@ interface Scheme {
 interface Props { color: Color, children: React.ReactNode }
 const StatusBadge = ({ color, children }: Props) => {
     return (
-        <Badge className={colors[color]}>
+        <Badge className={`${colors[color]} rounded-md`}>
             {children}
         </Badge>
     );
@@ -31,37 +29,30 @@ const repairRequestScheme: Record<Status, Scheme> = {
     "finished": {
         color: "green",
         title: "Виконано",
-        icon: CheckCircle2,
     },
     "waiting_engineer": {
         color: "blue",
         title: "Очікує інженера",
-        icon: Package,
     },
     "waiting_spare_parts": {
         color: "yellow",
         title: "Очікує запчастини",
-        icon: Package,
     },
     "in_progress": {
         color: "orange",
         title: "У роботі",
-        icon: Clock,
     },
     "not_taken": {
         color: "red",
         title: "Новий",
-        icon: AlertCircle,
     }
 }
 
 interface RepairRequestStatusBadgeProps { status: Status }
 const RepairRequestStatusBadge = ({ status }: RepairRequestStatusBadgeProps) => {
     const scheme = repairRequestScheme[status];
-    const Icon = scheme.icon;
     return (
         <StatusBadge color={scheme.color}>
-            <Icon className="w-3 h-3 mr-1" />
             {scheme.title}
         </StatusBadge>
     )

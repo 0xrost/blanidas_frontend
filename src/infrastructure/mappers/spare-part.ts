@@ -26,7 +26,7 @@ const mapSparePartDtoToDomain = (dto: SparePartDto): SparePart => {
 const mapLocationDtoToDomain = (dto: LocationDto): Location => {
     return {
         id: dto.id,
-        quantity: dto.quantity,
+        newQuantity: dto.new_quantity,
         restoredQuantity: dto.restored_quantity,
         institution: mapInstitutionDtoToDomain(dto.institution),
     };
@@ -35,7 +35,7 @@ const mapLocationDtoToDomain = (dto: LocationDto): Location => {
 const mapLocationCreateDomainToDto = (domain: LocationCreate): LocationCreateDto => {
     return {
         institution_id: domain.institutionId,
-        quantity: domain.quantity,
+        new_quantity: domain.newQuantity,
         restored_quantity: domain.restoredQuantity,
     };
 };

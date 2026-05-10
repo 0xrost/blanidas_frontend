@@ -64,7 +64,7 @@ const PaginationControl = ({ items, pagination, onChange }: PaginationControlPro
 
                     <PageButton
                         disabled={page === totalPages}
-                        onClick={() => onChange({ page: totalPages, limit: pagination.limit })}
+                        onClick={() => onChange({ page: pagination.page + 1, limit: pagination.limit })}
                     >
                         <span className="hidden sm:inline mr-1">Наступна</span>
                         <ChevronRight className="w-4 h-4" />

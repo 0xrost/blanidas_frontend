@@ -1,7 +1,6 @@
-import {Card} from "@/presentation/components/ui/card.tsx";
 import type {FailureType} from "@/domain/entities/failure-type.ts";
 import {Checkbox} from "@/presentation/components/ui/checkbox.tsx";
-import {Badge} from "@/presentation/components/ui/badge.tsx";
+import { AlertTriangle } from "lucide-react";
 
 interface Props {
     isReadonly: boolean;
@@ -12,53 +11,35 @@ interface Props {
 }
 const FailureTypesCard = ({ isReadonly, failureTypes, selectedFailureTypeIds, onSelectFailureType, onDeselectFailureType }: Props) => {
     return (
-        <Card className="bg-white border-slate-200">
-            <div className="p-6 space-y-4">
-                <div>
-                    <h3 className="text-slate-900">Типи виявлених збоїв</h3>
-                    {!isReadonly &&
-                        <p className="text-sm text-slate-600">Оберіть один або декілька типів поломок, які було виявлено при діагностиці</p>
-                    }
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto">
-                    {failureTypes.map(type => (
-                        <div key={type.id} className={`flex items-start space-x-3 bg-slate-50 rounded-lg p-3 border ${!isReadonly && "border-slate-200 hover:border-cyan-300 hover:bg-cyan-50/50"} transition-colors`}>
+        <div className="bg-white border-b">
+            <p className="px-4 py-3 border-slate-200 border-b text-slate-900">Типи виявлених збоїв</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 max-h-80 overflow-y-auto">
+                {failureTypes.length > 0 ? (
+                    failureTypes.map(type => (
+                        <label 
+                            htmlFor={`breakdown-${type.id}`} 
+                            key={type.id} 
+                            className="gap-2 px-4 py-3 flex items-center hover:bg-slate-50 border-slate-200 sm:odd:border-r border-b"
+                        >
                             {!isReadonly &&
                                 <Checkbox
                                     id={`breakdown-${type.id}`}
                                     checked={selectedFailureTypeIds.includes(type.id)}
-                                    onCheckedChange={(checked: boolean) =>
-                                        checked ? onSelectFailureType(type.id) : onDeselectFailureType(type.id)}
-                                    className="mt-0.5 border-slate-400"
+                                    onCheckedChange={(checked: boolean) => checked ? onSelectFailureType(type.id) : onDeselectFailureType(type.id)}
+                                    className="border-slate-400"
                                 />
                             }
-                            <div className="flex-1">
-                                <label
-                                    htmlFor={`breakdown-${type.id}`}
-                                    className="text-sm text-slate-900 cursor-pointer"
-                                >
-                                    {type.name}
-                                </label>
-                            </div>
+                            <label htmlFor={`breakdown-${type.id}`}  className="flex-1 text-sm text-slate-900" >{type.name}</label>
+                        </label>
+                    ))) : (
+                        <div className="col-span-2 py-8 text-center bg-slate-50">
+                            <AlertTriangle className="w-12 h-12 text-slate-300 mx-auto mb-2" />
+                            <p className="text-slate-500">Типів збоїв не додано</p>
                         </div>
-                    ))}
-                </div>
-                {selectedFailureTypeIds.length > 0 && !isReadonly && (
-                    <div className="pt-4 border-t border-slate-200">
-                        <div className="flex flex-wrap h-auto gap-2">
-                            {selectedFailureTypeIds.map(id => {
-                                const type = failureTypes.find(t => t.id === id);
-                                return type ? (
-                                    <Badge key={id} className="rounded-sm bg-cyan-100 text-cyan-700 border-cyan-200">
-                                        {type.name}
-                                    </Badge>
-                                ) : null;
-                            })}
-                        </div>
-                    </div>
-                )}
+                    )
+                }
             </div>
-        </Card>
+        </div>
     );
 };
 

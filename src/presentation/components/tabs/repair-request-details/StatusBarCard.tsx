@@ -1,6 +1,7 @@
-import {Card} from "@/presentation/components/ui/card.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/presentation/components/ui/select.tsx";
 import type {Status} from "@/domain/entities/repair-request.ts";
+import RepairRequestStatusCircle from "../../layouts/RepairRequestStatusCircle";
+import RepairRequestStatusLabel from "../../layouts/RepairRequestStatusLabel";
 
 type StatusBarCardProps = {
     status: Status,
@@ -8,9 +9,9 @@ type StatusBarCardProps = {
 }
 const StatusBarCard = ({ status, onStatusChange }: StatusBarCardProps) => {
     return (
-        <Card className="py-0 bg-white border-slate-200">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center p-6">
-                <h3 className="text-nowrap text-slate-900 mb-4 sm:mb-0 sm:mr-4">Статус ремонту</h3>
+        <div className="bg-white">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center px-4 py-3">
+                <h3 className="text-nowrap text-slate-900 mb-2 sm:mb-0 sm:mr-4">Статус ремонту</h3>
                 <div className="w-full sm:flex-row gap-4">
                     <div className="flex-1">
                         <Select
@@ -23,32 +24,32 @@ const StatusBarCard = ({ status, onStatusChange }: StatusBarCardProps) => {
                             <SelectContent>
                                 <SelectItem value="not_taken">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                                        Новий
+                                        <RepairRequestStatusCircle size="md" status="not_taken" />
+                                        <RepairRequestStatusLabel status="not_taken" />
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="waiting_engineer">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                        Очікує інженера
+                                        <RepairRequestStatusCircle size="md" status="waiting_engineer" />
+                                        <RepairRequestStatusLabel status="waiting_engineer" />
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="in_progress">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                                        У роботі
+                                        <RepairRequestStatusCircle size="md" status="in_progress" />
+                                        <RepairRequestStatusLabel status="in_progress" />
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="waiting_spare_parts">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                                        Очікує запчастини
+                                        <RepairRequestStatusCircle size="md" status="waiting_spare_parts" />
+                                        <RepairRequestStatusLabel status="waiting_spare_parts" />
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="finished">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                                        Виконано
+                                        <RepairRequestStatusCircle size="md" status="finished" />
+                                        <RepairRequestStatusLabel status="finished" />
                                     </div>
                                 </SelectItem>
                             </SelectContent>
@@ -56,7 +57,7 @@ const StatusBarCard = ({ status, onStatusChange }: StatusBarCardProps) => {
                     </div>
                 </div>
             </div>
-        </Card>
+        </div>
     );
 };
 

@@ -5,17 +5,24 @@ import type {FailureType} from "@/domain/entities/failure-type.ts";
 import type {SparePartDto} from "@/infrastructure/dto/spare-part.ts";
 import type {InstitutionDto} from "@/infrastructure/dto/institution.ts";
 
+interface RepairRequestEntryDto {
+    id: string;
+    created_at: Date;
+    issue: string;
+    photos: FileDto[];
+}
+
 interface RepairRequestDto {
     id: string;
-    issue: string;
     urgency: Urgency;
     manager_note: string;
     engineer_note: string;
     created_at: Date;
-    completed_at: Date;
+    completed_at: Date | null;
+    updated_at: Date | null;
     last_status: Status;
 
-    photos: FileDto[];
+    entries: RepairRequestEntryDto[];
     failure_types: FailureType[];
     used_spare_parts: UsedSparePartDto[];
     status_history: RepairRequestStatusRecordDto[];
@@ -30,6 +37,7 @@ interface RepairRequestStatusRecordDto {
     id: number;
     created_at: Date;
     status: Status;
+    was_merged: boolean;
     assigned_engineer: User | null;
 }
 
@@ -40,14 +48,16 @@ interface RepairRequestStatusRecordCreateDto {
 
 interface UsedSparePartDto {
     id: number;
-    quantity: number;
+    new_quantity: number;
+    restored_quantity: number;
     note: string;
     spare_part: SparePartDto;
     institution: InstitutionDto;
 }
 
 interface UsedSparePartCreateDto {
-    quantity: number;
+    new_quantity: number;
+    restored_quantity: number;
     note: string;
     spare_part_id: string;
     institution_id: string;
@@ -64,4 +74,12 @@ interface RepairRequestUpdateDto {
 }
 
 
-export type { RepairRequestStatusRecordDto, RepairRequestDto, RepairRequestUpdateDto, RepairRequestStatusRecordCreateDto, UsedSparePartDto, UsedSparePartCreateDto };
+export type { 
+    RepairRequestStatusRecordDto, 
+    RepairRequestDto, 
+    RepairRequestUpdateDto, 
+    RepairRequestStatusRecordCreateDto, 
+    UsedSparePartDto, 
+    UsedSparePartCreateDto, 
+    RepairRequestEntryDto
+};

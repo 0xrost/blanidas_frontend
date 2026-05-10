@@ -12,32 +12,48 @@ interface RepairRequestStatusRecord {
     id: number;
     createdAt: Date;
     status: Status;
+    wasMerged: boolean;
     assignedEngineer: User | null;
 }
 
 interface UsedSparePart {
     id: number;
     note: string;
-    quantity: number;
+    newQuantity: number;
+    restoredQuantity: number;
     sparePart: SparePart;
     institution: Institution;
+}
+
+interface RepairRequestEntry {
+    id: string;
+    createdAt: Date;
+    issue: string;
+    photos: string[];
 }
 
 interface RepairRequest {
     id: string;
     urgency: Urgency;
-    issue: string;
     managerNote: string;
     engineerNote: string;
     createdAt: Date;
     completedAt: Date | null;
+    updatedAt: Date | null;
     lastStatus: Status;
+    entries: RepairRequestEntry[];
 
-    photos: string[];
     failureTypes: FailureType[];
     usedSpareParts: UsedSparePart[];
     statusHistory: RepairRequestStatusRecord[];
     equipment: Equipment;
 }
 
-export type { RepairRequestStatusRecord, Urgency, RepairRequest, Status, UsedSparePart };
+export type { 
+    RepairRequestStatusRecord, 
+    Urgency, 
+    RepairRequest, 
+    Status, 
+    UsedSparePart, 
+    RepairRequestEntry
+};

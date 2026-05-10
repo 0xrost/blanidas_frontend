@@ -1,5 +1,5 @@
 import {Textarea} from "@/presentation/components/ui/textarea.tsx";
-import {Card} from "@/presentation/components/ui/card.tsx";
+import { NotebookIcon } from "lucide-react";
 
 type NoteCardProps = {
     title: string;
@@ -9,24 +9,31 @@ type NoteCardProps = {
 }
 const NotesCard = ({ title, setNotes, notes, isReadonly }: NoteCardProps) => {
     return (
-        <Card className="py-0 bg-white border-slate-200">
-            <div className="p-6">
-                <h3 className="text-slate-900 mb-4">{title}</h3>
-                {isReadonly
-                    ?
-                        <div className="border-slate-200 border rounded-md resize-none p-2 overflow-auto min-h-16 w-full bg-transparent px-3 py-2 text-base shadow-xs md:text-sm">
+        <div className="flex flex-col bg-white border-b">
+            <p className="border-b px-4 py-3 text-slate-900">{title}</p>
+            {isReadonly ? (
+                <>
+                    {notes.trim() === "" ? (
+                        <div className="py-8 text-center bg-slate-50">
+                            <NotebookIcon className="w-12 h-12 text-slate-300 mx-auto mb-2" />
+                            <p className="text-slate-500">Коментаря інженера не додано</p>
+                        </div>
+                    ) : (
+                        <div className="mx-4 my-3 text-sm border p-3 rounded-md border-slate-200 w-auto min-h-32 resize-none">
                             {notes}
                         </div>
-                    :
-                        <Textarea
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Опишіть виконані роботи, виявлені проблеми, рекомендації..."
-                            className="border-slate-200 min-h-32 resize-none"
-                        />
-                }
-            </div>
-        </Card>
+                    )}
+                </>
+            ) : (
+                <Textarea
+                    value={notes ?? ""}
+                    disabled={isReadonly}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Опишіть виконані роботи, виявлені проблеми, рекомендації..."
+                    className="mx-4 my-3 border-slate-200 w-auto h-auto min-h-32 resize-none" 
+                />
+            )}
+        </div>
     );
 };
 

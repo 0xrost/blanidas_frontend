@@ -18,13 +18,13 @@ interface SparePartDto {
 
 interface LocationDto {
     id: string
-    quantity: number;
+    new_quantity: number;
     restored_quantity: number;
     institution: InstitutionDto;
 }
 
 interface LocationCreateDto {
-    quantity: number;
+    new_quantity: number;
     restored_quantity: number;
     institution_id: string;
 }

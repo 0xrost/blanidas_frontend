@@ -25,7 +25,13 @@ function formatDuration(startDate: Date | string, endDate: Date | string): strin
     const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
     const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
 
-    return `${diffDays} днів ${diffHours} год ${diffMinutes} хв`;
+    const parts = [
+        diffDays > 0 && `${diffDays} днів`,
+        diffHours > 0 && `${diffHours} год`,
+        diffMinutes > 0 && `${diffMinutes} хв`,
+    ].filter(Boolean);
+
+    return parts.length > 0 ? parts.join(" ") : "менше хвилини";
 }
 
 function pluralize(count: number, one: string, few: string, many: string): string {

@@ -39,7 +39,7 @@ const SparePartMobileLocations = ({locations, institutions, save}: Props) => {
             !locations.some(
                 orig =>
                     orig.institution.id === loc.institution.id &&
-                    orig.quantity === loc.quantity &&
+                    orig.newQuantity === loc.newQuantity &&
                     orig.restoredQuantity === loc.restoredQuantity
             )
         );
@@ -50,7 +50,7 @@ const SparePartMobileLocations = ({locations, institutions, save}: Props) => {
     const onSave = () => {
         if (!isDirty) return;
         save(localLocations.map(x => ({
-            quantity: x.quantity,
+            newQuantity: x.newQuantity,
             restoredQuantity: x.restoredQuantity,
             institutionId: x.institution.id,
         })), {

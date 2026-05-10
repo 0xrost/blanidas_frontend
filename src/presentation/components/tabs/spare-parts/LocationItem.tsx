@@ -9,22 +9,22 @@ interface Props {
     mobileView?: boolean;
 
     remove(): void;
-    changeLocation(quantity: number, restoredQuantity: number): void
+    changeLocation(newQuantity: number, restoredQuantity: number): void
 }
 const LocationItem = ({ location, remove, changeLocation, mobileView = false }: Props) => {
     const [editing, setEditing] = useState<"new" | "restored" | null>(null);
-    const [newQuantity, setNewQuantity] = useState<number>(location.quantity - location.restoredQuantity);
+    const [newQuantity, setNewQuantity] = useState<number>(location.newQuantity);
     const [restoredQuantity, setRestoredQuantity] = useState<number>(location.restoredQuantity);
 
     useEffect(() => {
-        setNewQuantity(location.quantity - location.restoredQuantity);
+        setNewQuantity(location.newQuantity);
         setRestoredQuantity(location.restoredQuantity);
     }, [location]);
 
     const commitEdit = () => {
         const newQ = newQuantity ?? 0
         const restored = restoredQuantity ?? 0;
-        changeLocation(newQ + restored, restored);
+        changeLocation(newQ, restored);
         setEditing(null);
     };
 

@@ -13,7 +13,8 @@ interface RepairRequestCreate {
 }
 
 interface UsedSparePartCreate {
-    quantity: number
+    newQuantity: number
+    restoredQuantity: number
     note: string
     sparePartId: string
     institutionId: string

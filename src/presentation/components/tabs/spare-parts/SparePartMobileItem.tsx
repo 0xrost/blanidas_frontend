@@ -175,7 +175,7 @@ const SparePartMobileItem = ({sparePart, models, categories, institutions, updat
                     <SparePartMobileLocations
                         locations={sparePart.locations.map((l) => ({
                             institution: l.institution,
-                            quantity: l.quantity,
+                            newQuantity: l.newQuantity,
                             restoredQuantity: l.restoredQuantity,
                         }))}
                         institutions={institutions}

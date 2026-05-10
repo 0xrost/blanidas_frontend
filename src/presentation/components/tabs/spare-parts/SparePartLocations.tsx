@@ -38,7 +38,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
             !locations.some(
                 orig =>
                     orig.institution.id === loc.institution.id &&
-                    orig.quantity === loc.quantity &&
+                    orig.newQuantity === loc.newQuantity &&
                     orig.restoredQuantity === loc.restoredQuantity
             )
         );
@@ -49,7 +49,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
     const onSave = () => {
         if (!isDirty) return;
         save(localLocations.map(x => ({
-            quantity: x.quantity,
+            newQuantity: x.newQuantity,
             restoredQuantity: x.restoredQuantity,
             institutionId: x.institution.id,
         })), {
@@ -58,11 +58,11 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
         });
     }
 
-    const changeLocation = (institutionId: string, quantity: number, restoredQuantity: number) => {
+    const changeLocation = (institutionId: string, newQuantity: number, restoredQuantity: number) => {
         setLocalLocations((prev) =>
             prev.map((location) => {
                 if (location.institution.id !== institutionId) return location;
-                return { ...location, quantity: quantity, restoredQuantity: restoredQuantity };
+                return { ...location, newQuantity: newQuantity, restoredQuantity: restoredQuantity };
             }
         ));
     };

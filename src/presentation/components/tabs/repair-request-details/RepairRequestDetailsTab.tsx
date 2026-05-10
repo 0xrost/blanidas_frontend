@@ -4,7 +4,6 @@ import {
     useRepairRequests,
     useUpdateRepairRequest
 } from "@/presentation/hooks/entities/repair-request.ts";
-import IssueCard from "@/presentation/components/tabs/repair-request-details/IssueCard.tsx";
 import FailureTypesCard from "@/presentation/components/tabs/repair-request-details/FailureTypesCard.tsx";
 import {useFailureTypes} from "@/presentation/hooks/entities/failure-type.ts";
 import {useEffect, useMemo, useState} from "react";
@@ -14,22 +13,23 @@ import SparePartCard from "@/presentation/components/tabs/repair-request-details
 import type {SparePart} from "@/domain/entities/spare-part.ts";
 import type {Institution} from "@/domain/entities/institution.ts";
 import NotesCard from "@/presentation/components/tabs/repair-request-details/NotesCard.tsx";
-import StatusHistory from "@/presentation/components/tabs/repair-request-details/StatusHistory.tsx";
-import RepairHistory from "@/presentation/components/tabs/repair-request-details/RepairHistory.tsx";
+import RepairRequestStatusHistory from "@/presentation/components/tabs/repair-request-details/RepairRequestStatusHistory";
+import RepairRequestHistory from "@/presentation/components/tabs/repair-request-details/RepairRequestHistory";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import {Save, Trash} from "lucide-react";
-import PhotosCard from "@/presentation/components/tabs/repair-request-details/PhotosCard.tsx";
 import {useAuthSession} from "@/presentation/hooks/auth.ts";
 import NotFoundTab from "@/presentation/components/tabs/not-found/NotFoundTab.tsx";
 import type {RepairRequestStatusRecordCreate} from "@/domain/models/repair-request.ts";
 import {UnlimitedPagination} from "@/domain/pagination.ts";
 import {SortByNameAsc} from "@/domain/sorting.ts";
 import DeleteModal from "@/presentation/components/tabs/repair-request-details/DeleteModal.tsx";
+import DescriptionCard from "./DescriptionCard";
 
 
 interface RepairRequestUsedSparePartVM {
     note: string;
-    quantity: number;
+    newQuantity: number;
+    restoredQuantity: number;
     sparePart: SparePart;
     institution: Institution;
 }
@@ -37,8 +37,9 @@ interface RepairRequestUsedSparePartVM {
 interface Props {
     repairRequestId: string
     goToDashboard: () => void
+    goToRepairRequest: (id: string) => void
 }
-const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
+const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard, goToRepairRequest }: Props) => {
     const { data: failureTypes } = useFailureTypes({pagination: UnlimitedPagination, sorting: SortByNameAsc});
     const { data: repairRequest, isSuccess, refetch } = useRepairRequestById(repairRequestId);
     const { data: repairHistoryPagination } = useRepairRequests({
@@ -92,7 +93,8 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
             statusHistory: (repairRequestStatus !== repairRequest?.lastStatus) ? statusHistory : null,
             usedSpareParts: usedSparePartsToUpdate.map(part => ({
                     note: part.note,
-                    quantity: part.quantity,
+                    newQuantity: part.newQuantity,
+                    restoredQuantity: part.restoredQuantity,
                     sparePartId: part.sparePart.id,
                     institutionId: part.institution.id,
                 }))
@@ -138,23 +140,18 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
         isFailureTypesDirty;
 
     if (!isSuccess) {
-        return <NotFoundTab redirectTo={isManager
-                ? "/manager/dashboard/repair-requests"
-                : "/engineer/dashboard/repair-requests"
-            }
-        />
+        return <NotFoundTab redirectTo={"/dashboard/repair-requests"} />
     }
 
     return (
         <>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="flex flex-col lg:col-span-2 gap-6">
-                        <DeviceInfoCard repairRequest={repairRequest} />
-                        <IssueCard issue={repairRequest?.issue} />
-                        {repairRequest?.photos?.length > 0 && (
-                            <PhotosCard photos={repairRequest.photos} />
-                        )}
+            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div className="flex flex-col lg:col-span-3 rounded-xl border border-slate-200 bg-white overflow-hidden">
+                        <DeviceInfoCard repairRequest={repairRequest} goToDashboard={goToDashboard} />
+                        <DescriptionCard entries={repairRequest.entries} />
+                    </div>
+                    <div className="flex flex-col lg:col-span-2 h-min rounded-xl border border-slate-200 bg-white overflow-hidden">
                         <FailureTypesCard
                             isReadonly={isReadonly}
                             failureTypes={isReadonly ? (repairRequest?.failureTypes ?? []) : (failureTypes?.items ?? [])}
@@ -184,13 +181,32 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
                                 />
                             </div>
                         }
+                        {isReadonly &&
+                            <>
+                                <NotesCard
+                                    isReadonly={isReadonly}
+                                    notes={repairRequest.managerNote}
+                                    setNotes={setNotes}
+                                    title="Коментар менеджера"
+                                />
+                                <NotesCard
+                                    isReadonly={isReadonly}
+                                    notes={repairRequest.engineerNote}
+                                    setNotes={setNotes}
+                                    title="Коментар інженера"
+                                />
+                            </>
+                        }
                     </div>
-                    <div className="flex flex-col gap-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
-                            <StatusHistory statusHistory={repairRequest?.statusHistory} />
-                            <RepairHistory repairHistory={repairHistoryPagination?.items ?? []} />
+                    <div className="flex flex-col gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 rounded-xl border border-slate-200 bg-white overflow-hidden">
+                            <RepairRequestStatusHistory statusHistory={repairRequest?.statusHistory} />
+                            <RepairRequestHistory 
+                                repairHistory={repairHistoryPagination?.items ?? []} 
+                                goTo={goToRepairRequest} 
+                            />
                             {!isReadonly &&
-                                <div className="col-span-1 sm:col-span-2 block lg:hidden">
+                                <div className="col-span-1 border-t sm:col-span-2 block lg:hidden">
                                     <StatusBarCard
                                         status={repairRequestStatus ?? repairRequest?.lastStatus}
                                         onStatusChange={setRepairRequestStatus}
@@ -198,35 +214,15 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard }: Props) => {
                                 </div>
                             }
                         </div>
-                        {isReadonly &&
-                            <>
-                                {repairRequest?.managerNote &&
-                                    <NotesCard
-                                        isReadonly={isReadonly}
-                                        notes={repairRequest.managerNote}
-                                        setNotes={setNotes}
-                                        title="Коментар менеджера"
-                                    />
-                                }
-                                {repairRequest?.engineerNote &&
-                                    <NotesCard
-                                        isReadonly={isReadonly}
-                                        notes={repairRequest.engineerNote}
-                                        setNotes={setNotes}
-                                        title="Коментар інженера"
-                                    />
-                                }
-                            </>
-                        }
                         <div className="space-y-3">
                             {!isReadonly &&
                                 <Button
                                     variant="outline"
                                     onClick={onRepairRequestUpdate}
-                                    className="w-full h-12 flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
+                                    className="w-full h-12 flex items-center justify-center gap-2 border-border hover:bg-muted"
                                     disabled={!isDirty}
                                 >
-                                    <Save className="w-5 h-5"/>
+                                    <Save className="w-4 h-4" />
                                     Зберегти зміни
                                 </Button>
                             }

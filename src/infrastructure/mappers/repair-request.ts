@@ -2,9 +2,10 @@ import type {
     RepairRequestStatusRecordCreateDto, UsedSparePartCreateDto,
     RepairRequestDto,
     RepairRequestStatusRecordDto, UsedSparePartDto,
-    RepairRequestUpdateDto
+    RepairRequestUpdateDto,
+    RepairRequestEntryDto
 } from "@/infrastructure/dto/repair-request.ts";
-import type {RepairRequest, RepairRequestStatusRecord, UsedSparePart} from "@/domain/entities/repair-request.ts";
+import type {RepairRequest, RepairRequestEntry, RepairRequestStatusRecord, UsedSparePart} from "@/domain/entities/repair-request.ts";
 import {mapEquipmentDtoToDomain} from "@/infrastructure/mappers/equipment.ts";
 import type {
     RepairRequestStatusRecordCreate,
@@ -18,24 +19,34 @@ const mapUsedSparePartDtoToDomain = (dto: UsedSparePartDto): UsedSparePart => {
     return {
         id: dto.id,
         note: dto.note,
-        quantity: dto.quantity,
+        newQuantity: dto.new_quantity,
+        restoredQuantity: dto.restored_quantity,
         institution: mapInstitutionDtoToDomain(dto.institution),
         sparePart: mapSparePartDtoToDomain(dto.spare_part),
     }
 }
 
+const mapRepairRequestEntryDtoToDomain = (dto: RepairRequestEntryDto): RepairRequestEntry => {
+    return {
+        id: dto.id,
+        createdAt: dto.created_at,
+        issue: dto.issue,
+        photos: dto.photos.map(x => x.file_path),
+    };
+}
+
 const mapRepairRequestDtoToDomain = (dto: RepairRequestDto): RepairRequest => {
     return {
         id: dto.id,
-        issue: dto.issue,
         urgency: dto.urgency,
         managerNote: dto.manager_note,
         engineerNote: dto.engineer_note,
         createdAt: dto.created_at,
         completedAt: dto.completed_at,
+        updatedAt: dto.updated_at,
         lastStatus: dto.last_status,
-        photos: dto.photos.map(x => x.file_path),
         failureTypes: dto.failure_types,
+        entries: dto.entries.map(mapRepairRequestEntryDtoToDomain),
         usedSpareParts: dto.used_spare_parts.map(mapUsedSparePartDtoToDomain),
         statusHistory: dto.status_history.map(mapRepairRequestStatusRecordDtoToDomain),
         equipment: dto.equipment && mapEquipmentDtoToDomain(dto.equipment)
@@ -46,6 +57,7 @@ const mapRepairRequestStatusRecordDtoToDomain = (dto: RepairRequestStatusRecordD
     return {
         id: dto.id,
         createdAt: dto.created_at,
+        wasMerged: dto.was_merged,
         status: dto.status,
         assignedEngineer: dto.assigned_engineer,
     }
@@ -60,7 +72,8 @@ const mapRepairRequestStatusRecordCreateDomainToDto = (domain: RepairRequestStat
 
 const mapUsedSparePartCreateDomainToDto = (domain: UsedSparePartCreate): UsedSparePartCreateDto => {
     return {
-        quantity: domain.quantity,
+        new_quantity: domain.newQuantity,
+        restored_quantity: domain.restoredQuantity,
         institution_id: domain.institutionId,
         spare_part_id: domain.sparePartId,
         note: domain.note,

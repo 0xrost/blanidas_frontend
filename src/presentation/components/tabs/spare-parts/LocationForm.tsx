@@ -28,7 +28,7 @@ const LocationForm = ({ institutions, submit, mobilePanel = false, onSubmitted }
         if (institution === undefined) return;
 
         submit({
-            quantity: formData.newQuantity + formData.restoredQuantity,
+            newQuantity: formData.newQuantity,
             restoredQuantity: formData.restoredQuantity,
             institution: institution,
         });
