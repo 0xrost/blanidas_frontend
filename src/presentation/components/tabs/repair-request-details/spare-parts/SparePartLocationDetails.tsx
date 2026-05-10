@@ -56,7 +56,7 @@ const SparePartLocationDetails = ({ sparePart, newUsedSpareParts, deletedSparePa
     }, [newUsedSpareParts, deletedSpareParts, sparePart]);
 
     return (
-        <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+        <div className="bg-cyan-50 border border-cyan-200 sm:rounded-lg p-4">
             <div className="flex flex-col gap-2">
                 <p className="text-md font-medium text-slate-900">{sparePart.name}</p>
                 <div className="">
@@ -96,7 +96,7 @@ const SparePartLocationDetails = ({ sparePart, newUsedSpareParts, deletedSparePa
             )}
 
             <div className="grid grid-col-2 space-y-4 mt-2 space-x-2">
-                <div className="col-span-2">
+                <div className="col-span-2 min-w-0">
                     <Label htmlFor="part-warehouse" className="text-slate-700">Оберіть склад *</Label>
                     <Select
                         disabled={sparePart.totalQuantity === 0}
@@ -111,7 +111,7 @@ const SparePartLocationDetails = ({ sparePart, newUsedSpareParts, deletedSparePa
                             }
                         }}
                     >
-                        <SelectTrigger className="bg-white w-full h-12 mt-2">
+                        <SelectTrigger className="bg-white truncate w-full h-12 mt-2">
                             <SelectValue placeholder="Оберіть склад..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -124,9 +124,9 @@ const SparePartLocationDetails = ({ sparePart, newUsedSpareParts, deletedSparePa
                                         value={location.institution.id}
                                         disabled={totalQuantity === 0}
                                     >
-                                        <div className="flex items-center justify-between w-full">
-                                            <span>{location.institution?.name}</span>
-                                            <span className={`ml-4 text-nowrap
+                                        <div className="flex items-center justify-between w-full min-w-0">
+                                            <span className="truncate">{location.institution?.name}</span>
+                                            <span className={`ml-4 text-nowrap flex-shrink-0
                                                 ${totalQuantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
                                                 {totalQuantity > 0 ? `${totalQuantity} шт.` : 'Немає'}
                                             </span>
@@ -144,7 +144,7 @@ const SparePartLocationDetails = ({ sparePart, newUsedSpareParts, deletedSparePa
                         id="part-new-quantity"
                         type="number"
                         min="0"
-                        disabled={sparePart.totalQuantity === 0}
+                        disabled={(formData.institution ? (quantitiesByInstitution.get(formData.institution.id)?.newQuantity ?? 0) : 0) === 0}
                         max={formData.institution ? (quantitiesByInstitution.get(formData.institution.id)?.newQuantity ?? 0) : 0}
                         value={formData.newQuantity}
                         onChange={(e) => {
@@ -162,7 +162,7 @@ const SparePartLocationDetails = ({ sparePart, newUsedSpareParts, deletedSparePa
                         id="part-restored-quantity"
                         type="number"
                         min="0"
-                        disabled={sparePart.totalQuantity === 0}
+                        disabled={(formData.institution ? (quantitiesByInstitution.get(formData.institution.id)?.restoredQuantity ?? 0) : 0) === 0}
                         max={formData.institution ? (quantitiesByInstitution.get(formData.institution.id)?.restoredQuantity ?? 0) : 0}
                         value={formData.restoredQuantity}
                         onChange={(e) => {

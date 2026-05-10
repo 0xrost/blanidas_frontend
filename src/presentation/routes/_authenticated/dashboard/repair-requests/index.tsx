@@ -13,7 +13,7 @@ const defaultSearch = {
   institutionId: "all",
   status: "all",
   sortOrder: "desc",
-  sortBy: "date",
+  sortBy: "created_at",
   urgency: "all",
 } satisfies Search;
 

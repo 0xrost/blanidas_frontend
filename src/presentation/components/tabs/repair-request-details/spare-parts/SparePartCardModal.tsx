@@ -16,7 +16,7 @@ import { Dialog, DialogContent } from "@/presentation/components/ui/dialog.tsx";
 
 const createEmptyFormData = (): UsedSparePartFormData => ({
     note: "",
-    newQuantity: 1,
+    newQuantity: 0,
     restoredQuantity: 0,
     institution: null,
 });
@@ -113,13 +113,12 @@ const SparePartCardModal = ({
                     </button>
                 </div>
 
-                <div className="overflow-y-auto px-5 py-3" style={{ maxHeight: "calc(85vh - 120px)" }}>
+                <div className="overflow-y-auto sm:px-5 sm:py-3" style={{ maxHeight: "calc(85vh - 120px)" }}>
                     {currentSparePart ? (
                         <SparePartLocationDetails
                             sparePart={currentSparePart}
                             newUsedSpareParts={newUsedSpareParts}
                             deletedSpareParts={deletedSpareParts}
-                            close={() => setCurrentSparePart(null)}
                             formData={usedSparePartFormData}
                             onValueChange={(key, value) =>
                                 setUsedSparePartFormData((prev) => ({ ...prev, [key]: value }))
