@@ -1,4 +1,3 @@
-import {AlertTriangle, MapPin, X} from "lucide-react";
 import {Label} from "@/presentation/components/ui/label.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/presentation/components/ui/select.tsx";
 import {Input} from "@/presentation/components/ui/input.tsx";

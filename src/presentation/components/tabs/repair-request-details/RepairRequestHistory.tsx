@@ -1,6 +1,5 @@
-import { ChevronRight, Clock, FileText } from "lucide-react";
+import { ChevronRight, FileText } from "lucide-react";
 import type { RepairRequest } from "@/domain/entities/repair-request.ts";
-import { formatDuration } from "@/presentation/utils.ts";
 import RepairRequestStatusCircle from "../../layouts/RepairRequestStatusCircle";
 import RepairRequestStatusLabel from "../../layouts/RepairRequestStatusLabel";
 
