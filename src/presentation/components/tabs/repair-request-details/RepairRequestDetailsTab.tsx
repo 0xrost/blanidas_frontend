@@ -48,7 +48,7 @@ const RepairRequestDetailsTab = ({ repairRequestId, goToDashboard, goToRepairReq
             equipmentId: repairRequest?.equipment.id.toString() ?? "",
             idNotEqualTo: repairRequestId
         },
-        sorting: { sortBy: "created_at", sortOrder: "desc" }
+        sorting: { sortBy: "date", sortOrder: "desc" }
     })
 
     const authSession = useAuthSession();

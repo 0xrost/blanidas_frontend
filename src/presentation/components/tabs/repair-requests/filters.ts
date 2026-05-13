@@ -41,8 +41,7 @@ const filtersFactory = (institutions: Institution[], categories: EquipmentCatego
     {
         key: 'sortBy',
         options: [
-            { value: 'created_at', label: 'За датою створення' },
-            { value: 'updated_at', label: 'За датою оновлення' },
+            { value: 'date', label: 'За датою' },
             { value: 'model', label: 'За моделлю' },
             { value: 'status', label: 'За статусом' },
             { value: 'urgency', label: 'За пріоритетом' },
