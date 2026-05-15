@@ -59,11 +59,11 @@ const SparePartMobileLocations = ({locations, institutions, save}: Props) => {
         });
     };
 
-    const changeLocation = (institutionId: string, quantity: number, restoredQuantity: number) => {
+    const changeLocation = (institutionId: string, newQuantity: number, restoredQuantity: number) => {
         setLocalLocations((prev) =>
             prev.map((location) => {
                 if (location.institution.id !== institutionId) return location;
-                return { ...location, quantity: quantity, restoredQuantity: restoredQuantity };
+                return { ...location, newQuantity: newQuantity, restoredQuantity: restoredQuantity };
             }
         ));
     };

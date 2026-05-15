@@ -1,8 +1,10 @@
+import React from "react";
 import {MapPin, Trash2} from "lucide-react";
 import {Input} from "@/presentation/components/ui/input.tsx";
 import {Button} from "@/presentation/components/ui/button.tsx";
 import type {UILocation} from "@/presentation/components/tabs/spare-parts/models.ts";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
+import { useNumericInput, type NumericInputProps } from "@/presentation/hooks/useNumericInput";
 
 interface Props {
     location: UILocation;
@@ -11,22 +13,28 @@ interface Props {
     remove(): void;
     changeLocation(newQuantity: number, restoredQuantity: number): void
 }
+
 const LocationItem = ({ location, remove, changeLocation, mobileView = false }: Props) => {
-    const [editing, setEditing] = useState<"new" | "restored" | null>(null);
-    const [newQuantity, setNewQuantity] = useState<number>(location.newQuantity);
-    const [restoredQuantity, setRestoredQuantity] = useState<number>(location.restoredQuantity);
+    const newQuantity = useNumericInput(location.newQuantity);
+    const restoredQuantity = useNumericInput(location.restoredQuantity);
 
     useEffect(() => {
-        setNewQuantity(location.newQuantity);
-        setRestoredQuantity(location.restoredQuantity);
+        newQuantity.reset(location.newQuantity);
+        restoredQuantity.reset(location.restoredQuantity);
     }, [location]);
 
-    const commitEdit = () => {
-        const newQ = newQuantity ?? 0
-        const restored = restoredQuantity ?? 0;
-        changeLocation(newQ, restored);
-        setEditing(null);
-    };
+    const commitEdit = () => { changeLocation(newQuantity.value, restoredQuantity.value); };
+
+    const deleteButton = (
+        <Button
+            size="sm"
+            variant="outline"
+            onClick={remove}
+            className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0 justify-self-end"
+        >
+            <Trash2 className="w-4 h-4" />
+        </Button>
+    );
 
     if (mobileView) {
         return (
@@ -37,58 +45,24 @@ const LocationItem = ({ location, remove, changeLocation, mobileView = false }: 
                     </p>
 
                     <div className="flex items-center gap-1.5 mt-1.5">
-                        {editing === "new" ? (
-                            <Input
-                                autoFocus
-                                min={0}
-                                type="number"
-                                inputMode="numeric"
-                                value={newQuantity}
-                                onChange={(e) => setNewQuantity(+e.target.value)}
-                                onBlur={commitEdit}
-                                className="h-6 w-20 text-right text-xs"
-                            />
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={() => setEditing("new")}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-medium transition-colors"
-                            >
-                                {newQuantity} нові
-                            </button>
-                        )}
-
-                        {editing === "restored" ? (
-                            <Input
-                                autoFocus
-                                min={0}
-                                type="number"
-                                inputMode="numeric"
-                                value={restoredQuantity}
-                                onChange={(e) => setRestoredQuantity(+e.target.value)}
-                                onBlur={commitEdit}
-                                className="h-6 w-20 text-right text-xs"
-                            />
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={() => setEditing("restored")}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-purple-50 text-purple-700 text-xs font-medium transition-colors"
-                            >
-                                {restoredQuantity} відновл.
-                            </button>
-                        )}
+                        <MobileQuantityField
+                            label="нові"
+                            colorClass="bg-blue-50 text-blue-700"
+                            inputProps={newQuantity.inputProps}
+                            value={newQuantity.value}
+                            onCommit={commitEdit}
+                        />
+                        <MobileQuantityField
+                            label="відновл."
+                            colorClass="bg-purple-50 text-purple-700"
+                            inputProps={restoredQuantity.inputProps}
+                            value={restoredQuantity.value}
+                            onCommit={commitEdit}
+                        />
                     </div>
                 </div>
 
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={remove}
-                    className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0 justify-self-end"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </Button>
+                {deleteButton}
             </div>
         );
     }
@@ -106,10 +80,9 @@ const LocationItem = ({ location, remove, changeLocation, mobileView = false }: 
                 min={0}
                 type="number"
                 inputMode="numeric"
-                value={newQuantity}
-                onBlur={commitEdit}
-                onKeyDown={(e) => { if (e.key === "Enter") commitEdit() }}
-                onChange={(e) => setNewQuantity(+e.target.value)}
+                {...newQuantity.inputProps}
+                onBlur={() => { newQuantity.inputProps.onBlur?.(); commitEdit(); }}
+                onKeyDown={(e) => { if (e.key === "Enter") commitEdit(); }}
                 className="h-8 text-center shadow-none"
             />
 
@@ -117,22 +90,46 @@ const LocationItem = ({ location, remove, changeLocation, mobileView = false }: 
                 min={0}
                 type="number"
                 inputMode="numeric"
-                value={restoredQuantity}
-                onBlur={commitEdit}
-                onKeyDown={(e) => { if (e.key === "Enter") commitEdit() }}
-                onChange={(e) => setRestoredQuantity(+e.target.value)}
+                {...restoredQuantity.inputProps}
+                onBlur={() => { restoredQuantity.inputProps.onBlur?.(); commitEdit(); }}
+                onKeyDown={(e) => { if (e.key === "Enter") commitEdit(); }}
                 className="h-8 text-center shadow-none"
             />
 
-            <Button
-                size="sm"
-                variant="outline"
-                onClick={remove}
-                className="border-red-300 text-red-700 hover:bg-red-50 h-8 w-8 p-0 justify-self-end"
-            >
-                <Trash2 className="w-4 h-4" />
-            </Button>
+            {deleteButton}
         </div>
+    );
+};
+
+interface MobileQuantityFieldProps {
+    label: string;
+    colorClass: string;
+    value: number;
+    inputProps: NumericInputProps;
+    onCommit(): void;
+}
+
+const MobileQuantityField = ({ label, colorClass, value, inputProps, onCommit }: MobileQuantityFieldProps) => {
+    const [focused, setFocused] = React.useState(false);
+
+    return focused ? (
+        <Input
+            autoFocus
+            min={0}
+            type="number"
+            inputMode="numeric"
+            {...inputProps}
+            onBlur={() => { inputProps.onBlur?.(); setFocused(false); onCommit(); }}
+            className="h-6 w-20 text-right text-xs"
+        />
+    ) : (
+        <button
+            type="button"
+            onClick={() => setFocused(true)}
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-colors ${colorClass}`}
+        >
+            {value} {label}
+        </button>
     );
 };
 

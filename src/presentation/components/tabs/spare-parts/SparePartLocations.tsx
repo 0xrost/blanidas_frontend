@@ -111,7 +111,7 @@ const SparePartLocations = ({ locations, institutions, save }: Props) => {
                         key={location.institution.id}
                         location={location}
                         remove={() => removeLocation(location.institution.id)}
-                        changeLocation={(quantity, restoredQuantity) => changeLocation(location.institution.id, quantity, restoredQuantity)}
+                        changeLocation={(newQuantity, restoredQuantity) => changeLocation(location.institution.id, newQuantity, restoredQuantity)}
                     />
                 })}
                 {localLocations.length === 0 &&
